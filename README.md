@@ -11,18 +11,26 @@ Plan v1.0 — see [`docs/PLAN.md`](docs/PLAN.md) (source of truth).
 
 ## Documentation
 
-| File                                             | What it covers                                                                                    |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| [`AGENTS.md`](AGENTS.md)                         | Working agreement for any agent; auto-loaded by OpenCode and Claude Code                          |
-| [`docs/PLAN.md`](docs/PLAN.md)                   | The product plan: scope, locked decisions, schema, phases, acceptance lines                       |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)   | How the app is put together: layers, the `Db` contract, modules, storage, concurrency             |
-| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)     | Coding conventions: naming, money, repositories, services, React, i18n, a11y                      |
-| [`docs/DATA-MODEL.md`](docs/DATA-MODEL.md)       | Schema reference, indexes, derived money rules, ranking, migrations                               |
-| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)     | Setup, scripts, task workflow, and how to use GitNexus, Playwright MCP, Agentation and the skills |
-| [`docs/TESTING.md`](docs/TESTING.md)             | Test strategy, quality gates, performance budgets, accessibility                                  |
-| [`docs/UI-GUIDELINES.md`](docs/UI-GUIDELINES.md) | Design rules for a Bangla-first, tablet-first front-desk app                                      |
-| [`docs/PROGRESS.md`](docs/PROGRESS.md)           | Task log: what is done, what is next, what is known broken                                        |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md)         | Every decision taken, with the reason                                                             |
+| File                                             | What it covers                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------------------------ |
+| [`AGENTS.md`](AGENTS.md)                         | Working agreement for any agent; auto-loaded by OpenCode and Claude Code       |
+| [`docs/PLAN.md`](docs/PLAN.md)                   | The product plan: scope, locked decisions, schema, phases, acceptance lines    |
+| [`docs/PRD.md`](docs/PRD.md)                     | Product vision, v1 scope, the six critical workflows                           |
+| [`docs/TAD.md`](docs/TAD.md)                     | Architecture, the `Db` contract, the full schema, module ownership, migrations |
+| [`docs/SECURITY.md`](docs/SECURITY.md)           | Threat model, PIN and roles, data guardrails, CSP, supply chain                |
+| [`docs/FRONTEND_SPEC.md`](docs/FRONTEND_SPEC.md) | Design tokens, layout, every screen, states, accessibility                     |
+| [`docs/TICKETS.md`](docs/TICKETS.md)             | The execution queue: one ticket, one branch, one PR                            |
+| [`docs/REPO_RULES.md`](docs/REPO_RULES.md)       | Confirmation protocol, merge rules, code conventions, Definition of Done       |
+| [`docs/BUGS.md`](docs/BUGS.md)                   | The queue of known issues                                                      |
+| [`docs/BRANCHING.md`](docs/BRANCHING.md)         | Branch types, lifecycle, release and hotfix flow, protection                   |
+| [`docs/COMMIT_SYSTEM.md`](docs/COMMIT_SYSTEM.md) | Commit format, types, allowed scopes                                           |
+| [`docs/VERSIONING.md`](docs/VERSIONING.md)       | SemVer, version sources of truth, the release procedure                        |
+| [`docs/E2E_TESTING.md`](docs/E2E_TESTING.md)     | The Playwright MCP workflow, spec rules, coverage matrix, merge gates          |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)     | Setup, scripts, tooling, common tasks                                          |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md)           | Task log: what is done, what is next, what is known broken                     |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md)         | Every decision taken, with the reason                                          |
+| [`CHANGELOG.md`](CHANGELOG.md)                   | Curated, human-readable changes                                                |
+| [`session_log.md`](session_log.md)               | Every AI session, including in-progress and blocked work                       |
 
 ## Requirements
 

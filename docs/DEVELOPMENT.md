@@ -39,18 +39,18 @@ The app is served at `http://localhost:5173`.
 
 ## 4. The task workflow
 
-The plan (`docs/PLAN.md` §9) lists tasks as `P<phase>-<n>`. Work one at a time, in order.
+The full workflow, including the confirmation gate, lives in
+[`REPO_RULES.md`](REPO_RULES.md) §1 and §8. The short version:
 
 ```
-1. Read the phase in PLAN §9 and the module spec in PLAN §8.
-2. Read docs/ARCHITECTURE.md, docs/CONVENTIONS.md and the relevant part of
-   docs/DATA-MODEL.md.
+1. Read the ticket in docs/TICKETS.md and the plan phase in docs/PLAN.md §9.
+2. Read the relevant sections of docs/TAD.md, docs/FRONTEND_SPEC.md and docs/SECURITY.md.
 3. Check the blast radius of what you are about to touch (GitNexus, below).
-4. Write the code and its tests.
-5. pnpm check        → typecheck, lint, test and build all green.
-6. Demonstrate the acceptance line from PLAN §9.
-7. Update docs/PROGRESS.md: task ID, what changed, known gaps.
-8. Commit: feat(payments): P3-2 record payment
+4. Write the code and its tests, on a branch named per docs/BRANCHING.md §2.
+5. pnpm check        → typecheck, lint, test, build and the bundle budget all green.
+6. Verify the acceptance bullets with the Playwright MCP (docs/E2E_TESTING.md §4).
+7. Update docs/PROGRESS.md and session_log.md.
+8. Commit per docs/COMMIT_SYSTEM.md, then open the PR.
 ```
 
 A task is not done until step 7 is finished. If you cannot meet the acceptance line, say so
@@ -179,22 +179,20 @@ exempt from lint and formatting on purpose. Application components live outside 
 
 ## 7. Testing
 
-See [`TESTING.md`](TESTING.md) for the full strategy. The short version:
+See [`E2E_TESTING.md`](E2E_TESTING.md) for the full protocol. The short version:
 
 ```bash
 pnpm test                                   # unit and component tests
 pnpm test -- src/core/money                 # one area
 pnpm e2e                                    # end-to-end against the production build
+pnpm e2e -- --grep @smoke                   # the smoke suite only
 pnpm e2e -- --headed                        # watch it run
 ```
 
-Repositories are tested against `better-sqlite3` behind the same `Db` interface the browser
-uses, so SQL behaviour is real without needing a browser.
-
 ## 8. Seed data
 
-`pnpm seed --students 5000` lands in P2-5. Until then, create records through the UI or write
-a fixture by hand in `e2e/fixtures/`.
+`pnpm seed --students 5000` lands with ticket T-044. Until then, create records through the
+UI or write a fixture by hand in `e2e/fixtures/`.
 
 ## 9. Common tasks
 
@@ -211,10 +209,12 @@ pnpm dlx shadcn@latest add table
 3. Add a repository in `src/modules/<mod>/repositories/`.
 4. Export the service from `src/modules/<mod>/index.ts`.
 
+The table's columns and indexes are specified in [`TAD.md`](TAD.md) §5.
+
 **Add a setting**
 
 `settings` is a key/value table. Add the default to the settings module's defaults map and
-the key to the settings documentation in `docs/DATA-MODEL.md`.
+the key to the settings documentation in [`TAD.md`](TAD.md) §5.4.
 
 **Debug a UI problem**
 
@@ -224,9 +224,9 @@ the key to the settings documentation in `docs/DATA-MODEL.md`.
 
 ## 10. Offline guarantee
 
-There must be no runtime network access: no analytics, no CDN, no remote fonts, no cloud APIs.
-`e2e/smoke.spec.ts` asserts that the page contacts no host other than its own origin. If you
-add a dependency that fetches anything at runtime, that test fails — and it should.
+The rule and its enforcement live in [`SECURITY.md`](SECURITY.md) §9. Operationally: no
+dependency may fetch anything at runtime, and `e2e/smoke.spec.ts` fails the build if it
+does.
 
 ## 11. Security headers
 
@@ -234,10 +234,6 @@ add a dependency that fetches anything at runtime, that test fails — and it sh
 static hosts that read it (Netlify, Cloudflare Pages and compatible ones). Nginx and Apache
 need the equivalent directives written out by hand.
 
-The policy is `default-src 'self'` with `connect-src 'self'`. The plan (§10) suggests
-`connect-src 'none'`; same-origin is used instead because the service worker must fetch its
-own precached assets from the app's origin, and a `none` policy breaks offline start-up.
-Everything else follows the plan exactly: no inline scripts, no plugins, no framing.
-
-Serve these as HTTP headers, not as a `<meta http-equiv>` tag: a meta tag also applies in
-development and would break Vite's HMR websocket.
+The policy itself is specified in [`SECURITY.md`](SECURITY.md) §9. Serve it as HTTP headers,
+not as a `<meta http-equiv>` tag: a meta tag also applies in development and would break
+Vite's HMR websocket.

@@ -19,6 +19,10 @@ The first CI run (2026-11-16, run `43827123710`) passed both jobs — typecheck,
 tests, format check, build and the bundle budget, then Playwright e2e against the production
 build.
 
+**Governing documents:** the eleven-document set described in `docs/DECISIONS.md` D-014 is now
+in place. `docs/ARCHITECTURE.md`, `CONVENTIONS.md`, `DATA-MODEL.md`, `UI-GUIDELINES.md` and
+`TESTING.md` were retired and their rules folded in, so no rule is stated twice.
+
 **What changed**
 
 - Project created at `coaching-center-manager/` with pnpm 10.34.9.
