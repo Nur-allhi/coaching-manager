@@ -14,6 +14,10 @@ human-readable subset.
 
 ### Added
 
+- sqlite-wasm in a dedicated Web Worker with the `opfs-sahpool` VFS, plus a Comlink client
+  and a temporary `/__db-spike` verification harness.
+- Playwright end-to-end specs for database persistence and the export/import round-trip,
+  running on Chromium and Firefox, with WebKit smoke coverage.
 - Husky, commitlint and lint-staged: commit messages are validated on commit, and staged
   files are linted and formatted before the commit lands.
 - The 11 governing documents under `docs/`: PRD, TAD, SECURITY, FRONTEND_SPEC, TICKETS,

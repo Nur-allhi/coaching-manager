@@ -24,6 +24,34 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 15:10
+
+### Changes
+
+- `src/core/db/worker.ts` — sqlite-wasm + opfs-sahpool VFS in a Worker, exposed over Comlink.
+- `src/core/db/client.ts` — the main-thread Worker wrapper.
+- `src/app/dev/DbSpikeHarness.tsx` — temporary `/__db-spike` harness for browser verification.
+- `src/app/App.tsx` — serves the harness at its path; removed in P0-3.
+- `e2e/sqlite-persistence.spec.ts` — persistence, byte round-trip, and console/network specs.
+- `playwright.config.ts` — added Firefox and WebKit projects.
+- `docs/DECISIONS.md` — D-023 records the cross-browser findings, including the WebKit OPFS
+  gap and the local library fix.
+- `docs/PROGRESS.md`, `docs/E2E_TESTING.md`, `CHANGELOG.md` — updated.
+- `.github/workflows/ci.yml` — CI now installs chromium, firefox and webkit with their
+  system dependencies. The first run of PR #3 failed because only chromium was installed.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `playwright-mcp`
+- `code-reviewer`
+
+### Status
+
+in-progress — Chromium and Firefox pass; Safari on macOS is still unverified, so P0-2 cannot
+be closed yet. The pull request into `dev` awaits the human's merge confirmation.
+
 ## Session 2026-11-16 08:35
 
 ### Changes
