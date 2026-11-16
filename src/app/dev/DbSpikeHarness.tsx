@@ -7,7 +7,7 @@
  * Playwright MCP browser).
  */
 import { useCallback, useEffect, useState } from 'react'
-import { getSpikeDb } from '@/core/db/client'
+import { getDb } from '@/core/db/client'
 
 type SpikeRow = { id: string; value: string }
 
@@ -15,10 +15,10 @@ export function DbSpikeHarness() {
   const [rows, setRows] = useState<SpikeRow[]>([])
   const [status, setStatus] = useState('starting…')
   const [saved, setSaved] = useState<Uint8Array | null>(null)
-  const db = getSpikeDb()
+  const db = getDb()
 
   const refresh = useCallback(async () => {
-    setRows((await db.query('SELECT id, value FROM spike_rows ORDER BY id')) as SpikeRow[])
+    setRows(await db.query<SpikeRow>('SELECT id, value FROM spike_rows ORDER BY id'))
   }, [db])
 
   useEffect(() => {
@@ -103,6 +103,25 @@ export function DbSpikeHarness() {
           }
         >
           Import bytes
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            void act('rollback', async () => {
+              await db
+                .tx(async (t) => {
+                  await t.run('INSERT INTO spike_rows (id, value) VALUES (?, ?)', [
+                    crypto.randomUUID(),
+                    'should-not-exist',
+                  ])
+                  throw new Error('deliberate rollback')
+                })
+                .catch(() => undefined)
+              await refresh()
+            })
+          }
+        >
+          Rollback test
         </button>
         <button type="button" onClick={() => void act('reload-status', refresh)}>
           Refresh count

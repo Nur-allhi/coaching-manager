@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- The serialized `Db` client: one promise queue, `tx` with BEGIN/COMMIT/ROLLBACK, nested
+  transaction refusal, and unit tests for the queue and the transaction contract.
 - sqlite-wasm in a dedicated Web Worker with the `opfs-sahpool` VFS, plus a Comlink client
   and a temporary `/__db-spike` verification harness.
 - Playwright end-to-end specs for database persistence and the export/import round-trip,

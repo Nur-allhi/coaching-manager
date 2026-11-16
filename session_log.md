@@ -24,6 +24,29 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 15:30
+
+### Changes
+
+- `src/core/db/types.ts`, `src/core/db/queue.ts`, `src/core/db/client.ts` — the serialized
+  `Db` client with a real transaction contract.
+- `src/core/db/worker.ts` — BEGIN, COMMIT and ROLLBACK over Comlink.
+- `src/core/db/queue.test.ts`, `src/core/db/client.test.ts` — 8 new unit tests.
+- `src/app/dev/DbSpikeHarness.tsx`, `e2e/sqlite-persistence.spec.ts` — a browser-level
+  rollback check.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — updated.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `playwright-mcp`
+- `code-reviewer`
+
+### Status
+
+in-progress — T-011 is implemented and green; its pull request into `dev` awaits the human's
+merge confirmation.
+
 ## Session 2026-11-16 15:10
 
 ### Changes
