@@ -24,6 +24,30 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 21:34
+
+### Changes
+
+- `.opencode/agents/branch-manager.md`, `.opencode/agents/code-reviewer.md`,
+  `.opencode/agents/commit-writer.md`, `.opencode/agents/e2e-tester.md`,
+  `.opencode/agents/release-manager.md`, `.opencode/agents/security-auditor.md` — six subagent
+  files: reviewed and relaxed permissions per human decision D-030 (option 3, maximum). In-scope
+  ask rules converted to allow, missing GitNexus/pnpm budget/dev-server permissions added, bodies
+  updated to act without asking, and hard gates kept (no merge, no force push, no push to
+  main/dev, no branch delete).
+- `docs/DECISIONS.md` — added D-030.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus`
+- `senior-backend` (or `opencode`)
+- `code-reviewer`
+
+### Status
+
+in-progress — on branch `chore/subagent-permissions`; not committed or merged yet. T-017 work is
+stashed on `feature/error-boundary`.
+
 ## Session 2026-11-16 20:37
 
 ### Changes
