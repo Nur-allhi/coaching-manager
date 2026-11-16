@@ -279,6 +279,30 @@ Format: dated entries, newest last.
 - **Impact:** one small persistence helper and one status row. No new dependency, no schema or
   backup-behaviour change, and no change to the locked PWA stack or the test matrix.
 
+## D-034 — T-030 audit writer decisions (2026-11-16)
+
+- **Context:** T-030 adds void writes, undo and the History plumbing on top of T-015's audit
+  row writer. PLAN.md §3/§6 and TAD.md §12 fix the invariants: every write audits in the same
+  transaction, undo applies the inverse and writes a **new** entry, and history is never
+  rewritten. The action vocabulary is `create | update | delete | restore | void` — there is no
+  `undo` action. A decision-advisor surfaced two viable options per open choice.
+- **Autonomous decision (T-030), taking the advisor's leans:**
+  - **A1** — void and restore helpers belong beside the repository write helpers; an orchestrator
+    in `src/core/audit` reads an audit entry and applies its inverse. Core stays inside core and
+    the one audited write path is reused.
+  - **B1** — undo calls those helpers inside one `db.tx`, so each inverse write emits its own new
+    audit row (`delete` / `update` / `restore`) and the original entry is left untouched. No
+    dedicated `undo` action, no schema migration and no flipping of `undone`.
+  - **C1** — undoing a create uses the existing soft-delete path, including its refusal when the
+    record has live children. Business records are never hard-deleted and that parent/child rule
+    is locked, so the undo fails loudly rather than bypassing it.
+  - **D1** — `listHistory(db, table, id)` returns the stored entries with parsed before/after
+    snapshots, giving T-034's History panel a data-only surface.
+- **Why:** one audited write path, atomic void/undo with their audit rows, append-only history,
+  and no new dependency, schema change or product behaviour change.
+- **Impact:** additive helpers in `src/core/db/repository.ts`, a new `src/core/audit/undo.ts`,
+  and unit tests; no UI, no migration, no Locked Decision or backup behaviour change.
+
 ## D-033 — T-020 i18n scaffold decisions (2026-11-16)
 
 - **Context:** T-020 scaffolds i18next with English and Bangla. PLAN.md §3 locks the stack

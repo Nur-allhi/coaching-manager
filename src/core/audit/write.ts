@@ -14,7 +14,7 @@ export interface AuditContext {
   newId: () => string
 }
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'void'
+export type AuditAction = 'create' | 'update' | 'delete' | 'restore' | 'void'
 
 export interface AuditEntry {
   entity: string

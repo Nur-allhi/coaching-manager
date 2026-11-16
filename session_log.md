@@ -24,6 +24,55 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 23:18
+
+### Changes
+
+- `src/core/audit/undo.ts` — review fix: undoing a `restore` now soft-deletes instead of trying to
+  restore an already-live row; `StoredAction` aliases `AuditAction`; table/version guards reused
+  from the repository.
+- `src/core/audit/undo.test.ts` — regression test for undo of a restore (now ten tests).
+- `src/core/db/void-restore.ts` — removed the unused exported `restoreRecord` wrapper.
+- `src/core/db/repository.ts` — exported the existing `tableName` / `assertVersion` guards.
+- `docs/PROGRESS.md`, `session_log.md` — refreshed test counts and recorded this fix cycle.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `code-reviewer` (FAIL then fixes), `security-auditor` (PASS), `gitnexus`
+
+### Status
+
+in-progress — review fixes verified (`pnpm check` green, 92 unit tests, 55 e2e); one Vitest
+worker-termination timeout occurred under concurrent load and passed on retry (flaky infra, no
+bug logged). Final re-review, commit and PR pending.
+
+## Session 2026-11-16 23:11
+
+### Changes
+
+- `src/core/db/void-restore.ts` — void and restore write helpers (D-034 A1); `payments` is the
+  only voidable table.
+- `src/core/audit/undo.ts` — undo of create/update/delete/void/restore through audited helpers
+  in one transaction, plus `listHistory` (D-034 B1/D1).
+- `src/core/audit/write.ts` — `restore` added to the audit action union; no behaviour change.
+- `src/core/audit/undo.test.ts` — ten tests including undo-of-restore and rollback atomicity.
+- `docs/DECISIONS.md` — D-034 autonomous decision; `CHANGELOG.md`, `docs/PROGRESS.md`.
+- Branch `feature/audit-writer`, from `dev` after T-019 merged as `45b86bc`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `session-logger` (subagent roles)
+- `gitnexus`
+
+### Status
+
+in-progress — T-030 implemented; `pnpm check` green, 92 unit tests and 55 e2e passed; reviews,
+commit and PR pending. T-020 was already in progress in the concurrent worktree
+`ccm-t020-i18n`, so this run skipped it and took the next free ticket.
+
 ## Session 2026-11-16 23:07
 
 ### Changes
