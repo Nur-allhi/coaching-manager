@@ -59,11 +59,14 @@ Plan v1.0 — see [`docs/PLAN.md`](docs/PLAN.md) (source of truth).
 src/
   app/          shell, registry, providers, router, error boundary
   core/
-    db/         worker, client, migrate, repository helpers, uuid, clock
+    db/         worker, client, migrate, repository helpers, uuid
     backup/     snapshots, restore, file export and import
     audit/      audit log writer, undo
     auth/       PIN, session, roles
-    i18n/ money/ dates/ print/ export/ ui/
+    i18n/       translations and the locale toggle
+    money/      integer-paisa arithmetic, formatting, parsing
+    dates/      injectable clock, Dhaka date and month helpers
+    print/ export/ ui/
   modules/
     settings/ academics/ students/ enrollments/ payments/
     attendance/ exams/ leaderboard/ dashboard/ reports/ data-tools/

@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 16:35
+
+### Changes
+
+- `src/core/db/uuid.ts`, `src/core/dates/clock.ts`, `src/core/dates/dates.ts`,
+  `src/core/money/money.ts` — the T-014 core helpers.
+- Three new test files: 30 tests for UUIDv7, the injectable clock, Dhaka dates and months,
+  and money arithmetic in both digit scripts.
+- `package.json`, `pnpm-lock.yaml` — replaced the unused `uuid` package with `uuidv7`, as
+  PLAN.md §3 specifies.
+- `README.md` — corrected the `core/` layout after the helpers moved into `dates/`.
+- `docs/PROGRESS.md`, `CHANGELOG.md`, `docs/DECISIONS.md` — updated; the last records the
+  human's acceptance of the Safari gap on 2026-11-16.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `code-reviewer`
+- `gitnexus`
+
+### Status
+
+in-progress — T-014 is implemented and green; its pull request into `dev` awaits the human's
+merge confirmation.
+
 ## Session 2026-11-16 16:00
 
 ### Changes
