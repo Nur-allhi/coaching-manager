@@ -116,7 +116,7 @@ go to `docs/DECISIONS.md`.
 
 ---
 
-### T-002 — Commit message enforcement — **Done** (pending merge into `dev`)
+### T-002 — Commit message enforcement — **Done**, merged as PR #2
 
 **Acceptance:** the commitlint rules reject a bad message and accept a good one.
 
@@ -194,7 +194,7 @@ Then start T-010, the sqlite-wasm worker spike.
 `better-sqlite3` test double. P0-2 is closed on the strength of the Chromium and Firefox runs
 (D-026 removed Safari as a target).
 
-### T-011 — Db client with a serialized queue — **Done** (pending merge into `dev`)
+### T-011 — Db client with a serialized queue — **Done**, merged as PR #4
 
 **Acceptance:** `query`, `run` and `tx` behave as specified; a throwing transaction rolls
 back; a call during a transaction cannot see uncommitted rows.
@@ -231,7 +231,7 @@ back; a call during a transaction cannot see uncommitted rows.
 
 **Next:** T-012, the `better-sqlite3` test double behind the same `Db` interface.
 
-### T-012 — better-sqlite3 test double — **Done** (stacked on T-011, pending merge)
+### T-012 — better-sqlite3 test double — **Done**, merged as PR #5
 
 **Acceptance:** the identical contract suite passes against both implementations, including
 rollback on error; `pnpm test` runs in under 5 seconds.
@@ -266,7 +266,7 @@ rollback on error; `pnpm test` runs in under 5 seconds.
 
 ### P0-3 — `Db` client and test double implemented; awaiting merges
 
-### T-013 / P0-4 — Migration runner — **Done** (pending merge into `dev`)
+### T-013 / P0-4 — Migration runner — **Done**, merged as PR #6
 
 **Acceptance:** migrating an empty DB and a v1 DB yields an identical schema.
 
@@ -300,7 +300,7 @@ rollback on error; `pnpm test` runs in under 5 seconds.
 
 ### P0-4 — Migration runner — **Done**, merged into `dev` as PR #6
 
-### T-014 / P0-5 — Core helpers (uuid, clock, money, dates) — **Done** (pending merge into `dev`)
+### T-014 / P0-5 — Core helpers (uuid, clock, money, dates) — **Done**, merged as PR #7
 
 **Acceptance:** the four T-014 acceptance lines from `docs/TICKETS.md`.
 
@@ -345,9 +345,9 @@ The first formatter also used `Intl.NumberFormat('en-BD')`, which groups in thre
 
 **Next:** T-015, repository helpers with version checks, soft delete and audit rows.
 
-### P0-5 — Core helpers (uuid, clock, money, dates) — **Done** pending merge; audit rows in T-015
+### P0-5 — Core helpers (uuid, clock, money, dates) — **Done**; audit rows in T-015
 
-### T-015 / repository helpers — **Done** (pending merge into `dev`)
+### T-015 / repository helpers — **Done**, merged as PR #8
 
 **Acceptance:** all four T-015 lines from `docs/TICKETS.md`, plus D-024.
 
@@ -388,9 +388,9 @@ owns one behavior.
 
 **Next:** T-016, the app shell, registry and router.
 
-### P0-5 — Repository helpers — **Done** pending merge
+### P0-5 — Repository helpers — **Done**
 
-### T-016 / P0-6 — App shell, registry and router — **Done** (pending merge into `dev`)
+### T-016 / P0-6 — App shell, registry and router — **Done**, merged as PR #9
 
 **Acceptance:** all four T-016 lines from `docs/TICKETS.md`.
 
@@ -433,7 +433,7 @@ owns one behavior.
 
 **Next:** T-017, the global error boundary and unsaved-changes guard.
 
-### P0-6 — App shell — **Done** pending merge; boundary, lock, PWA and i18n still open
+### P0-6 — App shell — **Done**; boundary, lock, PWA and i18n still open
 
 ## P1 Safety net
 
