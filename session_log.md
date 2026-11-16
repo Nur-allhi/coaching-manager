@@ -24,6 +24,26 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 16:00
+
+### Changes
+
+- `src/core/db/split-sql.ts`, `src/core/db/migrate.ts`, `src/core/db/migrations.ts` — the
+  append-only migration runner and its registry.
+- Seven SQL files under `src/modules/*/migrations/` contributing the full schema.
+- `src/core/db/split-sql.test.ts`, `src/core/db/migrate.test.ts` — 9 new tests.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — updated.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `code-reviewer`
+
+### Status
+
+in-progress — T-013 is implemented and green; its pull request into `dev` awaits the human's
+merge confirmation.
+
 ## Session 2026-11-16 15:40
 
 ### Changes

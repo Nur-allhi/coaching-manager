@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- An append-only migration runner with `app_meta.schema_version`, a pre-migration snapshot
+  hook, rollback on failure, and seven module-owned SQL migrations covering the full schema.
 - A `better-sqlite3` implementation of the `Db` contract and a shared contract suite, so
   repository and service tests run against real SQL without a browser.
 - The serialized `Db` client: one promise queue, `tx` with BEGIN/COMMIT/ROLLBACK, nested
