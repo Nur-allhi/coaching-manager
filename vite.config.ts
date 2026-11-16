@@ -14,7 +14,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Coaching Center Manager',
+        name: 'Coaching Manager',
         short_name: 'Coaching',
         description: 'Offline-first coaching center management for the front desk.',
         lang: 'en',

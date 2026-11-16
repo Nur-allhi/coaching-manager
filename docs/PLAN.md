@@ -1,4 +1,4 @@
-# Coaching Center Manager: Build Plan for the AI Agent
+# Coaching Manager: Build Plan for the AI Agent
 
 Local-first single-page app. React + TypeScript + SQLite (WASM). Plan v1.0, 16 Nov 2026.
 

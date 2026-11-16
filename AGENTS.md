@@ -1,4 +1,4 @@
-# Coaching Center Manager — working agreement
+# Coaching Manager — working agreement
 
 This file is loaded automatically by every agent that opens this repository
 (OpenCode reads `AGENTS.md`; `CLAUDE.md` is a byte-identical mirror for Claude Code).

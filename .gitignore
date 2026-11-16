@@ -22,6 +22,10 @@ blob-report
 # GitNexus code graph (self-ignored, listed for clarity)
 .gitnexus/
 
+# Third-party agent skills: installed locally for use, never published.
+# They are not ours to license, so they stay out of the repository and its history.
+.claude/skills/
+
 # Coverage
 coverage
 

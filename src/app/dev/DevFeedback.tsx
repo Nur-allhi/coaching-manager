@@ -12,7 +12,7 @@ export function DevFeedback() {
   return (
     <Agentation
       endpoint="http://localhost:4747"
-      appName="Coaching Center Manager"
+      appName="Coaching Manager"
       useHashLocation
     />
   )

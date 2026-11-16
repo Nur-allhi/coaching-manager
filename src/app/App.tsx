@@ -17,7 +17,7 @@ export function App() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Coaching Center Manager</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Coaching Manager</h1>
         <p className="text-muted-foreground">
           Offline-first coaching center management. Foundation scaffold is in place.
         </p>

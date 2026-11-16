@@ -1,6 +1,6 @@
 # Architecture
 
-How the Coaching Center Manager is put together, and why. The product scope and the
+How the Coaching Manager is put together, and why. The product scope and the
 authoritative plan live in [`PLAN.md`](PLAN.md); this document explains the structure that the
 plan prescribes.
 

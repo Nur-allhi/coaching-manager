@@ -5,7 +5,7 @@ import { App } from '@/app/App'
 describe('App scaffold', () => {
   it('renders the product heading', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { name: 'Coaching Center Manager' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Coaching Manager' })).toBeInTheDocument()
   })
 
   it('states that the app runs fully offline', () => {

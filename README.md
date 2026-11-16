@@ -1,4 +1,4 @@
-# Coaching Center Manager
+# Coaching Manager
 
 Offline-first single-page app for a coaching center admin. React 19 + TypeScript + SQLite
 (WASM) over OPFS. All data stays on the device; the app makes no network calls at runtime.
