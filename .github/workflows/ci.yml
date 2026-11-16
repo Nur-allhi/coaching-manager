@@ -45,6 +45,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Scan for committed secrets
+        run: bash scripts/scan-secrets.sh
+
       - name: Typecheck
         run: pnpm typecheck
 
