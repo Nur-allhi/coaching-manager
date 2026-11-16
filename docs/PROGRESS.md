@@ -464,9 +464,40 @@ owns one behavior.
 - Drafts use sessionStorage; File inputs in future forms will need special handling (serialisation).
 - Safari is not a supported target (D-026).
 
-**Next:** T-018, the single-tab lock.
+### T-018 / P0-6 — Single-tab lock — **Done** (pending merge)
 
-### P0-6 — App shell — **Done**; boundary and PWA done; lock and i18n still open
+**Acceptance:** all three T-018 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                            | Result                                                                  |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------- |
+| A second tab shows an "already open in another tab" screen | met — `LockScreen` + bilingual strings; E2E asserts it                  |
+| The second tab makes no database call                      | met — bootstrap gate; no router/Worker/Db client; E2E asserts no worker |
+| The lock is released on unload                             | met — never-resolving callback auto-releases on tab close; E2E verifies |
+
+**What changed**
+
+- `src/app/single-tab.ts` — Web Locks owner acquisition with a dev-only HMR bypass.
+- `src/app/LockScreen.tsx` — standalone lock screen; strings added to `en`/`bn` locales.
+- `src/main.tsx` — top-level await acquires the lock before rendering; second tab gets only the lock screen.
+- `src/app/__tests__/single-tab.test.ts` (4 unit tests), `e2e/specs/single-tab.spec.ts` (3 E2E tests).
+
+**Decisions:** D-037 (bootstrap gate + never-create DB + dev bypass).
+
+**Results**
+
+| Check        | Result                               |
+| ------------ | ------------------------------------ |
+| `pnpm check` | green; bundle 162.5 KB of 300 KB     |
+| `pnpm e2e`   | 78 passed (Chromium, Firefox, smoke) |
+
+**Known gaps**
+
+- Web Locks is best-effort: where the API is absent the app fails open (the Worker still serialises its connection).
+- Dev mode bypasses the lock (HMR), so the guard is verified against the production preview.
+
+**Next:** P1 follow-ups — BUG-003 (dev harness overflow), then the remaining foundation phase is complete.
+
+### P0-6 — App shell — **Done**; boundary, lock, PWA and i18n all done
 
 ### T-019 / P0-6 — PWA completion and persistent storage — **Done** (pending merge)
 

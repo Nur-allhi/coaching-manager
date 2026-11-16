@@ -8,6 +8,11 @@ export const en = {
     shell: {
       openNavigation: 'Open navigation menu',
     },
+    singleTab: {
+      title: 'Already open in another tab',
+      description:
+        'Coaching Manager is already running in another tab of this browser. Close this tab and use the one that is already open — your data stays on this device.',
+    },
     common: {
       loading: 'Loading…',
     },

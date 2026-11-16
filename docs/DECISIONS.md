@@ -259,6 +259,23 @@ Format: dated entries, newest last.
 
 ---
 
+## D-037 — T-018 single-tab lock design (2026-11-17)
+
+- **Context:** T-018 must refuse a second tab before it opens the one-connection OPFS VFS,
+  show a lock screen, and release on unload. The app uses a React Router data router and renders
+  from `main.tsx`.
+- **Decision (human, on the decision-advisor's recommendation):** acquire the lock at bootstrap
+  in `main.tsx` with a top-level `await navigator.locks.request('app-db-owner', { mode:
+'exclusive', ifAvailable: true }, neverResolvingCallback)` (A1). A tab that cannot acquire it
+  renders only `LockScreen` — no router, Worker or Db client is constructed (B1). A dev-only
+  bypass skips the lock under `import.meta.env.DEV` to avoid a hot-reload self-deadlock.
+- **Why:** the never-resolving callback holds the lock for the tab's lifetime and the browser
+  releases it automatically on tab destruction (including a crash), satisfying acceptance (3)
+  without an unreliable unload handler. The bootstrap gate makes "no DB call" true by
+  construction. The lazy-in-getDb alternative still spawns the app tree and needs error plumbing.
+- **Impact:** new `single-tab.ts` + `LockScreen.tsx`, strings in both locales, and a top-level
+  await in `main.tsx`. No new dependency. Web Locks absent fails open (best-effort guard).
+
 ## D-032 — T-019 PWA persistence decisions (2026-11-16)
 
 - **Context:** T-019 must request `navigator.storage.persist()` on first run and show the
