@@ -21,14 +21,14 @@ PR; a spec is the guarantee.
 
 Already in place:
 
-- `playwright.config.ts`: `testDir: './e2e'`, `baseURL` against `vite preview` on port 4173,
-  a `chromium` project, `fullyParallel: true`, `retries: 0` locally and `2` in CI,
+- `playwright.config.ts`: `testDir: './e2e/specs'`, `baseURL` against `vite preview` on port 4173,
+  Chromium and Firefox projects, `fullyParallel: true`, `retries: 0` locally and `2` in CI,
   `trace: 'on-first-retry'`.
 - The MCP server is configured in `opencode.json` as `playwright`, running headless with an
   isolated profile. The MCP pins its own Chromium build, separate from `@playwright/test`'s;
   on a fresh machine run `pnpm exec playwright-mcp install-browser chrome-for-testing`.
 
-Folder layout, to be introduced by ticket T-005:
+Folder layout, introduced by ticket T-005:
 
 ```
 e2e/

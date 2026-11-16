@@ -1,0 +1,6 @@
+/** The three viewports the MCP workflow checks (E2E_TESTING.md §4.6). */
+export const VIEWPORTS = [
+  { name: 'phone', width: 375, height: 812 },
+  { name: 'tablet', width: 768, height: 1024 },
+  { name: 'desktop', width: 1280, height: 800 },
+] as const
