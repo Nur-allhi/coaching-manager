@@ -1,14 +1,11 @@
 import { expect, test } from '@playwright/test'
-
-const SPIKE_URL = '/__db-spike'
+import { collectConsoleErrors } from '../helpers/console-errors'
+import { collectExternalRequests } from '../helpers/network'
+import { seedSpikeRow, SPIKE_URL } from '../helpers/seed'
 
 test.describe('sqlite-wasm worker spike', () => {
   test('persists a row across a page reload', async ({ page }) => {
-    await page.goto(SPIKE_URL)
-    await expect(page.getByTestId('status')).toHaveText('ready')
-
-    await page.getByRole('button', { name: 'Insert row' }).click()
-    await expect(page.getByTestId('row-count')).toHaveText('Rows: 1')
+    await seedSpikeRow(page)
     const before = await page.getByTestId('rows').locator('li').first().textContent()
     expect(before).toContain('row-1')
 
@@ -19,11 +16,7 @@ test.describe('sqlite-wasm worker spike', () => {
   })
 
   test('export and import round-trip the database bytes', async ({ page }) => {
-    await page.goto(SPIKE_URL)
-    await expect(page.getByTestId('status')).toHaveText('ready')
-
-    await page.getByRole('button', { name: 'Insert row' }).click()
-    await expect(page.getByTestId('row-count')).toHaveText('Rows: 1')
+    await seedSpikeRow(page)
     const before = await page.getByTestId('rows').locator('li').first().textContent()
 
     await page.getByRole('button', { name: 'Export bytes' }).click()
@@ -38,10 +31,7 @@ test.describe('sqlite-wasm worker spike', () => {
   })
 
   test('a transaction that throws rolls back every write inside it', async ({ page }) => {
-    await page.goto(SPIKE_URL)
-    await expect(page.getByTestId('status')).toHaveText('ready')
-    await page.getByRole('button', { name: 'Insert row' }).click()
-    await expect(page.getByTestId('row-count')).toHaveText('Rows: 1')
+    await seedSpikeRow(page)
 
     await page.getByRole('button', { name: 'Rollback test' }).click()
     await expect(page.getByTestId('status')).toHaveText('rollback: ok')
@@ -50,17 +40,8 @@ test.describe('sqlite-wasm worker spike', () => {
   })
 
   test('the console stays clean and the page contacts no external host', async ({ page }) => {
-    const errors: string[] = []
-    const external: string[] = []
-    page.on('console', (message) => {
-      if (message.type() === 'error') errors.push(message.text())
-    })
-    page.on('request', (request) => {
-      const url = new URL(request.url())
-      if (url.hostname !== '127.0.0.1' && url.protocol !== 'data:' && url.protocol !== 'blob:') {
-        external.push(request.url())
-      }
-    })
+    const errors = collectConsoleErrors(page)
+    const external = collectExternalRequests(page)
 
     await page.goto(SPIKE_URL)
     await expect(page.getByTestId('status')).toHaveText('ready')
