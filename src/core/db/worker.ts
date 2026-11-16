@@ -1,14 +1,12 @@
 /**
- * sqlite-wasm + opfs-sahpool spike (PLAN.md P0-2).
+ * sqlite-wasm on OPFS, owned entirely by this Worker (PLAN.md §3, tickets T-010/T-011).
  *
- * The whole SQLite connection lives in this Worker: the UI thread never blocks on SQLite,
- * and the `opfs-sahpool` VFS does not need COOP/COEP headers.
- *
- * `tx` and the typed repositories arrive in P0-3. This is deliberately only the surface
- * needed to prove persistence and a byte-level export/import round-trip.
+ * `opfs-sahpool` needs no COOP/COEP headers. The UI thread never blocks on SQLite, and
+ * the single-tab lock in the client keeps this to one connection.
  */
 import * as Comlink from 'comlink'
 import sqlite3InitModule, { type BindableValue, type SAHPoolUtil } from '@sqlite.org/sqlite-wasm'
+import type { DbParam, WorkerApi } from './types'
 
 const DB_FILE = '/coaching.sqlite3'
 const VFS_NAME = 'ccm-sahpool'
@@ -37,34 +35,45 @@ async function ready(): Promise<{ db: SpikeDatabase; pool: SAHPoolUtil }> {
   return { db: opened, pool: installed }
 }
 
-export interface SpikeDbApi {
-  init(): Promise<void>
-  query(sql: string, params?: readonly BindableValue[]): Promise<unknown[]>
-  run(sql: string, params?: readonly BindableValue[]): Promise<{ changes: number }>
-  exportBytes(): Promise<Uint8Array>
-  importBytes(bytes: Uint8Array): Promise<void>
+function bind(params: readonly DbParam[] = []): BindableValue[] {
+  return params as BindableValue[]
 }
 
-const api: SpikeDbApi = {
+const api: WorkerApi = {
   async init() {
     await ready()
   },
 
-  async query(sql: string, params: readonly BindableValue[] = []) {
+  async query(sql: string, params?: readonly DbParam[]) {
     const { db: connection } = await ready()
     return connection.exec({
       sql,
-      bind: params,
+      bind: bind(params),
       rowMode: 'object',
       resultRows: [],
       returnValue: 'resultRows',
     })
   },
 
-  async run(sql: string, params: readonly BindableValue[] = []) {
+  async run(sql: string, params?: readonly DbParam[]) {
     const { db: connection } = await ready()
-    connection.exec({ sql, bind: params })
+    connection.exec({ sql, bind: bind(params) })
     return { changes: connection.changes() }
+  },
+
+  async begin() {
+    const { db: connection } = await ready()
+    connection.exec('BEGIN')
+  },
+
+  async commit() {
+    const { db: connection } = await ready()
+    connection.exec('COMMIT')
+  },
+
+  async rollback() {
+    const { db: connection } = await ready()
+    connection.exec('ROLLBACK')
   },
 
   async exportBytes() {

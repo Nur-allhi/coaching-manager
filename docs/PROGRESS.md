@@ -188,7 +188,44 @@ Then start T-010, the sqlite-wasm worker spike.
 **Next:** T-011, the full `Db` client with a serialized queue and `tx`, then T-012, the
 `better-sqlite3` test double. Ask the human for a macOS runner before closing P0-2.
 
-### P0-3 — `Db` client + `better-sqlite3` test double — **Not started**
+### T-011 — Db client with a serialized queue — **Done** (pending merge into `dev`)
+
+**Acceptance:** `query`, `run` and `tx` behave as specified; a throwing transaction rolls
+back; a call during a transaction cannot see uncommitted rows.
+
+**What changed**
+
+- `src/core/db/types.ts` — the `Db` contract from PLAN §5 and the Worker's RPC surface.
+- `src/core/db/queue.ts` — one promise queue; a failed task does not poison later tasks.
+- `src/core/db/client.ts` — `createDbClient(factory)` plus the browser singleton `getDb()`.
+  `tx` takes the queue for the whole callback, runs `BEGIN`, hands the callback a Db whose
+  calls go straight to the Worker, then `COMMIT` or `ROLLBACK` before releasing the queue.
+  Nested transactions are refused.
+- `src/core/db/worker.ts` — added `begin`, `commit` and `rollback`; it now implements the
+  shared `WorkerApi` type.
+- `src/app/dev/DbSpikeHarness.tsx` — uses the real client and adds a "Rollback test" button.
+- `src/core/db/queue.test.ts`, `src/core/db/client.test.ts` — 8 new unit tests.
+- `e2e/sqlite-persistence.spec.ts` — a fourth spec proving a throwing transaction leaves no
+  row behind.
+
+**Results**
+
+| Check          | Result                                                                                          |
+| -------------- | ----------------------------------------------------------------------------------------------- |
+| `pnpm test`    | 11 passed (3 files)                                                                             |
+| `pnpm e2e`     | 14 passed, 4 skipped (WebKit OPFS, D-023)                                                       |
+| `pnpm check`   | green                                                                                           |
+| Playwright MCP | inserted a row, ran the rollback test, row count stayed at 1, no ghost row, zero console errors |
+
+**Known gaps**
+
+- The contract suite has not yet run against `better-sqlite3`; that is T-012.
+- The harness still exists and is removed in P0-3.
+- Safari on macOS remains unverified (D-023).
+
+**Next:** T-012, the `better-sqlite3` test double behind the same `Db` interface.
+
+### P0-3 — `Db` client done (T-011); test double still to do (T-012)
 
 ### P0-4 — Migration runner — **Not started**
 

@@ -48,6 +48,18 @@ test.describe('sqlite-wasm worker spike', () => {
     await expect(page.getByTestId('rows').locator('li').first()).toHaveText(before!)
   })
 
+  test('a transaction that throws rolls back every write inside it', async ({ page }) => {
+    await page.goto(SPIKE_URL)
+    await expect(page.getByTestId('status')).toHaveText('ready')
+    await page.getByRole('button', { name: 'Insert row' }).click()
+    await expect(page.getByTestId('row-count')).toHaveText('Rows: 1')
+
+    await page.getByRole('button', { name: 'Rollback test' }).click()
+    await expect(page.getByTestId('status')).toHaveText('rollback: ok')
+    await expect(page.getByTestId('row-count')).toHaveText('Rows: 1')
+    await expect(page.getByTestId('rows')).not.toContainText('should-not-exist')
+  })
+
   test('the console stays clean and the page contacts no external host', async ({ page }) => {
     const errors: string[] = []
     const external: string[] = []
