@@ -260,7 +260,39 @@ rollback on error; `pnpm test` runs in under 5 seconds.
 
 ### P0-3 — `Db` client and test double implemented; awaiting merges
 
-### P0-4 — Migration runner — **Not started**
+### T-013 / P0-4 — Migration runner — **Done** (pending merge into `dev`)
+
+**Acceptance:** migrating an empty DB and a v1 DB yields an identical schema.
+
+**What changed**
+
+- `src/core/db/split-sql.ts` — splits a hand-written SQL file into single statements while
+  respecting quoted semicolons and comments.
+- `src/core/db/migrate.ts` — applies pending migrations in version order, records the latest
+  in `app_meta.schema_version`, calls the pre-migration snapshot hook once before the
+  transaction, and rolls everything back on failure.
+- `src/core/db/migrations.ts` — the registry. Seven append-only SQL files under
+  `src/modules/*/migrations/` contribute the full schema from PLAN §6, one per owning module.
+- `src/core/db/split-sql.test.ts`, `src/core/db/migrate.test.ts` — 9 new tests.
+
+**Results**
+
+| Check                      | Result                                                |
+| -------------------------- | ----------------------------------------------------- |
+| `pnpm test`                | 25 passed across 6 files, in 1.97 s                   |
+| `pnpm check`               | green                                                 |
+| Empty DB vs migrated v1 DB | identical `sqlite_master` contents and schema version |
+
+**Known gaps**
+
+- The pre-migration snapshot hook is a stub; real snapshots land in P1-2.
+- Migrations are SQL files imported with `?raw`, so they are part of the browser bundle. That
+  is fine for v1's small schema; FTS5 and later migrations need a check in P6-4.
+- Safari on macOS remains unverified (D-023).
+
+**Next:** T-014, the core helpers (UUIDv7, clock, money, dates, repository helpers).
+
+### P0-4 — Migration runner implemented; awaiting merge
 
 ### P0-5 — Core helpers (uuid, clock, money, dates, repository helpers) — **Not started**
 
