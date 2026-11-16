@@ -85,6 +85,12 @@ Status legend: `Done` | `In progress` | `Blocked` | `Not started`
 - Playwright MCP pins its own Chromium build (`chrome-for-testing`), separate from the one
   `@playwright/test` uses. It is installed here; on a fresh machine run
   `pnpm exec playwright-mcp install-browser chrome-for-testing`.
+- The third-party skills in `.claude/skills/` are **not** in the repository and never were:
+  the history was rewritten before the first push and the directory is git-ignored. See
+  D-015.
+- The Content-Security-Policy in `public/_headers` is written but not yet exercised against a
+  live worker and service worker. It must be verified in P0-6, once the SQLite worker and the
+  offline cache exist. See D-017.
 
 **Next:** P0-2 — spike sqlite-wasm in a Worker with the `opfs-sahpool` VFS; create a table,
 insert, reload the page, data persists, and `exportBytes`/`importBytes` round-trip. Findings

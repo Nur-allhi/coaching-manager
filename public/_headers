@@ -1,0 +1,26 @@
+# Static-host security headers (Netlify, Cloudflare Pages and compatible hosts).
+#
+# Copy this file's contents into your host's header configuration if your host does not
+# read `_headers` automatically. Nginx and Apache need the equivalent directives.
+#
+# Rationale (PLAN.md section 10):
+#   default-src 'self'   no third-party scripts, styles, fonts or media
+#   connect-src 'self'   the app makes no API calls; same-origin only, which the service
+#                         worker needs in order to precache its own assets
+#   script-src 'self'    no inline scripts, so no inline event handlers
+#   object-src 'none'    no plugins
+#   base-uri 'self'      no base-tag hijacking
+#   frame-ancestors 'none'  the app must not be framed
+#
+# 'unsafe-inline' is allowed for styles only: Radix popper positions overlays with inline
+# style attributes, which CSP cannot express any other way.
+#
+# worker-src 'self' blob:  is required by the SQLite worker (P0-2) and the service worker.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains

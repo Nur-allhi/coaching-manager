@@ -227,3 +227,17 @@ the key to the settings documentation in `docs/DATA-MODEL.md`.
 There must be no runtime network access: no analytics, no CDN, no remote fonts, no cloud APIs.
 `e2e/smoke.spec.ts` asserts that the page contacts no host other than its own origin. If you
 add a dependency that fetches anything at runtime, that test fails — and it should.
+
+## 11. Security headers
+
+`public/_headers` carries the Content-Security-Policy and the other hardening headers for
+static hosts that read it (Netlify, Cloudflare Pages and compatible ones). Nginx and Apache
+need the equivalent directives written out by hand.
+
+The policy is `default-src 'self'` with `connect-src 'self'`. The plan (§10) suggests
+`connect-src 'none'`; same-origin is used instead because the service worker must fetch its
+own precached assets from the app's origin, and a `none` policy breaks offline start-up.
+Everything else follows the plan exactly: no inline scripts, no plugins, no framing.
+
+Serve these as HTTP headers, not as a `<meta http-equiv>` tag: a meta tag also applies in
+development and would break Vite's HMR websocket.

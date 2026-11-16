@@ -81,10 +81,10 @@ Format: dated entries, newest last.
 
 ## 2026-11-16 — Agent tooling and project documentation
 
-### D-010 Agent tooling is installed and committed to the repository
+### D-010 Agent tooling is installed and wired up
 
-- **Decision:** Install seven Claude skills into `.claude/skills/` (committed), plus three MCP
-  servers wired in `opencode.json`.
+- **Decision:** Install seven Claude skills into `.claude/skills/`, plus three MCP servers
+  wired in `opencode.json`.
 - **Why:** The user asked for a specific toolset. OpenCode discovers `.claude/skills/` as a
   project skill source, so the skills work for OpenCode and Claude Code alike.
 - **Skills:** `frontend-design`, `ui-ux-pro-max`, `senior-frontend`, `code-reviewer`,
@@ -93,8 +93,8 @@ Format: dated entries, newest last.
   - `playwright` — `@playwright/mcp`, headless and isolated, for driving the real app.
   - `gitnexus` — code knowledge graph, for blast radius and execution flows.
   - `agentation` — visual feedback from the human, annotated in the running app.
-- **Impact:** `.claude/skills/` is ~35 files of Markdown and Python helper scripts. They are
-  committed so every clone has them.
+- **Impact:** The skills are on disk and loaded by the agent, but they are **not** committed
+  — see D-015.
 
 ### D-011 GitNexus index lives in `.gitnexus/` and is git-ignored
 
@@ -138,7 +138,46 @@ Format: dated entries, newest last.
 - **Impact:** `AGENTS.md` carries the document map, so an agent knows which file to open for
   which question.
 
+### D-015 Third-party skills stay out of the repository
+
+- **Decision:** `.claude/skills/` is git-ignored, and the directory was removed from every
+  commit in the history, not only from the tip.
+- **Why:** The skills come from `aitmpl.com` and the GitNexus project. Two carry an explicit
+  MIT or Apache-2.0 licence and the rest declare no licence at all. Publishing files whose
+  licence status is unknown under someone else's repository is not ours to do. They stay
+  installed on disk for local use.
+- **Impact:** The history was rewritten with `git filter-branch --index-filter` before the
+  first push, and the orphaned objects were garbage-collected, so the skills are absent from
+  the published repository entirely. `AGENTS.md` and `CLAUDE.md` still name them, because
+  they are installed locally and the working agreement should describe the local setup.
+
+### D-016 CI hardening: pinned actions and least privilege
+
+- **Decision:** Every GitHub Action is pinned to a commit SHA with the version in a trailing
+  comment, and the workflow declares `permissions: contents: read`.
+- **Why:** A tag is a mutable pointer. If an action's repository were compromised, a moving
+  tag would pull the malicious commit into every run of every fork. Pinning to a SHA runs the
+  exact audited code. Least privilege means a compromised step cannot push to the repository.
+- **Impact:** Updating an action means bumping the SHA deliberately. The workflow uses no
+  secrets and no write scopes, so a pull request from a fork can do nothing but run the
+  build.
+
+### D-017 CSP is served as headers, and `connect-src` is `'self'`
+
+- **Decision:** `public/_headers` carries the CSP and the other hardening headers.
+  `connect-src` is `'self'` rather than the plan's `'none'`.
+- **Why:** The service worker must fetch its own precached assets from the app's origin; a
+  `connect-src 'none'` policy blocks that and breaks offline start-up. Nothing else is
+  allowed to connect, so the intent of the rule — no third-party calls, ever — still holds.
+- **Impact:** The policy is delivered as an HTTP header, not a `<meta http-equiv>` tag,
+  because a meta tag also applies in development and would break Vite's HMR websocket.
+  `style-src` allows `'unsafe-inline'` because Radix positions overlays with inline style
+  attributes, which CSP cannot express any other way. Verify the policy against the live
+  worker and service worker in P0-6.
+
 ---
+
+## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.
 

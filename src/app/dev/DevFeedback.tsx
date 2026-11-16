@@ -9,13 +9,7 @@ import { Agentation } from 'agentation'
  * This module is imported lazily and only in dev, so it never reaches the production bundle.
  */
 export function DevFeedback() {
-  return (
-    <Agentation
-      endpoint="http://localhost:4747"
-      appName="Coaching Manager"
-      useHashLocation
-    />
-  )
+  return <Agentation endpoint="http://localhost:4747" appName="Coaching Manager" useHashLocation />
 }
 
 export default DevFeedback

@@ -55,12 +55,12 @@ code, and the phase (section 9) plus the module spec (section 8) before each tas
 
 ## Tooling available in this repository
 
-| Tool                                   | Use it for                                                                                                                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **GitNexus** (MCP + CLI, `.gitnexus/`) | Blast radius before editing, execution flows, change analysis before committing. See the block below.                                                                                |
-| **Playwright MCP**                     | Driving the real app in a browser: check a screen, reproduce a UI bug, capture console errors.                                                                                       |
-| **Agentation** (MCP + dev toolbar)     | The human clicks an element in the running app and leaves a note; read it with `agentation_get_all_pending`, then reply, resolve or dismiss.                                         |
-| **Claude skills** in `.claude/skills/` | `frontend-design`, `ui-ux-pro-max`, `senior-frontend` for UI work; `code-reviewer` for review; `senior-architect`, `senior-backend` for design; `skill-creator` to write new skills. |
+| Tool                                                                      | Use it for                                                                                                                                                                           |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **GitNexus** (MCP + CLI, `.gitnexus/`)                                    | Blast radius before editing, execution flows, change analysis before committing. See the block below.                                                                                |
+| **Playwright MCP**                                                        | Driving the real app in a browser: check a screen, reproduce a UI bug, capture console errors.                                                                                       |
+| **Agentation** (MCP + dev toolbar)                                        | The human clicks an element in the running app and leaves a note; read it with `agentation_get_all_pending`, then reply, resolve or dismiss.                                         |
+| **Claude skills** in `.claude/skills/` (installed locally, not committed) | `frontend-design`, `ui-ux-pro-max`, `senior-frontend` for UI work; `code-reviewer` for review; `senior-architect`, `senior-backend` for design; `skill-creator` to write new skills. |
 
 Full instructions for these live in `docs/DEVELOPMENT.md`.
 
