@@ -4,11 +4,11 @@ Everything needed to set up, run, test and navigate this repository.
 
 ## 1. Requirements
 
-| Tool                | Version                                 | Notes                                            |
-| ------------------- | --------------------------------------- | ------------------------------------------------ |
-| Node                | 22 or newer (developed on 24)           | Required by Vite 8 and the toolchain.            |
-| pnpm                | 10                                      | `npm i -g pnpm@10` if Corepack is not available. |
-| Playwright browsers | Chromium (and Firefox, WebKit for P0-2) | `pnpm exec playwright install chromium`          |
+| Tool                | Version                       | Notes                                            |
+| ------------------- | ----------------------------- | ------------------------------------------------ |
+| Node                | 22 or newer (developed on 24) | Required by Vite 8 and the toolchain.            |
+| pnpm                | 10                            | `npm i -g pnpm@10` if Corepack is not available. |
+| Playwright browsers | Chromium and Firefox          | `pnpm exec playwright install chromium firefox`  |
 
 ## 2. Setup
 

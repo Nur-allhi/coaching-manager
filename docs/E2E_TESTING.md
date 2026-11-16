@@ -103,10 +103,8 @@ No file in `e2e/` may exceed 300 LOC.
 
 Every UI ticket in [`TICKETS.md`](TICKETS.md) lists at least one spec in its **E2E** field.
 
-The sqlite specs run on Chromium and Firefox. They are skipped on the Linux WebKit build
-because it has no working OPFS — a documented platform gap in
-[`DECISIONS.md`](DECISIONS.md) D-023, not a hidden failure. The WebKit smoke specs still run.
-Safari on macOS remains to be verified.
+The specs run on Chromium and Firefox. Safari/WebKit is not a supported target (D-026), so
+there is no WebKit project and no skipped spec.
 
 The smoke suite runs on every pull request into `dev`. The full suite runs before any
 `dev` → `main` merge.
@@ -174,12 +172,12 @@ Plus the Definition of Done in [`REPO_RULES.md`](REPO_RULES.md) §8.
 
 Each is a decision and needs confirmation before it is added:
 
-| Extra                                      | Value                                                      | Cost                                                           |
-| ------------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------------- |
-| `@axe-core/playwright` accessibility scans | Catches contrast and ARIA regressions automatically        | One dependency; a scan is not a substitute for the manual pass |
-| Visual snapshot tests                      | Catches unintended visual changes                          | Brittle; needs a review workflow for the diffs                 |
-| Firefox and WebKit projects                | Real cross-browser coverage, which `PLAN.md` P0-2 requires | Two more browser downloads; slower CI                          |
-| Offline tests for the PWA                  | Proves the app works with the network off                  | Needs a service-worker-aware harness                           |
+| Extra                                      | Value                                                 | Cost                                                           |
+| ------------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------------- |
+| `@axe-core/playwright` accessibility scans | Catches contrast and ARIA regressions automatically   | One dependency; a scan is not a substitute for the manual pass |
+| Visual snapshot tests                      | Catches unintended visual changes                     | Brittle; needs a review workflow for the diffs                 |
+| Firefox project (already enabled)          | Cross-browser coverage, which `PLAN.md` P0-2 requires | One more browser download; slower CI                           |
+| Offline tests for the PWA                  | Proves the app works with the network off             | Needs a service-worker-aware harness                           |
 
 ## 13. Related documents
 

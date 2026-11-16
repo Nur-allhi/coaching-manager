@@ -51,7 +51,7 @@ Out of scope for v1: cloud sync, multi-device, online payments, SMS gateway, stu
 | Crypto      | WebCrypto only (SHA-256 checksums, PBKDF2 PIN hashing, AES-GCM for encrypted backups)                                                               |
 | Tests       | Vitest (unit, repositories on `better-sqlite3` using the same `Db` interface), React Testing Library, Playwright (Chromium e2e)                     |
 
-Browser targets: latest Chrome and Edge are primary (File System Access API for saving backups). Firefox and Safari 16.4+ must work; they fall back to normal file downloads.
+Browser targets: latest Chrome and Edge are primary (File System Access API for saving backups). Firefox must also work; it falls back to normal file downloads. Safari is not a supported target (D-026, human decision 2026-11-16).
 
 ## 4. Open decisions and defaults
 
@@ -302,7 +302,7 @@ Each task lists its acceptance check. Do not skip tests.
 **P0 Foundation**
 
 - P0-1 Scaffold Vite + React + TS strict, ESLint, Prettier, Vitest, Playwright, Tailwind, shadcn/ui, folder layout, scripts (`dev`, `build`, `typecheck`, `lint`, `test`, `e2e`). Acceptance: all scripts run clean on an empty app.
-- P0-2 Spike: sqlite-wasm in a Worker with `opfs-sahpool`; create a table, insert, reload the page, data persists; `exportBytes` and `importBytes` round-trip. Acceptance: passes in Chrome, Firefox, Safari; findings written to `docs/DECISIONS.md`.
+- P0-2 Spike: sqlite-wasm in a Worker with `opfs-sahpool`; create a table, insert, reload the page, data persists; `exportBytes` and `importBytes` round-trip. Acceptance: passes in Chrome and Firefox; findings written to `docs/DECISIONS.md`.
 - P0-3 `Db` client with serialized queue and `tx`; `better-sqlite3` test double. Acceptance: contract test suite passes on both implementations, including rollback on error.
 - P0-4 Migration runner with `schema_version`, module-contributed migrations, pre-migration snapshot hook (stub). Acceptance: migrating an empty DB and a v1 DB yields identical schema.
 - P0-5 Core helpers: UUIDv7, clock, money (integer math, format, parse), dates, repository helpers (insert, update with version check, soft delete). Acceptance: unit tests, including money rounding for percent discounts.
@@ -365,7 +365,6 @@ Each task lists its acceptance check. Do not skip tests.
 
 - Browsers can evict site storage; mitigated by `persist()`, file export reminders, and the 7-day warning.
 - The sahpool VFS allows one connection, which is why the single-tab lock is mandatory.
-- Safari and iOS have storage limits and quirks; P0-2 must confirm behavior before the rest is built.
 - Bangla PDF text shaping in JavaScript PDF libraries is unreliable; hence print-based PDF as the default.
 - The OPFS database is not encrypted at rest; this is documented to the user, and backups can be encrypted.
 

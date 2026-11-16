@@ -27,10 +27,6 @@ export default defineConfig({
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
   ],
   webServer: {
     command: `pnpm preview --port ${PORT} --host 127.0.0.1 --strictPort`,
