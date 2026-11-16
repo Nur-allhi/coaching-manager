@@ -341,6 +341,49 @@ The first formatter also used `Intl.NumberFormat('en-BD')`, which groups in thre
 
 ### P0-5 — Core helpers (uuid, clock, money, dates) — **Done** pending merge; audit rows in T-015
 
+### T-015 / repository helpers — **Done** (pending merge into `dev`)
+
+**Acceptance:** all four T-015 lines from `docs/TICKETS.md`, plus D-024.
+
+| Acceptance line                                                         | Result                                                |
+| ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| A stale `expectedVersion` aborts the update and raises a conflict error | met — no row and no audit row written                 |
+| A soft-deleted row is hidden from list queries                          | met — `findById` and `list` filter `deleted_at`       |
+| Every write produces an audit row with correct before/after JSON        | met — full snapshots, same transaction as the change  |
+| Deleting a parent with children is refused with a readable message      | met — `ChildrenExistError`, e.g. "1 live enrollments" |
+
+**What changed**
+
+- `src/core/audit/write.ts` — `AuditContext` (`actorId`, `now`, `newId`), `writeAudit` and the
+  four audit actions. `src/core/db/relationships.ts` — the parent→child map from the migration
+  foreign keys.
+- `src/core/db/repository.ts` — insert/update/softDelete, each in its own transaction with
+  its audit row; `repoWithin(t, ctx)` lets a service compose several writes atomically without
+  nesting transactions. Guarded columns, table allowlist and bound values carried over.
+- 14 repository tests, including rollback of the row and its audit row together, and refusal
+  to delete a parent with live children.
+
+**Decisions:** D-024. T-030 was narrowed to void, undo and History plumbing so each ticket
+owns one behavior.
+
+**Results**
+
+| Check        | Result                             |
+| ------------ | ---------------------------------- |
+| `pnpm test`  | 66 passed across 10 files          |
+| `pnpm check` | green                              |
+| GitNexus     | clean `detect-changes` after index |
+
+**Known gaps**
+
+- The `actorId` is passed by the caller; wiring the authenticated session to it is part of
+  P6-1 (PIN and roles).
+- Safari on macOS remains unverified (D-023).
+
+**Next:** T-016, the app shell, registry and router.
+
+### P0-5 — Repository helpers — **Done** pending merge
+
 ### P0-6 — App shell, registry, router, error boundary, single-tab lock, PWA, storage
 
 persist, i18n scaffold — **Not started**

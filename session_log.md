@@ -24,6 +24,27 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 16:50
+
+### Changes
+
+- `src/core/audit/write.ts`, `src/core/db/relationships.ts`, `src/core/db/repository.ts` —
+  T-015 repository helpers with same-transaction audit writes and parent/child refusal.
+- `src/core/db/repository.test.ts` — 14 tests, including rollback and child refusal.
+- `docs/DECISIONS.md` (D-024), `docs/TICKETS.md`, `docs/PROGRESS.md`, `CHANGELOG.md` — the
+  human split the audit write between T-015 and T-030, and chose explicit audit context.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `gitnexus`
+- `code-reviewer`
+
+### Status
+
+in-progress — T-015 is implemented and green; its pull request into `dev` awaits the human's
+merge confirmation.
+
 ## Session 2026-11-16 16:35
 
 ### Changes

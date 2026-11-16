@@ -269,6 +269,19 @@ Format: dated entries, newest last.
 
 ---
 
+## D-024 — T-015 owns the audit write; context is explicit (2026-11-16)
+
+- **Context:** `docs/TICKETS.md` T-015 and T-030 both claimed "every write produces an audit
+  row in the same transaction" with the same acceptance lines, which would make both tickets
+  unverifiable independently.
+- **Decision (human):** T-015 writes the audit row inside each repository helper's
+  transaction. T-030 narrows to void, undo and the History plumbing. Audit context is an
+  explicit `{ actorId, now, newId }` argument on every write, not a module-level setter.
+- **Why:** one ticket owns one behavior, and explicit context has no shared mutable state to
+  leak between sessions or tests.
+- **Impact:** `src/core/audit/write.ts` and `repoWithin(t, ctx)` in the repository. T-030's
+  acceptance must be updated before that ticket starts.
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.
