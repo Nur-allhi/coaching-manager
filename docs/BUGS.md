@@ -44,7 +44,7 @@ a resolved-bug history.
 
 ## BUG-002: Duplicate concurrent nightly autonomous-build sessions
 
-- **Status:** open
+- **Status:** wontfix
 - **Severity:** medium
 - **Found:** 2026-11-16 (during: autonomous nightly build — checking git status before T-020)
 - **Location:** OpenChamber scheduled task 'Coaching Manager — autonomous nightly build'; session
@@ -58,22 +58,29 @@ a resolved-bug history.
   session per trigger. Actual: two concurrent builders editing the same working tree, which
   forced the scheduled run to move into an isolated git worktree to avoid corrupting files. One
   session may perform work the other duplicated.
-- **Root Cause:** unknown until diagnosed
-- **Fix Approach:**
-- **Resolved:**
+- **Root Cause:** the human triggered `schedule.run` twice in a row during the manual dry run;
+  the scheduler created one session per manual trigger. Not a scheduler defect — the nightly
+  cron fires once per day.
+- **Fix Approach:** none needed; avoid double-triggering. The scheduled task is now disabled
+  until the dry-run review is complete.
+- **Resolved:** 2026-11-17 — marked wontfix as a one-off trigger mistake, not a product defect
 
 ## BUG-001: Stray Git conflict marker in the decisions log
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-16 (during: autonomous nightly build — reading docs before T-019)
 - **Location:** `docs/DECISIONS.md` — between D-029 and D-028 (line 330 after D-032 was added; was 310 when found)
-- **Description:** A leftover conflict marker line (`> > > > > > > 77a1efe …`) sits between
-  D-029 and D-028 in the committed decisions log. Expected: a clean Markdown document with no
-  conflict markers. Present in `dev` at `41afdfd`; breaks the rendered log between two entries.
-- **Root Cause:** unknown until diagnosed
-- **Fix Approach:**
-- **Resolved:**
+- **Description:** A leftover spaced conflict-marker line (seven `>` characters, then the
+  commit `77a1efe …`) sat between D-029 and D-028 in the committed decisions log. Expected: a
+  clean Markdown document with no conflict markers. Present in `dev` at `41afdfd`; broke the
+  rendered log between two entries.
+- **Root Cause:** a spaced form of a Git conflict marker left by a manual rebase conflict
+  resolution earlier in the session; the later conflict-marker grep used the unspaced form and
+  missed it.
+- **Fix Approach:** remove the stray line; add a regression test that scans the governing docs
+  for both spaced and unspaced conflict markers. Confirmed by the human during dry-run cleanup.
+- **Resolved:** 2026-11-17 — fix commit on `dev`
 
 ## BUG-003: Dev snapshot harness overflows horizontally on narrow viewports
 
