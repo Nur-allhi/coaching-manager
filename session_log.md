@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 20:37
+
+### Changes
+
+- `.opencode/agents/branch-manager.md`, `.opencode/agents/commit-writer.md`,
+  `.opencode/agents/code-reviewer.md`, `.opencode/agents/security-auditor.md`,
+  `.opencode/agents/release-manager.md`, `.opencode/agents/e2e-tester.md`,
+  `.opencode/agents/bug-tracker.md`, `.opencode/agents/session-logger.md`,
+  `.opencode/agents/decision-advisor.md` — nine focused subagents created on branch
+  `chore/opencode-subagents`.
+- `AGENTS.md`, `CLAUDE.md` — added a Subagents section to AGENTS.md and mirrored it to
+  CLAUDE.md.
+
+### Skill(s) / Tool(s) Used
+
+- `opencode`
+- `senior-backend`
+- `gitnexus`
+- `playwright-mcp`
+- `code-reviewer` (subagent exercised)
+- `security-auditor` (subagent exercised)
+
+### Status
+
+in-progress — the branch `chore/opencode-subagents` is not committed or merged yet.
+
 ## Session 2026-11-16 19:00
 
 ### Changes

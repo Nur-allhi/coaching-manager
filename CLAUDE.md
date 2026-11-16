@@ -156,6 +156,38 @@ in-progress and blocked work. Its format is specified in
 Append an entry after every change. It is internal and developer-facing — it is not the same
 thing as `CHANGELOG.md`.
 
+---
+
+## 5. Subagents
+
+Nine focused subagents live in `.opencode/agents/` (tracked in git). They read the governing
+docs as the single source of truth; they never restate them. The primary agent orchestrates;
+subagents do not spawn subagents. See each agent file for its exact trigger and permissions.
+
+| Agent              | Use for                                        |
+| ------------------ | ---------------------------------------------- |
+| `decision-advisor` | An open choice: lay out options and a lean     |
+| `branch-manager`   | Create branches, rebase, draft PRs             |
+| `e2e-tester`       | Verify UI in a browser, write Playwright specs |
+| `commit-writer`    | Make an atomic Conventional Commit             |
+| `code-reviewer`    | PASS/FAIL against Definition of Done           |
+| `security-auditor` | Read-only security review                      |
+| `bug-tracker`      | Log and update `docs/BUGS.md`                  |
+| `session-logger`   | Append to `session_log.md`                     |
+| `release-manager`  | Version and release preparation                |
+
+### Standard ticket flow
+
+1. `decision-advisor` if a choice exists, then human confirms.
+2. `branch-manager` creates the branch.
+3. Implement the ticket.
+4. `e2e-tester` verifies and writes specs.
+5. `commit-writer` commits.
+6. `code-reviewer` and `security-auditor` review.
+7. `branch-manager` prepares the PR; human confirms the merge.
+8. `session-logger` logs; `bug-tracker` logs any bug when found.
+9. `release-manager` when a batch is complete.
+
 <!-- gitnexus:start -->
 
 # GitNexus — Code Intelligence
