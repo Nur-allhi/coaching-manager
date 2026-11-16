@@ -4,12 +4,12 @@ import type { AppModule } from '@/app/module-contract'
 
 export const attendanceModule: AppModule = {
   id: 'attendance',
-  nav: { label: 'Attendance', icon: CheckSquare, order: 6, path: '/attendance' },
+  nav: { labelKey: 'nav.attendance', icon: CheckSquare, order: 6, path: '/attendance' },
   permissions: ['attendance.read'],
   routes: [
     {
       path: '/attendance',
-      title: 'Attendance',
+      titleKey: 'nav.attendance',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
     },
   ],

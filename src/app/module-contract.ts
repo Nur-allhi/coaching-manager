@@ -10,8 +10,8 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import type { Migration } from '@/core/db/migrate'
 
 export interface NavEntry {
-  /** The label shown in the sidebar. */
-  label: string
+  /** The i18n key for the label shown in the sidebar. */
+  labelKey: string
   icon: LucideIcon
   /** Navigation order, ascending, 1-based. */
   order: number
@@ -22,8 +22,8 @@ export interface NavEntry {
 export interface ModuleRoute {
   /** An absolute React Router path, e.g. `/students/new`. */
   path: string
-  /** The heading the route renders; used by tests and the header. */
-  title: string
+  /** The i18n key for the heading the route renders; used by tests and the header. */
+  titleKey: string
   component: LazyExoticComponent<ComponentType>
 }
 

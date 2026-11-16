@@ -4,6 +4,7 @@
  */
 import { lazy, Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AppShell } from './AppShell'
 import { ErrorBoundary } from './ErrorBoundary'
@@ -13,18 +14,20 @@ const DevFeedback = import.meta.env.DEV
   : null
 
 function RouteFallback() {
+  const { t } = useTranslation()
   return (
     <div role="status" className="text-muted-foreground px-4 py-8 text-sm" aria-busy="true">
-      Loading…
+      {t('common.loading')}
     </div>
   )
 }
 
 function NotFound() {
+  const { t } = useTranslation()
   return (
     <div className="mx-auto w-full max-w-3xl space-y-2 px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Page not found</h1>
-      <p className="text-muted-foreground text-sm">That screen does not exist.</p>
+      <h1 className="text-2xl font-semibold tracking-tight">{t('notFound.title')}</h1>
+      <p className="text-muted-foreground text-sm">{t('notFound.description')}</p>
     </div>
   )
 }

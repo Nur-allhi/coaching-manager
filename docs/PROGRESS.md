@@ -519,6 +519,45 @@ owns one behavior.
   daily 22:00 Asia/Dhaka, Goal Mode 400k tokens, fresh worktree from `dev`, starts at the ticket
   after T-018. First run executed 2026-11-16: T-019 on branch `feature/pwa-persistence`.
 
+### T-020 / P0-6 — i18n scaffold (English and Bangla) — **Done** (pending merge)
+
+**Acceptance:** all four T-020 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                   | Result                                                                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| No user-visible string is hard-coded in a component               | met — shell, placeholder, boundary, 404 and 11 module screens use dotted keys |
+| Switching to Bangla translates the shell, numbers stay in Latin   | met — `i18n.spec.ts` asserts Bangla nav + Latin sample number                 |
+| Bangla digits can be enabled and every formatted number follows   | met — central `formatNumber`, persisted setting, reload assertion             |
+| Bangla text renders with the Bengali family and correct conjuncts | met — `:lang(bn)` font + computed-family browser assertion                    |
+
+**What changed**
+
+- `src/core/i18n/` — i18next init, typed `en`/`bn` resources, `formatNumber`, a persisted
+  Bangla-digit setting with a `useSyncExternalStore` hook, and sidebar `LanguageControls`.
+- `src/app/AppShell.tsx`, `ModulePlaceholder.tsx`, `ErrorBoundary.tsx`, `router-layout.tsx`,
+  `module-contract.ts` — strings moved to i18n keys; `language`/`lang` updated on toggle.
+- The 11 `src/modules/*/index.ts` manifests and `Screen.tsx` files store `labelKey`/`titleKey`.
+- `e2e/specs/i18n.spec.ts` plus English pinning in the three pre-existing English specs.
+
+**Decisions:** D-033 (English initial default, central Intl digit helper, typed TS resources,
+dotted keys). D-032 belongs to the concurrent T-019 nightly session and is not in this branch.
+
+**Results**
+
+| Check        | Result                                                                               |
+| ------------ | ------------------------------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 160.6 KB of 300 KB (post-rebase onto dev)                          |
+| `pnpm e2e`   | 66 passed (Chromium, Firefox, smoke) on an isolated port 4174 (port 4173 was in use) |
+
+**Known gaps**
+
+- English is the initial default for integration stability; FRONTEND_SPEC §1's "Bangla first"
+  intent is met by complete resources and a one-constant default flip, deferred to the human.
+- No numbers are rendered by the placeholder screens yet; the persisted digit setting is
+  demonstrated by the sidebar's sample number until real money/count screens land.
+
+**Next:** T-040 settings module (once T-019 PWA persistence and T-030+ safety net land).
+
 ## P1 Safety net
 
 _(not started)_

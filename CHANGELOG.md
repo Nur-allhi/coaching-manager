@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- An i18n scaffold: i18next with full English and Bangla resources, a sidebar language toggle,
+  an independent Bangla-digits setting using `Intl.NumberFormat('bn-BD')`, and no hard-coded
+  user-visible strings in components (T-020, D-033).
 - Persistent storage is requested once on first run and its status is shown in Settings. The Workbox service worker now claims the page on install, and a new `offline.spec.ts` proves offline reload, installability and the status row.
 - Autonomous build mode (`docs/AUTONOMY.md`) with decide-and-record, bounded retries and auto-merge to `dev` after green CI; scheduled nightly runs stay in worktrees and never touch `main`.
 - A global error boundary with a recoverable screen that restores unsaved form values, and an

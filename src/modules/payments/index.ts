@@ -4,12 +4,12 @@ import type { AppModule } from '@/app/module-contract'
 
 export const paymentsModule: AppModule = {
   id: 'payments',
-  nav: { label: 'Payments', icon: Wallet, order: 5, path: '/payments' },
+  nav: { labelKey: 'nav.payments', icon: Wallet, order: 5, path: '/payments' },
   permissions: ['payments.read'],
   routes: [
     {
       path: '/payments',
-      title: 'Payments',
+      titleKey: 'nav.payments',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
     },
   ],
