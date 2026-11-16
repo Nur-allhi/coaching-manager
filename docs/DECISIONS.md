@@ -79,7 +79,66 @@ Format: dated entries, newest last.
 
 ---
 
-## Open decisions carried from PLAN.md section 4
+## 2026-11-16 — Agent tooling and project documentation
+
+### D-010 Agent tooling is installed and committed to the repository
+
+- **Decision:** Install seven Claude skills into `.claude/skills/` (committed), plus three MCP
+  servers wired in `opencode.json`.
+- **Why:** The user asked for a specific toolset. OpenCode discovers `.claude/skills/` as a
+  project skill source, so the skills work for OpenCode and Claude Code alike.
+- **Skills:** `frontend-design`, `ui-ux-pro-max`, `senior-frontend`, `code-reviewer`,
+  `senior-architect`, `senior-backend`, `skill-creator`.
+- **MCP servers:**
+  - `playwright` — `@playwright/mcp`, headless and isolated, for driving the real app.
+  - `gitnexus` — code knowledge graph, for blast radius and execution flows.
+  - `agentation` — visual feedback from the human, annotated in the running app.
+- **Impact:** `.claude/skills/` is ~35 files of Markdown and Python helper scripts. They are
+  committed so every clone has them.
+
+### D-011 GitNexus index lives in `.gitnexus/` and is git-ignored
+
+- **Decision:** `pnpm exec gitnexus analyze` writes the index to `.gitnexus/`, which ignores
+  itself. `AGENTS.md` and `CLAUDE.md` carry the generated GitNexus block between
+  `<!-- gitnexus:start -->` markers.
+- **Why:** The index is derived data — rebuildable with one command — and it is large. The
+  markers let `gitnexus` regenerate its own section without touching the rest of the file.
+- **Impact:** `AGENTS.md` is now the working agreement _and_ the GitNexus instructions.
+  `CLAUDE.md` is a byte-identical mirror.
+
+### D-012 The Agentation toolbar is dev-only and lazily imported
+
+- **Decision:** `src/app/dev/DevFeedback.tsx` is loaded with `React.lazy` behind an
+  `import.meta.env.DEV` check, so the production bundle contains neither the component nor its
+  chunk.
+- **Why:** It is a development feedback tool, not a product feature. Shipping it would add a
+  floating button to the admin's screen.
+- **Impact:** `pnpm build` output contains no `agentation` code. Verified by inspecting the
+  built bundle.
+
+### D-013 MCP servers are configured project-locally
+
+- **Decision:** `opencode.json` at the repository root holds the MCP server definitions with
+  `cwd: "."` and relative `node_modules` entry points.
+- **Why:** The global config can only hold one `gitnexus` entry, and it would point at an
+  absolute path into this project. A project config travels with the repository and is
+  overridden per directory.
+- **Impact:** `gitnexus setup --coding-agent opencode` also added a global entry and 12
+  GitNexus skills to `~/.config/opencode/skills/`. The project entry takes precedence. The
+  global entry can be removed with `pnpm exec gitnexus uninstall`.
+
+### D-014 The documentation set
+
+- **Decision:** Nine documents under `docs/` plus `AGENTS.md` at the root.
+- **Why:** `PLAN.md` is the source of truth but it is a plan, not a reference. The day-to-day
+  questions — where does this file go, how do I write a repository, how do I test this — need
+  their own answers that do not require reading 500 lines of plan.
+- **Documents:** `PLAN`, `ARCHITECTURE`, `CONVENTIONS`, `DATA-MODEL`, `DEVELOPMENT`,
+  `TESTING`, `UI-GUIDELINES`, `PROGRESS`, `DECISIONS`.
+- **Impact:** `AGENTS.md` carries the document map, so an agent knows which file to open for
+  which question.
+
+---
 
 These use the plan's defaults. They become implemented in the phase noted.
 

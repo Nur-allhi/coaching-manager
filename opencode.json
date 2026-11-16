@@ -1,0 +1,40 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "formatter": true,
+  "mcp": {
+    "timeout": {
+      "startup": 60000
+    },
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": [
+          "node",
+          "node_modules/@playwright/mcp/cli.js",
+          "--headless",
+          "--isolated",
+          "--browser",
+          "chromium"
+        ],
+        "cwd": "."
+      },
+      "gitnexus": {
+        "type": "local",
+        "command": ["node", "node_modules/gitnexus/dist/cli/index.js", "mcp"],
+        "cwd": "."
+      },
+      "agentation": {
+        "type": "local",
+        "command": ["node", "node_modules/agentation-mcp/dist/cli.js", "server"],
+        "cwd": "."
+      }
+    }
+  },
+  "permissions": [
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "mcp_playwright_*", "resource": "*", "effect": "allow" },
+    { "action": "mcp_gitnexus_*", "resource": "*", "effect": "allow" },
+    { "action": "mcp_agentation_*", "resource": "*", "effect": "allow" }
+  ]
+}

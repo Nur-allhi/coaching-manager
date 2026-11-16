@@ -34,6 +34,19 @@ Status legend: `Done` | `In progress` | `Blocked` | `Not started`
   dropdown, select, table, tabs, sidebar, chart, calendar, command, toaster, and more).
 - `src/app/App.tsx` renders a minimal scaffold landing screen. The real shell, router,
   registry, error boundary, single-tab lock and i18n come with P0-6.
+- Agent tooling, added the same day:
+  - `.claude/skills/` — `frontend-design`, `ui-ux-pro-max`, `senior-frontend`,
+    `code-reviewer`, `senior-architect`, `senior-backend`, `skill-creator`. OpenCode reads
+    this directory as a project skill source.
+  - `opencode.json` — MCP servers for Playwright (headless, isolated), GitNexus (code graph)
+    and Agentation (visual feedback), plus `AGENTS.md` as the always-loaded working agreement.
+  - GitNexus index in `.gitnexus/` (git-ignored): 512 symbols, 708 relationships, 8 execution
+    flows.
+  - Agentation's dev-only toolbar in `src/app/dev/DevFeedback.tsx`, lazily imported behind
+    `import.meta.env.DEV` so it is absent from the production bundle.
+- Documentation set: `AGENTS.md` at the root, and `docs/ARCHITECTURE.md`,
+  `docs/CONVENTIONS.md`, `docs/DATA-MODEL.md`, `docs/DEVELOPMENT.md`, `docs/TESTING.md`,
+  `docs/UI-GUIDELINES.md` alongside `PLAN.md`, `PROGRESS.md` and `DECISIONS.md`.
 
 **Tests added**
 
@@ -64,6 +77,14 @@ Status legend: `Done` | `In progress` | `Blocked` | `Not started`
 - Chromium is installed for Playwright. Firefox and WebKit are not yet installed; P0-2 needs
   them for the cross-browser acceptance line (`pnpm exec playwright install firefox webkit`).
 - Dark mode tokens exist in CSS but no theme toggle is wired (not in v1 scope until P6-5).
+- GitNexus's vector extension is unavailable in this environment (exact-scan only for semantic
+  search). Graph, full-text search and local embeddings all work.
+- The GitNexus MCP server is also registered in the **global** OpenCode config by
+  `gitnexus setup`; the project entry in `opencode.json` takes precedence. Remove the global
+  one with `pnpm exec gitnexus uninstall` if it is unwanted.
+- Playwright MCP pins its own Chromium build (`chrome-for-testing`), separate from the one
+  `@playwright/test` uses. It is installed here; on a fresh machine run
+  `pnpm exec playwright-mcp install-browser chrome-for-testing`.
 
 **Next:** P0-2 — spike sqlite-wasm in a Worker with the `opfs-sahpool` VFS; create a table,
 insert, reload the page, data persists, and `exportBytes`/`importBytes` round-trip. Findings

@@ -1,9 +1,18 @@
+import { lazy, Suspense } from 'react'
+
 /**
  * Application root.
  *
  * P0-1 only renders the scaffold landing screen. The real shell, router,
  * registry, error boundary and i18n wiring land in P0-6.
  */
+
+// Dev-only visual feedback toolbar. `import.meta.env.DEV` is statically false in a
+// production build, so this chunk is dropped from the bundle entirely.
+const DevFeedback = import.meta.env.DEV
+  ? lazy(() => import('@/app/dev/DevFeedback').then((m) => ({ default: m.DevFeedback })))
+  : null
+
 export function App() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
@@ -27,6 +36,12 @@ export function App() {
           <dd>None at runtime, fully offline</dd>
         </dl>
       </section>
+
+      {DevFeedback && (
+        <Suspense fallback={null}>
+          <DevFeedback />
+        </Suspense>
+      )}
     </main>
   )
 }

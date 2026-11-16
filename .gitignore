@@ -17,6 +17,10 @@ playwright-report
 test-results
 blob-report
 .playwright
+.playwright-mcp
+
+# GitNexus code graph (self-ignored, listed for clarity)
+.gitnexus/
 
 # Coverage
 coverage
