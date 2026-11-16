@@ -37,6 +37,8 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 - `docs/DECISIONS.md` — D-023 records the cross-browser findings, including the WebKit OPFS
   gap and the local library fix.
 - `docs/PROGRESS.md`, `docs/E2E_TESTING.md`, `CHANGELOG.md` — updated.
+- `.github/workflows/ci.yml` — CI now installs chromium, firefox and webkit with their
+  system dependencies. The first run of PR #3 failed because only chromium was installed.
 
 ### Skill(s) / Tool(s) Used
 
