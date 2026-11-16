@@ -90,7 +90,8 @@ Every step needs the human's explicit confirmation, per
 3. **Merge to `dev`.** PR into `dev` — **confirmation 1**.
 4. **Merge to `main`.** PR `dev` → `main` with a merge commit (`--no-ff`) — **confirmation 2**.
 5. **Tag.** Tag `main` with `vX.Y.Z`, push the tag, and append the session to
-   `session_log.md`.
+   `session_log.md`. Pushing the tag triggers `release.yml`, which publishes the GitHub release
+   with that version's CHANGELOG section as its body (D-027).
 
 ## 9. Hotfix releases
 

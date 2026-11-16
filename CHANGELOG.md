@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- A release workflow that publishes a GitHub release from a `vX.Y.Z` tag, using that version's
+  CHANGELOG section as the body, with write permission scoped to the release job alone.
+- A CI secret scan on every push and pull request, sharing one scanner with the publish script.
 - The app shell: a module registry, an 11-entry sidebar that becomes a sheet below 768px, a
   sticky header, a BrowserRouter with one lazy route per module, and a 404 screen.
 - Repository helpers with version-checked updates, soft delete, an audit row written in the

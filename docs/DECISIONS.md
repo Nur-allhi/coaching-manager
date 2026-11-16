@@ -259,6 +259,18 @@ Format: dated entries, newest last.
 
 ---
 
+## D-027 — Release workflow has scoped write permission (2026-11-16)
+
+- **Context:** T-004 asked for a release workflow that publishes a GitHub release, while also
+  saying every workflow uses `permissions: contents: read`. Creating a release needs write
+  access, so the two lines conflict.
+- **Decision (human):** add `.github/workflows/release.yml`, triggered on `v[0-9]*` tags, with
+  `contents: write` scoped to the single release job. CI keeps `contents: read`. Release
+  creation uses the runner's `gh` CLI with `GITHUB_TOKEN`, so no third-party action is added.
+- **Impact:** the only write permission in the repo is this one job; every action stays pinned
+  to a SHA. The CHANGELOG section for the tag becomes the release body via a script that fails
+  if the tag has no section.
+
 ## D-026 — Safari is not a supported target (2026-11-16)
 
 - **Context:** D-023 carried an unverified Safari/macOS gap and a Linux WebKit OPFS failure.

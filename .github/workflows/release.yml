@@ -1,0 +1,52 @@
+name: Release
+
+# T-004. A tag of the form vX.Y.Z publishes a GitHub release whose body is that version's
+# CHANGELOG section. This is the only workflow with write permission, and it is scoped to the
+# single step that creates the release; CI stays contents: read.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Validate the tag matches package.json
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "error: tag $TAG_VERSION does not match package.json $PACKAGE_VERSION" >&2
+            exit 1
+          fi
+
+      - name: Extract the CHANGELOG section
+        id: notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          node scripts/changelog-section.mjs "$VERSION" > release-notes.md
+          echo "path=release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file release-notes.md \
+            --verify-tag

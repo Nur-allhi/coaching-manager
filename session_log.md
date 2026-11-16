@@ -24,6 +24,27 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 18:45
+
+### Changes
+
+- `scripts/scan-secrets.sh`, `scripts/publish-github.sh`, `.github/workflows/ci.yml` — T-007:
+  the secret scanner now runs in CI and in the publish script.
+- `e2e/specs/`, `e2e/fixtures/`, `e2e/helpers/`, `playwright.config.ts`, `docs/E2E_TESTING.md` —
+  T-005: restructured e2e folder and shared helpers.
+- `.github/workflows/release.yml`, `scripts/changelog-section.mjs`, `docs/VERSIONING.md`,
+  `docs/DECISIONS.md` (D-027), `CHANGELOG.md` — T-004: release workflow with scoped write.
+
+### Skill(s) / Tool(s) Used
+
+- `code-reviewer`
+- `senior-backend`
+
+### Status
+
+in-progress — T-007 and T-005 are green as PRs #12 and #13; T-004 is implemented locally;
+pull requests await the human's merge confirmation.
+
 ## Session 2026-11-16 17:35
 
 ### Changes
