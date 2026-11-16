@@ -1,68 +1,160 @@
 # Coaching Manager — working agreement
 
-This file is loaded automatically by every agent that opens this repository
-(OpenCode reads `AGENTS.md`; `CLAUDE.md` is a byte-identical mirror for Claude Code).
+This file is loaded automatically by every agent that opens this repository. OpenCode reads
+`AGENTS.md`; `CLAUDE.md` is a byte-identical mirror for Claude Code.
 
-`docs/PLAN.md` is the **source of truth** for the product. Read sections 1–6 before writing
-code, and the phase (section 9) plus the module spec (section 8) before each task.
+**Read it at the start of every conversation.** Update it when a new convention or file is
+introduced.
 
-## Document map
+---
 
-| File                    | Read it when                                                    |
-| ----------------------- | --------------------------------------------------------------- |
-| `docs/PLAN.md`          | Always. The product plan, schema, phases and acceptance lines.  |
-| `docs/ARCHITECTURE.md`  | Before changing how data flows or where a file belongs.         |
-| `docs/CONVENTIONS.md`   | Before writing code: naming, money, repositories, errors, i18n. |
-| `docs/DATA-MODEL.md`    | Before touching a table, a migration or a money rule.           |
-| `docs/DEVELOPMENT.md`   | Before running anything: setup, scripts, tooling, seed data.    |
-| `docs/TESTING.md`       | Before adding a test or closing a phase.                        |
-| `docs/UI-GUIDELINES.md` | Before building or changing any UI.                             |
-| `docs/PROGRESS.md`      | After every task, to see where the work stands.                 |
-| `docs/DECISIONS.md`     | Before making a choice, to see how it was already settled.      |
+## 1. Available skills and tools
 
-## Rules that are not negotiable
+| Skill / tool       | Purpose                                                                   |
+| ------------------ | ------------------------------------------------------------------------- |
+| `frontend-design`  | Visual direction, typography, avoiding templated defaults                 |
+| `ui-ux-pro-max`    | Palettes, spacing, chart and layout choices, accessibility review         |
+| `senior-frontend`  | Building or changing any UI: states, keyboard, screen reader, phone width |
+| `senior-backend`   | Service design, database optimisation, security, performance              |
+| `code-reviewer`    | Reviewing a diff or a branch for real bugs, and enforcing the rules below |
+| `senior-architect` | Architecture decisions, trade-offs, diagrams                              |
+| `skill-creator`    | Writing and measuring new skills                                          |
+| `gitnexus`         | The code knowledge graph: blast radius, execution flows, change analysis  |
+| `playwright-mcp`   | The agent's real browser, for verification and for discovering selectors  |
 
-1. **One task ID at a time, in plan order.** Do not start a phase until the previous phase's
-   exit criteria pass.
-2. **A task is done only when** `pnpm typecheck` and `pnpm lint` pass, its tests exist and
-   pass, the acceptance line is demonstrated, and `docs/PROGRESS.md` is updated with the task
-   ID, what changed, and known gaps.
-3. **Never change a Locked Decision** (PLAN §3), the schema conventions (PLAN §6) or backup and
-   restore (PLAN §7.3) without asking the human first. For Open Decisions (PLAN §4) use the
-   stated default and record it in `docs/DECISIONS.md`.
-4. **No network calls at runtime.** No analytics, no CDN, no remote fonts, no cloud APIs. The
-   app must work fully offline. There is an e2e test that fails the build if the page contacts
-   any host other than its own.
-5. **Money is never a float.** Amounts are integer paisa in `*_minor` columns. Percent
-   discounts round exactly to the paisa and the rounding rule is tested.
-6. **Business records are never hard-deleted.** Soft delete only; every default list query
-   filters `deleted_at IS NULL`.
-7. **UI code never runs SQL.** It goes through module services and repositories. A module may
-   only touch its own tables; other modules import its public `index.ts`.
-8. **Every mutation is audited** in the same transaction as the change.
-9. **If a rule is ambiguous or two rules conflict, stop and ask.** Never guess on money,
-   backup, restore or migration behaviour.
-10. **One task per commit.** Message format: `feat(payments): P3-2 record payment`.
+The skills live in `.claude/skills/` (installed locally, **not** committed). GitNexus added
+its own skills to `~/.config/opencode/skills/`. Load one with the `skill` tool by id, or
+mention `@skill-id` in a prompt.
 
-## Working agreement
+---
 
-- Read the phase and the module spec before starting a task, not while writing it.
-- Keep the plan's folder layout. `src/app`, `src/core/*`, `src/modules/*`, `src/components/ui`.
-- Never edit a shipped migration. Migrations are append-only.
-- Never rename symbols with find-and-replace. Use the graph tooling.
-- Run `pnpm check` (typecheck + lint + test + build) before proposing a commit.
-- Prefer small, reviewable commits over large ones.
+## 2. Project structure
 
-## Tooling available in this repository
+```
+.
+├── AGENTS.md            this file
+├── CLAUDE.md            byte-identical mirror, for Claude Code
+├── CHANGELOG.md         curated, human-readable changes (Keep a Changelog)
+├── session_log.md       every AI session, including in-progress and blocked work
+├── opencode.json        MCP servers and project settings
+├── docs/                the governing documents — see the table below
+├── e2e/                 Playwright specs
+├── scripts/             seed generator, bundle budget check, publish script
+├── public/              static assets, PWA icons, security headers
+└── src/
+    app/                 shell, registry, providers, router, error boundary
+      dev/               dev-only helpers (the Agentation toolbar lives here)
+    core/
+      db/                worker, client, migrate, repository helpers, uuid, clock
+      backup/            snapshots, restore, file export and import
+      audit/             audit log writer, undo
+      auth/              PIN, session, roles
+      i18n/ money/ dates/ print/ export/ ui/
+    modules/
+      settings/ academics/ students/ enrollments/ payments/
+      attendance/ exams/ leaderboard/ dashboard/ reports/ data-tools/
+    components/ui/       shadcn/ui primitives — generated, never hand-edited
+    hooks/               shared hooks
+    lib/                 `cn` and other tiny helpers
+    test/                Vitest setup
+```
 
-| Tool                                   | Use it for                                                                                                                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **GitNexus** (MCP + CLI, `.gitnexus/`) | Blast radius before editing, execution flows, change analysis before committing. See the block below.                                                                                |
-| **Playwright MCP**                     | Driving the real app in a browser: check a screen, reproduce a UI bug, capture console errors.                                                                                       |
-| **Agentation** (MCP + dev toolbar)     | The human clicks an element in the running app and leaves a note; read it with `agentation_get_all_pending`, then reply, resolve or dismiss.                                         |
-| **Claude skills** in `.claude/skills/` | `frontend-design`, `ui-ux-pro-max`, `senior-frontend` for UI work; `code-reviewer` for review; `senior-architect`, `senior-backend` for design; `skill-creator` to write new skills. |
+The `@/` alias points at `src/`.
 
-Full instructions for these live in `docs/DEVELOPMENT.md`.
+### The documents
+
+| Document                                         | Holds                                                                                           |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| [`docs/PLAN.md`](docs/PLAN.md)                   | The build plan: scope, locked decisions, schema, phases, acceptance lines. The plan of record.  |
+| [`docs/PRD.md`](docs/PRD.md)                     | What the product is for: vision, scope, critical workflows.                                     |
+| [`docs/TAD.md`](docs/TAD.md)                     | How it is built: layering, the `Db` contract, the schema, module ownership.                     |
+| [`docs/SECURITY.md`](docs/SECURITY.md)           | Auth, roles, the data guardrails, the threat model, the review checklist.                       |
+| [`docs/FRONTEND_SPEC.md`](docs/FRONTEND_SPEC.md) | Tokens, layout, every screen, states, accessibility.                                            |
+| [`docs/TICKETS.md`](docs/TICKETS.md)             | The execution queue: one ticket, one branch, one PR.                                            |
+| [`docs/REPO_RULES.md`](docs/REPO_RULES.md)       | The confirmation protocol, merge rules, code conventions, Definition of Done, the bug protocol. |
+| [`docs/BUGS.md`](docs/BUGS.md)                   | The queue of known issues, in a fixed order.                                                    |
+| [`docs/BRANCHING.md`](docs/BRANCHING.md)         | Branch types, lifecycle, release and hotfix flow, protection.                                   |
+| [`docs/COMMIT_SYSTEM.md`](docs/COMMIT_SYSTEM.md) | Commit format, types, allowed scopes.                                                           |
+| [`docs/VERSIONING.md`](docs/VERSIONING.md)       | SemVer, the version sources of truth, the release procedure.                                    |
+| [`docs/E2E_TESTING.md`](docs/E2E_TESTING.md)     | The Playwright MCP workflow, spec rules, coverage matrix, merge gates.                          |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)     | Setup, scripts, tooling, common tasks.                                                          |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md)           | What is done, what is next, what is known broken.                                               |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md)         | Every decision, with its reason and date.                                                       |
+
+**Each rule lives in exactly one document.** Other documents link to it and never restate it.
+When you add a rule, put it in the document that owns that area and fix the links.
+
+---
+
+## 3. Workflow rules
+
+### 3.1 Read before you write
+
+1. Read the ticket in `docs/TICKETS.md`, the plan phase in `docs/PLAN.md` §9, and the module
+   spec in `docs/PLAN.md` §8.
+2. Read the relevant sections of `docs/TAD.md`, `docs/FRONTEND_SPEC.md` and
+   `docs/SECURITY.md`.
+3. Check the blast radius of what you are about to touch with GitNexus `impact` before you
+   edit a symbol.
+
+### 3.2 The decision-making and confirmation protocol
+
+The full protocol is in [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §1. In short, and without
+restating it: surface the choice, offer at least two genuinely viable options with their
+trade-offs and your leaning, and **wait for an explicit confirmation** before creating,
+editing or deleting anything, writing code, or adding a dependency. Hooks, CI pipelines,
+linters, test runners and MCP servers are dependencies and follow the same gate.
+
+No merge into `dev` or `main` happens without a separate, explicit confirmation at merge
+time. Meeting the criteria makes a merge _eligible_, not _approved_.
+
+### 3.3 The bug tracking protocol
+
+The full protocol is in [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §10. In short: log the bug
+in [`docs/BUGS.md`](docs/BUGS.md) **first**, before anything else happens with it, in the
+order that file defines. Do not fix it until the approach is confirmed. A fix ships with a
+regression test that fails before and passes after.
+
+### 3.4 The repo management rules
+
+Merge rules, the README and CHANGELOG obligations, housekeeping and the Definition of Done
+are in [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §2–§8. Read them before opening a PR.
+
+The three linked documents:
+
+- [`docs/BRANCHING.md`](docs/BRANCHING.md) — branch types, names, lifecycle, protection, the
+  PR template.
+- [`docs/COMMIT_SYSTEM.md`](docs/COMMIT_SYSTEM.md) — the commit format, the type table and the
+  allowed scopes.
+- [`docs/VERSIONING.md`](docs/VERSIONING.md) — SemVer, the sources of truth, the release
+  procedure.
+- [`docs/E2E_TESTING.md`](docs/E2E_TESTING.md) — the verification workflow, the spec rules,
+  the coverage matrix and the merge gates.
+
+### 3.5 Code conventions
+
+The enforceable conventions — size, cleanliness, TypeScript, naming, money, dates, modules,
+SQL, React and errors — are in [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §7. The UI rules
+are in [`docs/FRONTEND_SPEC.md`](docs/FRONTEND_SPEC.md) §8 and §10.
+
+### 3.6 Housekeeping after every change
+
+1. `pnpm check` passes — typecheck, lint, unit tests, build and the bundle budget.
+2. `docs/PROGRESS.md` is updated with the task ID, what changed and the known gaps.
+3. `session_log.md` gets an entry in the required format.
+4. `CHANGELOG.md` gets an `[Unreleased]` entry when the change is user- or developer-relevant.
+5. `docs/BUGS.md` is updated if a bug was found, fixed or had its status changed.
+
+---
+
+## 4. Session logs
+
+`session_log.md` at the repository root records every AI session on this project, including
+in-progress and blocked work. Its format is specified in
+[`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5.
+
+Append an entry after every change. It is internal and developer-facing — it is not the same
+thing as `CHANGELOG.md`.
 
 <!-- gitnexus:start -->
 

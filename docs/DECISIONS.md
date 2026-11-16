@@ -127,16 +127,23 @@ Format: dated entries, newest last.
   GitNexus skills to `~/.config/opencode/skills/`. The project entry takes precedence. The
   global entry can be removed with `pnpm exec gitnexus uninstall`.
 
-### D-014 The documentation set
+### D-014 The governing document set
 
-- **Decision:** Nine documents under `docs/` plus `AGENTS.md` at the root.
-- **Why:** `PLAN.md` is the source of truth but it is a plan, not a reference. The day-to-day
-  questions — where does this file go, how do I write a repository, how do I test this — need
-  their own answers that do not require reading 500 lines of plan.
-- **Documents:** `PLAN`, `ARCHITECTURE`, `CONVENTIONS`, `DATA-MODEL`, `DEVELOPMENT`,
-  `TESTING`, `UI-GUIDELINES`, `PROGRESS`, `DECISIONS`.
-- **Impact:** `AGENTS.md` carries the document map, so an agent knows which file to open for
-  which question.
+- **Decision:** Eleven documents under `docs/` govern the project, alongside `AGENTS.md`,
+  `CHANGELOG.md` and `session_log.md` at the root.
+- **Why:** `PLAN.md` is a plan, not a reference. The day-to-day questions — where does this
+  file go, how do I write a repository, how do I test this, may I merge this — each need an
+  answer that does not require reading five hundred lines of plan.
+- **The set:** `PRD` (what it is for), `TAD` (how it is built), `SECURITY` (what is
+  protected), `FRONTEND_SPEC` (how it looks and behaves), `TICKETS` (the execution queue),
+  `REPO_RULES` (the process and the code conventions), `BUGS` (the known-issue queue),
+  `BRANCHING`, `COMMIT_SYSTEM`, `VERSIONING` (the git contract), and `E2E_TESTING` (the
+  Playwright protocol). `PLAN`, `PROGRESS`, `DECISIONS` and `DEVELOPMENT` sit alongside them.
+- **Single source of truth:** each rule lives in exactly one document. Other documents link
+  to it and never restate it.
+- **Impact:** five earlier documents — `ARCHITECTURE`, `CONVENTIONS`, `DATA-MODEL`,
+  `UI-GUIDELINES` and `TESTING` — were retired and their rules folded into the new set, so
+  no rule is stated twice.
 
 ### D-015 Third-party skills stay out of the repository
 
