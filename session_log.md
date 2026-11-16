@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 08:35
+
+### Changes
+
+- PR #1 — squash-merged into `dev` on the human's explicit confirmation.
+- `.husky/commit-msg`, `.husky/pre-commit` — added; commitlint and lint-staged now run on
+  commit.
+- `commitlint.config.js` — added, enforcing the scope allowlist, the nine allowed types, the
+  72-character subject limit, lowercase imperative subjects, no trailing period and the
+  forbidden-subject list.
+- `package.json` — added the four dev dependencies and the `lint-staged` configuration.
+- `docs/COMMIT_SYSTEM.md` §7 — records the chosen enforcement mechanism.
+- `docs/DECISIONS.md` — D-018 to D-022 record the five decisions the human made.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — updated.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus`
+- `code-reviewer`
+- `senior-backend`
+
+### Status
+
+in-progress — commit message enforcement is implemented and verified locally, but its pull
+request into `dev` is awaiting the human's merge confirmation.
+
 ## Session 2026-11-16 07:35
 
 ### Changes

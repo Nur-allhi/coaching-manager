@@ -186,6 +186,56 @@ Format: dated entries, newest last.
 
 ---
 
+## 2026-11-16 — The five decisions the human made
+
+### D-018 PR #1 is merged into `dev`
+
+- **Decision:** The human chose "Merge into dev (squash)". PR #1 was squash-merged into
+  `dev` at 08:33 UTC. The `docs/foundation-documents` branch was deleted by GitHub.
+- **Why:** The governing document set is the foundation every later ticket depends on, so it
+  lands on the integration branch first. It does **not** go to `main` until a release PR is
+  prepared and separately confirmed.
+- **Impact:** `dev` is now the branch to start working branches from.
+
+### D-019 Commit format is enforced by Husky, commitlint and lint-staged
+
+- **Decision:** Option A from `COMMIT_SYSTEM.md` §7. Four dev dependencies added: `husky`,
+  `@commitlint/cli`, `@commitlint/config-conventional`, `lint-staged`.
+- **Why:** The strongest feedback loop. The commit vocabulary is large enough that a scope
+  typo is likely, and rejecting the message before it exists is cheaper than finding it in
+  CI. The human chose this over commitlint-in-CI-only and a dependency-free hook script.
+- **Configuration:** `commitlint.config.js` owns the scope allowlist, the 72-character subject
+  limit and the forbidden-subject list — with a one-line reason pointing at
+  `COMMIT_SYSTEM.md` §3. `lint-staged` in `package.json` runs ESLint and Prettier on staged
+  files, so the pre-commit hook also upholds the cleanliness rules.
+- **Impact:** `--no-verify` remains forbidden by `COMMIT_SYSTEM.md` §3.8.
+
+### D-020 Commits are not signed
+
+- **Decision:** No GPG or SSH commit signing for now.
+- **Why:** The human chose the lighter setup. Branch protection does not require signatures.
+- **Impact:** Revisit if the repository is ever subject to a provenance requirement.
+
+### D-021 The repository has no licence
+
+- **Decision:** No `LICENSE` file. The repository remains "all rights reserved".
+- **Why:** The human's explicit choice.
+- **Impact:** The third-party skills are not in the repository, so no `NOTICE` file is
+  needed. If a licence is added later, it is a change to this decision.
+
+### D-022 Branch protection on `main` and `dev` is kept
+
+- **Decision:** Keep the protection that was applied (PR required, both CI jobs required,
+  branch up to date, no force-push, no deletion, conversation resolution required, enforced
+  on admins).
+- **Why:** The Human confirmed it. Removing it would let working branches push straight to
+  `dev`, which defeats the one-ticket-one-branch-one-PR system.
+- **Impact:** The repository allows squash and merge commits but not rebase, because GitHub
+  cannot set the merge method per branch. `BRANCHING.md` §7 documents which method belongs
+  on which branch.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.
