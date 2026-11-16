@@ -24,6 +24,25 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 15:40
+
+### Changes
+
+- `src/core/db/testing/better-sqlite3.ts` — the `Db` test double on better-sqlite3.
+- `src/core/db/contract.ts` — one contract suite shared by every implementation.
+- `src/core/db/testing/better-sqlite3.test.ts` — registers the suite for this implementation.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — updated.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `code-reviewer`
+
+### Status
+
+in-progress — T-012 is implemented and green. Its PR is stacked on the still-open PR #4; both
+await the human's merge confirmation.
+
 ## Session 2026-11-16 15:30
 
 ### Changes

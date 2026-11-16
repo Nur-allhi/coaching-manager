@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- A `better-sqlite3` implementation of the `Db` contract and a shared contract suite, so
+  repository and service tests run against real SQL without a browser.
 - The serialized `Db` client: one promise queue, `tx` with BEGIN/COMMIT/ROLLBACK, nested
   transaction refusal, and unit tests for the queue and the transaction contract.
 - sqlite-wasm in a dedicated Web Worker with the `opfs-sahpool` VFS, plus a Comlink client

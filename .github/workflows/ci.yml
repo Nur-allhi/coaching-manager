@@ -4,7 +4,16 @@ on:
   push:
     branches: [main, dev]
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+      - 'feature/**'
+      - 'fix/**'
+      - 'hotfix/**'
+      - 'refactor/**'
+      - 'docs/**'
+      - 'test/**'
+      - 'chore/**'
 
 # Least privilege. The workflow only ever reads the repository.
 permissions:

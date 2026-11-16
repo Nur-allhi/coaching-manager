@@ -225,7 +225,40 @@ back; a call during a transaction cannot see uncommitted rows.
 
 **Next:** T-012, the `better-sqlite3` test double behind the same `Db` interface.
 
-### P0-3 — `Db` client done (T-011); test double still to do (T-012)
+### T-012 — better-sqlite3 test double — **Done** (stacked on T-011, pending merge)
+
+**Acceptance:** the identical contract suite passes against both implementations, including
+rollback on error; `pnpm test` runs in under 5 seconds.
+
+**What changed**
+
+- `src/core/db/testing/better-sqlite3.ts` — a `Db` implementation on `better-sqlite3` with the
+  same serialized queue and transaction rules as the browser client. `better-sqlite3` can
+  serialize but not deserialize, so `importBytes` writes the bytes to a temporary file and
+  reopens it; the previous temporary file is removed on the next import.
+- `src/core/db/contract.ts` — one contract suite used by every implementation: parameterized
+  round-trip, rollback of a throwing transaction, commit plus serialized concurrent calls,
+  and byte round-trip.
+- `src/core/db/testing/better-sqlite3.test.ts` — registers the suite for this implementation.
+- `better-sqlite3` and `@types/better-sqlite3` added as dev dependencies.
+
+**Results**
+
+| Check                                          | Result                                                    |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| `pnpm test`                                    | 15 passed across 4 files, in 1.42 s                       |
+| `pnpm typecheck` / `lint` / `build` / `budget` | green                                                     |
+| Browser half of the contract                   | covered by `e2e/sqlite-persistence.spec.ts` (T-010/T-011) |
+
+**Known gaps**
+
+- This PR is stacked on `feature/db-client` (PR #4) rather than `dev`, because T-012 depends
+  on T-011 and PR #4 has not been merged yet. Merge #4 first, then #5.
+- Safari on macOS remains unverified (D-023).
+
+**Next:** T-013, the migration runner — after the human confirms the two merges.
+
+### P0-3 — `Db` client and test double implemented; awaiting merges
 
 ### P0-4 — Migration runner — **Not started**
 
