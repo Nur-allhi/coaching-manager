@@ -25,7 +25,7 @@ test.describe('app shell navigation', () => {
     })
   }
 
-  test('every route renders directly by URL', async ({ page }) => {
+  test('every route renders directly by URL @smoke', async ({ page }) => {
     for (const item of navigation) {
       await page.goto(item.path)
       await expect(page.getByRole('heading', { level: 1, name: item.label })).toBeVisible()

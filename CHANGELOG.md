@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- A `smoke` Playwright project and a CI gate that runs `@smoke` specs on pull requests; the
+  offline and shell-route specs are tagged, with W1–W6 tagged as those features land (D-028).
 - A release workflow that publishes a GitHub release from a `vX.Y.Z` tag, using that version's
   CHANGELOG section as the body, with write permission scoped to the release job alone.
 - A CI secret scan on every push and pull request, sharing one scanner with the publish script.

@@ -27,6 +27,12 @@ export default defineConfig({
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
+    {
+      // T-006: the fast gate on pull requests. Only specs tagged @smoke run here.
+      name: 'smoke',
+      use: { ...devices['Desktop Chrome'] },
+      grep: /@smoke/,
+    },
   ],
   webServer: {
     command: `pnpm preview --port ${PORT} --host 127.0.0.1 --strictPort`,
