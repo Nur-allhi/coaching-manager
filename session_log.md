@@ -99,6 +99,33 @@ in-progress — T-030 implemented; `pnpm check` green, 92 unit tests and 55 e2e 
 commit and PR pending. T-020 was already in progress in the concurrent worktree
 `ccm-t020-i18n`, so this run skipped it and took the next free ticket.
 
+## Session 2026-11-16 23:07
+
+### Changes
+
+- `docs/DECISIONS.md` — added D-033 (autonomous T-020 i18n decisions).
+- `src/core/i18n/{index.ts,locales/en.ts,locales/bn.ts,numbers.ts,useBanglaDigits.ts,LanguageControls.ts}` — added i18next scaffold, typed EN/BN resources, Intl-based digit setting and sidebar controls.
+- `src/app/{AppShell.tsx,ModulePlaceholder.tsx,ErrorBoundary.tsx,router-layout.tsx,module-contract.ts}` — moved all user-visible strings to i18n keys.
+- `src/modules/*/index.ts` and `Screen.tsx` (11 modules) — labelKey/titleKey instead of English display strings.
+- `src/test/setup.ts`, `src/app/registry.test.ts` — pin English for tests, assert keys.
+- `e2e/specs/i18n.spec.ts` — new 5-test spec; `e2e/helpers/locale.ts` — locale pin helper.
+- `e2e/specs/{shell,smoke,error-boundary}.spec.ts` — pin English before app boot.
+- `CHANGELOG.md`, `docs/PROGRESS.md` — housekeeping for T-020.
+- Note — session moved to an isolated worktree because a concurrent nightly session (started 22:47) is implementing T-019 in the shared checkout; T-019 left to that session. No BUG ids touched.
+
+### Skill(s) / Tool(s) Used
+
+- `decision-advisor`
+- `e2e-tester`
+- `playwright-mcp` (agent role)
+- GitNexus CLI
+- pnpm
+- Playwright
+
+### Status
+
+in-progress — branch implemented and verified with checks green; PR not yet open and no merge has happened.
+
 ## Session 2026-11-16 22:57
 
 ### Changes

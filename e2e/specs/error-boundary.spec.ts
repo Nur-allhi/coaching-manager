@@ -9,6 +9,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { collectConsoleErrors } from '../helpers/console-errors'
 import { collectExternalRequests } from '../helpers/network'
+import { useEnglish } from '../helpers/locale'
 
 const PROBE_URL = '/__crash-probe'
 const CRASH_URL = '/__crash-probe?crash=1'
@@ -25,6 +26,10 @@ function recoveryAlert(page: Page) {
     .getByRole('alert')
     .filter({ has: page.getByRole('heading', { name: 'Something went wrong' }) })
 }
+
+test.beforeEach(async ({ page }) => {
+  await useEnglish(page)
+})
 
 test.describe('global ErrorBoundary', () => {
   test('a render error shows a recoverable recovery screen instead of a blank page', async ({

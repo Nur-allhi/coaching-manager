@@ -3,18 +3,18 @@ import { modules, navigation, routes } from './registry'
 
 describe('module registry', () => {
   it('registers every module from the frontend spec in the right order', () => {
-    expect(navigation.map((nav) => nav.label)).toEqual([
-      'Dashboard',
-      'Students',
-      'Academics',
-      'Enrollments',
-      'Payments',
-      'Attendance',
-      'Exams',
-      'Leaderboard',
-      'Reports',
-      'Data tools',
-      'Settings',
+    expect(navigation.map((nav) => nav.labelKey)).toEqual([
+      'nav.dashboard',
+      'nav.students',
+      'nav.academics',
+      'nav.enrollments',
+      'nav.payments',
+      'nav.attendance',
+      'nav.exams',
+      'nav.leaderboard',
+      'nav.reports',
+      'nav.dataTools',
+      'nav.settings',
     ])
   })
 
@@ -34,7 +34,7 @@ describe('module registry', () => {
 
   it('gives every route a heading and a lazy component', () => {
     for (const route of routes) {
-      expect(route.title, route.path).toBeTruthy()
+      expect(route.titleKey, route.path).toBeTruthy()
       expect(typeof route.component, route.path).toBe('object') // React.lazy wrapper
     }
   })

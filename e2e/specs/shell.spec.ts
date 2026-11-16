@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { useEnglish } from '../helpers/locale'
 
 /** The sidebar order from FRONTEND_SPEC.md §3.3, asserted against what actually renders. */
 const navigation = [
@@ -14,6 +15,10 @@ const navigation = [
   { label: 'Data tools', path: '/data-tools' },
   { label: 'Settings', path: '/settings' },
 ]
+
+test.beforeEach(async ({ page }) => {
+  await useEnglish(page)
+})
 
 test.describe('app shell navigation', () => {
   for (const item of navigation) {
