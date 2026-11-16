@@ -466,7 +466,48 @@ owns one behavior.
 
 **Next:** T-018, the single-tab lock.
 
-### P0-6 — App shell — **Done**; boundary done; lock, PWA and i18n still open
+### P0-6 — App shell — **Done**; boundary and PWA done; lock and i18n still open
+
+### T-019 / P0-6 — PWA completion and persistent storage — **Done** (pending merge)
+
+**Acceptance:** all three T-019 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                | Result                                                                                   |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| The app is installable in Chrome                               | met — standalone manifest, 192/512/maskable icons and a controlling service worker (e2e) |
+| The app loads with the network disabled after one online visit | met — offline reload and navigation pass in `offline.spec.ts` on Chromium and Firefox    |
+| The storage persistence status is visible in Settings          | met — `/settings` renders the live `navigator.storage.persisted()` state                 |
+
+**What changed**
+
+- `src/app/persistent-storage.ts` — first-run `navigator.storage.persist()` request with a
+  localStorage flag and an in-flight promise guard, plus a read-only status helper.
+- `src/main.tsx` — requests persistence before mount; `src/modules/settings/Screen.tsx` —
+  exposes the status with `data-testid="persistence-status"`.
+- `vite.config.ts` — Workbox `skipWaiting` / `clientsClaim`, so the first visit is already
+  controlled by the worker. The manifest and icons were already in place from P0-1.
+- `e2e/specs/offline.spec.ts` — offline reload, installability and status specs;
+  `src/app/persistent-storage.test.ts` — six unit tests.
+- `docs/DECISIONS.md` D-032, `docs/BUGS.md` BUG-001, `CHANGELOG.md`, `session_log.md`.
+
+**Decisions:** D-032 (Autonomous decision for T-019: A1 startup request, B1 read-only status).
+
+**Results**
+
+| Check         | Result                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`  | green; bundle 140.5 KB of 300 KB                                                                                                    |
+| `pnpm e2e`    | 55 passed (Chromium, Firefox, smoke)                                                                                                |
+| Browser check | 375 / 768 / 1280 px; 0 console errors; 0 external requests; no horizontal scroll; screenshots in `/tmp/opencode/pwa-settings-*.png` |
+
+**Known gaps**
+
+- Headless Chromium reports "Persistent storage is not enabled" by default; the status row is
+  correct, but an actual grant depends on the browser and its permissions.
+- T-018 (single-tab lock) is not implemented in this checkout; this nightly run was directed to
+  start after T-018. The new status strings are literal until T-020 adds i18n.
+
+**Next:** T-020, the i18n scaffold (or T-018 if the human wants the lock first).
 
 ### Autonomous build mode — **Configured** (2026-11-16)
 
@@ -476,7 +517,7 @@ owns one behavior.
   stays human-only.
 - OpenChamber scheduled task `Coaching Manager — autonomous nightly build` (`id 16fa9d08…`):
   daily 22:00 Asia/Dhaka, Goal Mode 400k tokens, fresh worktree from `dev`, starts at the ticket
-  after T-018. First run is scheduled; it has not been executed yet.
+  after T-018. First run executed 2026-11-16: T-019 on branch `feature/pwa-persistence`.
 
 ## P1 Safety net
 

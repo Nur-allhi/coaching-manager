@@ -259,6 +259,26 @@ Format: dated entries, newest last.
 
 ---
 
+## D-032 — T-019 PWA persistence decisions (2026-11-16)
+
+- **Context:** T-019 must request `navigator.storage.persist()` on first run and show the
+  persistence status in Settings. PLAN.md §3 locks the PWA stack (`vite-plugin-pwa`/Workbox
+  plus `persist()`); the manifest, icons and auto-registered worker already exist, so the open
+  choices are when/how to request and how to surface the status.
+- **Autonomous decision (T-019), taking the decision-advisor's leans:**
+  - **A1** — request once at startup from `src/main.tsx`, remembering "first run" with a
+    `localStorage` flag and an in-module in-flight promise guard; no Db/worker coupling.
+  - **B1** — show a read-only persistence status row in the Settings screen, read from
+    `navigator.storage.persisted()` when the screen mounts; no install or re-request control.
+- **Why:** A1 satisfies "on first run" literally, before any data is created, and keeps the
+  flag with the tiny UI state it describes. A3 would couple one boolean to the data-tools-owned
+  `app_meta` and a worker that may not be ready at startup; A2 would never fire for an admin
+  who does not open Settings. B1 meets the acceptance line with the smallest surface and does
+  not pre-empt T-040's fuller Settings screen; B2/B3 add UI state and diagnostics outside this
+  ticket.
+- **Impact:** one small persistence helper and one status row. No new dependency, no schema or
+  backup-behaviour change, and no change to the locked PWA stack or the test matrix.
+
 ## D-031 — Autonomous overnight build mode (2026-11-16)
 
 - **Context:** the human wants the app built overnight without per-step confirmation: the

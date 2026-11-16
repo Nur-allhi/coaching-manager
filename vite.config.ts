@@ -48,6 +48,9 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         cleanupOutdatedCaches: true,
+        // Claim the page as soon as the worker installs, so the first visit is already offline-ready.
+        skipWaiting: true,
+        clientsClaim: true,
         navigateFallback: '/index.html',
         runtimeCaching: [
           {

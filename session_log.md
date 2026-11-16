@@ -24,6 +24,36 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 22:57
+
+### Changes
+
+- `src/app/persistent-storage.ts` — first-run `navigator.storage.persist()` request, guarded by a
+  localStorage flag and an in-flight promise; read-only status helper (D-032, A1).
+- `src/main.tsx` — requests persistence before mount; `src/modules/settings/Screen.tsx` — shows
+  the live status in Settings (D-032, B1).
+- `vite.config.ts` — Workbox `skipWaiting` / `clientsClaim` so the first visit is controlled by
+  the service worker; the manifest and icons were already present.
+- `e2e/specs/offline.spec.ts` — offline reload, installability and status specs;
+  `src/app/persistent-storage.test.ts` — six unit tests including a refused-request case.
+- `docs/DECISIONS.md` — D-032 autonomous decision for T-019; `docs/BUGS.md` — BUG-001 (pre-existing
+  stray conflict marker in the decisions log, logged and left for the human).
+- `CHANGELOG.md`, `docs/PROGRESS.md` — housekeeping for T-019.
+- Branch `feature/pwa-persistence`, from `dev`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `bug-tracker`, `session-logger` (subagent roles)
+- `gitnexus`
+- `playwright` (browser verification: 375/768/1280 px, 0 console errors, 0 external requests)
+
+### Status
+
+in-progress — T-019 implemented and verified (pnpm check green, 55 e2e passed); security review
+PASS, code review re-run pending; commit and PR to `dev` pending. BUG-001 logged, not fixed.
+
 ## Session 2026-11-16 22:27
 
 ### Changes

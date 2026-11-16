@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Added
 
+- Persistent storage is requested once on first run and its status is shown in Settings. The Workbox service worker now claims the page on install, and a new `offline.spec.ts` proves offline reload, installability and the status row.
 - Autonomous build mode (`docs/AUTONOMY.md`) with decide-and-record, bounded retries and auto-merge to `dev` after green CI; scheduled nightly runs stay in worktrees and never touch `main`.
 - A global error boundary with a recoverable screen that restores unsaved form values, and an
   unsaved-changes guard that blocks in-app navigation and tab close (D-029).
