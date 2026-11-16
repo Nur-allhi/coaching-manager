@@ -15,7 +15,9 @@ versioning have their own documents and their own rules:
 
 ## 1. Decision-making and confirmation protocol
 
-These rules govern how any change is proposed and executed.
+These rules govern how any change is proposed and executed in a normal, interactive session.
+A scheduled run with `AUTONOMOUS_MODE=true` follows [`AUTONOMY.md`](AUTONOMY.md) instead; that
+document owns the exceptions for deciding, merging and fixing without a human present.
 
 ### 1.1 Discuss before deciding
 
@@ -237,7 +239,8 @@ else happens with it**.
 1. Log it the moment it is identified, even if it is not being fixed now. Discussing a bug
    is not a substitute for logging it.
 2. Do **not** fix a bug in the same breath it is found. Log it, then follow the confirmation
-   protocol in §1 before touching code — unless the human says to fix it immediately.
+   protocol in §1 before touching code — unless the human says to fix it immediately, or the run
+   is in autonomous mode, in which case [`AUTONOMY.md`](AUTONOMY.md) §5 governs.
 3. The file is maintained in this order:
    1. **Status** first: `open` and `in-progress` always sort above `fixed` and `wontfix`.
    2. Within the same status, by **severity**: `critical`, `high`, `medium`, `low`.

@@ -63,23 +63,24 @@ The `@/` alias points at `src/`.
 
 ### The documents
 
-| Document                                         | Holds                                                                                           |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| [`docs/PLAN.md`](docs/PLAN.md)                   | The build plan: scope, locked decisions, schema, phases, acceptance lines. The plan of record.  |
-| [`docs/PRD.md`](docs/PRD.md)                     | What the product is for: vision, scope, critical workflows.                                     |
-| [`docs/TAD.md`](docs/TAD.md)                     | How it is built: layering, the `Db` contract, the schema, module ownership.                     |
-| [`docs/SECURITY.md`](docs/SECURITY.md)           | Auth, roles, the data guardrails, the threat model, the review checklist.                       |
-| [`docs/FRONTEND_SPEC.md`](docs/FRONTEND_SPEC.md) | Tokens, layout, every screen, states, accessibility.                                            |
-| [`docs/TICKETS.md`](docs/TICKETS.md)             | The execution queue: one ticket, one branch, one PR.                                            |
-| [`docs/REPO_RULES.md`](docs/REPO_RULES.md)       | The confirmation protocol, merge rules, code conventions, Definition of Done, the bug protocol. |
-| [`docs/BUGS.md`](docs/BUGS.md)                   | The queue of known issues, in a fixed order.                                                    |
-| [`docs/BRANCHING.md`](docs/BRANCHING.md)         | Branch types, lifecycle, release and hotfix flow, protection.                                   |
-| [`docs/COMMIT_SYSTEM.md`](docs/COMMIT_SYSTEM.md) | Commit format, types, allowed scopes.                                                           |
-| [`docs/VERSIONING.md`](docs/VERSIONING.md)       | SemVer, the version sources of truth, the release procedure.                                    |
-| [`docs/E2E_TESTING.md`](docs/E2E_TESTING.md)     | The Playwright MCP workflow, spec rules, coverage matrix, merge gates.                          |
-| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)     | Setup, scripts, tooling, common tasks.                                                          |
-| [`docs/PROGRESS.md`](docs/PROGRESS.md)           | What is done, what is next, what is known broken.                                               |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md)         | Every decision, with its reason and date.                                                       |
+| Document                                         | Holds                                                                                             |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| [`docs/PLAN.md`](docs/PLAN.md)                   | The build plan: scope, locked decisions, schema, phases, acceptance lines. The plan of record.    |
+| [`docs/PRD.md`](docs/PRD.md)                     | What the product is for: vision, scope, critical workflows.                                       |
+| [`docs/TAD.md`](docs/TAD.md)                     | How it is built: layering, the `Db` contract, the schema, module ownership.                       |
+| [`docs/SECURITY.md`](docs/SECURITY.md)           | Auth, roles, the data guardrails, the threat model, the review checklist.                         |
+| [`docs/FRONTEND_SPEC.md`](docs/FRONTEND_SPEC.md) | Tokens, layout, every screen, states, accessibility.                                              |
+| [`docs/TICKETS.md`](docs/TICKETS.md)             | The execution queue: one ticket, one branch, one PR.                                              |
+| [`docs/REPO_RULES.md`](docs/REPO_RULES.md)       | The confirmation protocol, merge rules, code conventions, Definition of Done, the bug protocol.   |
+| [`docs/BUGS.md`](docs/BUGS.md)                   | The queue of known issues, in a fixed order.                                                      |
+| [`docs/BRANCHING.md`](docs/BRANCHING.md)         | Branch types, lifecycle, release and hotfix flow, protection.                                     |
+| [`docs/COMMIT_SYSTEM.md`](docs/COMMIT_SYSTEM.md) | Commit format, types, allowed scopes.                                                             |
+| [`docs/VERSIONING.md`](docs/VERSIONING.md)       | SemVer, the version sources of truth, the release procedure.                                      |
+| [`docs/E2E_TESTING.md`](docs/E2E_TESTING.md)     | The Playwright MCP workflow, spec rules, coverage matrix, merge gates.                            |
+| [`docs/AUTONOMY.md`](docs/AUTONOMY.md)           | Autonomous build mode: decide-and-record, retries, auto-merge to dev, the human-only safety line. |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)     | Setup, scripts, tooling, common tasks.                                                            |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md)           | What is done, what is next, what is known broken.                                                 |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md)         | Every decision, with its reason and date.                                                         |
 
 **Each rule lives in exactly one document.** Other documents link to it and never restate it.
 When you add a rule, put it in the document that owns that area and fix the links.
@@ -107,6 +108,11 @@ linters, test runners and MCP servers are dependencies and follow the same gate.
 
 No merge into `dev` or `main` happens without a separate, explicit confirmation at merge
 time. Meeting the criteria makes a merge _eligible_, not _approved_.
+
+**Autonomous runs:** when `AUTONOMOUS_MODE=true`, follow [`docs/AUTONOMY.md`](docs/AUTONOMY.md)
+instead — the agent decides and records, retries up to three times, and may auto-merge into
+`dev` only after green CI and passing reviews. `main`, releases and the locked decisions stay
+human-only.
 
 ### 3.3 The bug tracking protocol
 

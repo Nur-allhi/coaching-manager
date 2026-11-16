@@ -468,6 +468,16 @@ owns one behavior.
 
 ### P0-6 — App shell — **Done**; boundary done; lock, PWA and i18n still open
 
+### Autonomous build mode — **Configured** (2026-11-16)
+
+- `docs/AUTONOMY.md` added; `REPO_RULES.md` §1/§10 and `AGENTS.md`/`CLAUDE.md` link to it as the
+  exception for scheduled runs (`AUTONOMOUS_MODE=true`). D-031 records the human's decision.
+- GitHub auto-merge enabled on `dev` (still PR + both CI checks + up-to-date required). `main`
+  stays human-only.
+- OpenChamber scheduled task `Coaching Manager — autonomous nightly build` (`id 16fa9d08…`):
+  daily 22:00 Asia/Dhaka, Goal Mode 400k tokens, fresh worktree from `dev`, starts at the ticket
+  after T-018. First run is scheduled; it has not been executed yet.
+
 ## P1 Safety net
 
 _(not started)_
