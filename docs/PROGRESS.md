@@ -23,6 +23,10 @@ build.
 in place. `docs/ARCHITECTURE.md`, `CONVENTIONS.md`, `DATA-MODEL.md`, `UI-GUIDELINES.md` and
 `TESTING.md` were retired and their rules folded in, so no rule is stated twice.
 
+**PR #1 merged into `dev`** at 08:33 UTC as a squash merge, on the human's explicit
+confirmation (D-018). It did not go to `main`; that waits for a release PR and a separate
+confirmation.
+
 **What changed**
 
 - Project created at `coaching-center-manager/` with pnpm 10.34.9.
@@ -106,6 +110,42 @@ insert, reload the page, data persists, and `exportBytes`/`importBytes` round-tr
 go to `docs/DECISIONS.md`.
 
 ---
+
+### T-002 — Commit message enforcement — **Done** (pending merge into `dev`)
+
+**Acceptance:** the commitlint rules reject a bad message and accept a good one.
+
+**What changed**
+
+- Added `husky`, `@commitlint/cli`, `@commitlint/config-conventional` and `lint-staged`
+  (D-019).
+- `commitlint.config.js` enforces the `COMMIT_SYSTEM.md` rules: required scope from the
+  allowlist, the nine allowed types, a 72-character subject, lowercase imperative subject, no
+  trailing period, and the forbidden-subject list.
+- `.husky/commit-msg` runs `commitlint --edit`; `.husky/pre-commit` runs `lint-staged`.
+- `lint-staged` in `package.json` runs ESLint and Prettier on staged files.
+
+**Results**
+
+| Input                                                  | Expected | Got      |
+| ------------------------------------------------------ | -------- | -------- |
+| `feat(payments): add partial payment allocation`       | accepted | accepted |
+| `fix(auth): reject expired refresh tokens`             | accepted | accepted |
+| `feat: lots of things`                                 | rejected | rejected |
+| `fixed stuff`                                          | rejected | rejected |
+| `feat(nope): something`                                | rejected | rejected |
+| 75-character subject                                   | rejected | rejected |
+| trailing period / capitalised subject / uppercase type | rejected | rejected |
+
+**Known gaps**
+
+- Not signed (D-020).
+- The hooks are local. CI does not run commitlint again; a commit that bypassed the hook with
+  `--no-verify` would be caught only by `code-reviewer`. CI-only enforcement was an option the
+  human did not choose.
+
+**Next:** wait for the human's confirmation before squash-merging the T-002 PR into `dev`.
+Then start T-010, the sqlite-wasm worker spike.
 
 ### P0-2 — sqlite-wasm worker spike — **Not started**
 

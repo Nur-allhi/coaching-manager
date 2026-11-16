@@ -145,9 +145,15 @@ options that were considered:
 | B      | commitlint in CI only             | No local setup; bad commits are caught late, after they are pushed | One dev dependency; the author only learns in CI     |
 | C      | A dependency-free git hook script | Lightest footprint, nothing to install                             | Weaker rule coverage; the script is ours to maintain |
 
-Signed commits are a separate decision and are not assumed either way.
+**Option A is in force.** The human chose it; see [`DECISIONS.md`](DECISIONS.md) D-019.
+`husky` runs the hooks, `commitlint` checks the message on `commit-msg`, and `lint-staged`
+runs ESLint and Prettier on staged files in `pre-commit`.
 
-Until a mechanism is chosen, `code-reviewer` enforces §1–§4 manually on every PR.
+1. `commitlint.config.js` is the configuration for §1–§4. The scope allowlist in §4, the
+   72-character subject limit in §3.2 and the forbidden-subject list in §3.10 are enforced
+   there. A change to one of those rules MUST change both this document and the config.
+2. Commits are **not** signed; see [`DECISIONS.md`](DECISIONS.md) D-020.
+3. `--no-verify` bypasses the hooks and is forbidden by §3.8. `code-reviewer` checks every PR.
 
 ## 8. Version impact
 

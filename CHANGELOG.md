@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- Husky, commitlint and lint-staged: commit messages are validated on commit, and staged
+  files are linted and formatted before the commit lands.
 - The 11 governing documents under `docs/`: PRD, TAD, SECURITY, FRONTEND_SPEC, TICKETS,
   REPO_RULES, BUGS, BRANCHING, COMMIT_SYSTEM, VERSIONING and E2E_TESTING.
 - `session_log.md`, recording every AI session.
@@ -33,6 +35,7 @@ human-readable subset.
 - The app was renamed to **Coaching Manager**.
 - The third-party agent skills moved out of version control. They are installed locally and
   are git-ignored; they are not ours to licence.
+- `dev` became the integration branch; `main` receives releases only.
 
 ### Removed
 
