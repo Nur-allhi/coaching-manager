@@ -1,5 +1,5 @@
 import { ModulePlaceholder } from '@/app/ModulePlaceholder'
 
 export function Screen() {
-  return <ModulePlaceholder title="Students" />
+  return <ModulePlaceholder titleKey="nav.students" />
 }

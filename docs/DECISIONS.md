@@ -303,6 +303,37 @@ Format: dated entries, newest last.
 - **Impact:** additive helpers in `src/core/db/repository.ts`, a new `src/core/audit/undo.ts`,
   and unit tests; no UI, no migration, no Locked Decision or backup behaviour change.
 
+## D-033 — T-020 i18n scaffold decisions (2026-11-16)
+
+- **Context:** T-020 scaffolds i18next with English and Bangla. PLAN.md §3 locks the stack
+  (i18next) but not the initial language, digit mechanism, resource format or key strategy.
+  A decision-advisor surfaced two viable options for each; the autonomous run took the lean
+  it could honestly stand behind (REPO_RULES.md §1.1, AUTONOMY.md §2).
+- **Autonomous decision (T-020), by the run's own lean after the advisor:**
+  - **D1 — initial language: English (Option A).** Option B (Bangla default, seed English in
+    tests) was the advisor's lean and better matches FRONTEND_SPEC.md §1. Chosen A instead
+    because T-020's own acceptance line says "Switching to Bangla translates the shell", every
+    existing unit and Playwright spec asserts English strings, and a concurrent nightly session
+    is landing another English-language spec (T-019). A Bangla default would break those specs
+    in the same merge window for no product gain at this stage. Every user-visible string still
+    has a Bangla resource, and the default is one constant in `src/core/i18n/index.ts` that the
+    human can flip to `bn` without touching any component.
+  - **D2 — Bangla digits: central helper (Option A).** `formatNumber(value, bengaliDigits)`
+    in `src/core/i18n/numbers.ts` uses `Intl.NumberFormat('bn-BD')`, which already emits Bengali
+    numerals and South Asian grouping. Rejected the i18next `format` override (invisible on raw
+    numbers) and regex post-processing (corrupts ids and non-number digits). The flag is an
+    independent localStorage setting, so switching language alone keeps Latin digits.
+  - **D3 — resources: typed TypeScript objects (Option A).** `locales/{en,bn}.ts` give
+    compile-time key checking and inline bundling, with no async loader and no runtime fetch —
+    the offline guarantee is preserved. JSON (Option B) needs a loader and offers no typo safety.
+  - **D4 — nav labels and route titles: dotted keys in manifests (Option A).** The 11
+    `src/modules/*/index.ts` manifests store keys such as `nav.students`, translated in the
+    shell; no parallel English field to drift. `registry.test.ts` asserts keys instead of labels.
+- **Why:** one source of truth per string, no new dependency, no schema or backup change, and no
+  change to the locked stack, the test matrix or any Locked Decision.
+- **Impact:** new `src/core/i18n/*`, small edits to the shell, manifests and screens, two new
+  unit suites and one E2E spec. No version bump.
+
 ## D-031 — Autonomous overnight build mode (2026-11-16)
 
 - **Context:** the human wants the app built overnight without per-step confirmation: the

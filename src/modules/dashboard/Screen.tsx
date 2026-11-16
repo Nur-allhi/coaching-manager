@@ -1,5 +1,5 @@
 import { ModulePlaceholder } from '@/app/ModulePlaceholder'
 
 export function Screen() {
-  return <ModulePlaceholder title="Dashboard" />
+  return <ModulePlaceholder titleKey="nav.dashboard" />
 }

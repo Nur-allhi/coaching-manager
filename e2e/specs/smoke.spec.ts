@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test'
 import { collectExternalRequests } from '../helpers/network'
+import { useEnglish } from '../helpers/locale'
+
+test.beforeEach(async ({ page }) => {
+  await useEnglish(page)
+})
 
 test('the app shell loads and renders the product brand @smoke', async ({ page }) => {
   await page.goto('/')

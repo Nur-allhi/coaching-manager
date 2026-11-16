@@ -42,6 +42,26 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-002: Duplicate concurrent nightly autonomous-build sessions
+
+- **Status:** open
+- **Severity:** medium
+- **Found:** 2026-11-16 (during: autonomous nightly build — checking git status before T-020)
+- **Location:** OpenChamber scheduled task 'Coaching Manager — autonomous nightly build'; session
+  state. Not a product-code file.
+- **Description:** Two top-level sessions titled 'Coaching Manager — autonomous nightly build'
+  (started 22:47 and 22:49 Asia/Dhaka) were busy at the same time on 2026-11-16, while the
+  scheduler reports only one enabled task (16fa9d08-…, daily 22:00) with `lastSessionId` set to
+  the 22:49 run. Both shared the same checkout at
+  /home/homelab/dev_projects/coaching-center-manager; the 22:47 session was already implementing
+  T-019 there while the 22:49 session (the scheduled one) started T-020. Expected: one nightly
+  session per trigger. Actual: two concurrent builders editing the same working tree, which
+  forced the scheduled run to move into an isolated git worktree to avoid corrupting files. One
+  session may perform work the other duplicated.
+- **Root Cause:** unknown until diagnosed
+- **Fix Approach:**
+- **Resolved:**
+
 ## BUG-001: Stray Git conflict marker in the decisions log
 
 - **Status:** open
