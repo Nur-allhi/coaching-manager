@@ -14,6 +14,11 @@ Status legend: `Done` | `In progress` | `Blocked` | `Not started`
 
 **Acceptance:** all scripts run clean on an empty app. **Met.**
 
+**Published:** the repository is public at <https://github.com/Nur-allhi/coaching-manager>.
+The first CI run (2026-11-16, run `43827123710`) passed both jobs — typecheck, lint, unit
+tests, format check, build and the bundle budget, then Playwright e2e against the production
+build.
+
 **What changed**
 
 - Project created at `coaching-center-manager/` with pnpm 10.34.9.

@@ -1,7 +1,11 @@
 # Coaching Manager
 
+[![CI](https://github.com/Nur-allhi/coaching-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/Nur-allhi/coaching-manager/actions/workflows/ci.yml)
+
 Offline-first single-page app for a coaching center admin. React 19 + TypeScript + SQLite
 (WASM) over OPFS. All data stays on the device; the app makes no network calls at runtime.
+
+Repository: <https://github.com/Nur-allhi/coaching-manager>
 
 Plan v1.0 — see [`docs/PLAN.md`](docs/PLAN.md) (source of truth).
 

@@ -160,7 +160,9 @@ Format: dated entries, newest last.
   exact audited code. Least privilege means a compromised step cannot push to the repository.
 - **Impact:** Updating an action means bumping the SHA deliberately. The workflow uses no
   secrets and no write scopes, so a pull request from a fork can do nothing but run the
-  build.
+  build. The first run against the real repository passed on 2026-11-16
+  (run `43827123710`, both jobs green), which confirms the pinned SHAs and the action input
+  schema.
 
 ### D-017 CSP is served as headers, and `connect-src` is `'self'`
 
