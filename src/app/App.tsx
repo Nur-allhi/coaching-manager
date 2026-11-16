@@ -1,11 +1,7 @@
-import { BrowserRouter } from 'react-router-dom'
-import { AppRoutes } from './routes'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './router'
 
-/** The app root: one router for the whole SPA, with the shell mounted inside. */
+/** The app root: one data router for the whole SPA, with the shell mounted inside. */
 export function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  )
+  return <RouterProvider router={router} />
 }

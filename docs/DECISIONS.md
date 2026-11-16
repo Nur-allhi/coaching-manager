@@ -275,6 +275,23 @@ Format: dated entries, newest last.
   branches or leak a secret. Agent bodies were updated to stop asking and act.
 - **Impact:** six agent files changed; no shared config, no code, no new dependency.
 
+## D-029 — T-017 error boundary and unsaved-changes guard (2026-11-16)
+
+- **Context:** T-017 needs form values to survive a render error and an unsaved-changes guard
+  that cannot be bypassed. The app uses `BrowserRouter`, whose `useBlocker` needs a data router.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — persist dirty form state
+  to `sessionStorage` and restore it in the recovery UI, so values survive even when the global
+  boundary unmounts the whole tree. B1 — migrate to `createBrowserRouter`/`RouterProvider` and
+  use React Router's `useBlocker`, plus `beforeunload` for tab close/reload.
+- **Why:** A2's guarantee is conditional on where the crash occurs; acceptance (2) is
+  unconditional. B2's custom interceptor misses browser back/forward and any `navigate()` it
+  does not wrap, which is not a real guard. The registry gives B1 one migration point and
+  react-router v7 is already a dependency.
+- **Impact:** router wiring moves to a data router; a form-state persistence helper and a
+  global error boundary are added. No new dependency.
+
+> > > > > > > 77a1efe (feat(app): add the error boundary and unsaved-changes guard)
+
 ## D-028 — Smoke tagging is incremental (2026-11-16)
 
 - **Context:** T-006 asked for `@smoke` on W1–W6, whose features and specs land in P2–P4 and do
