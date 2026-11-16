@@ -80,14 +80,15 @@ function identifier(name: string): string {
   return name
 }
 
-function tableName(table: string): string {
+export function tableName(table: string): TableName {
   if (!(TABLES as readonly string[]).includes(table)) {
     throw new Error(`unknown table: ${table}`)
   }
-  return identifier(table)
+  identifier(table) // keep the strict pattern check as well as the allowlist
+  return table as TableName
 }
 
-function assertVersion(version: number): void {
+export function assertVersion(version: number): void {
   if (!Number.isInteger(version) || version < 1) {
     throw new Error('expectedVersion must be a positive whole number')
   }

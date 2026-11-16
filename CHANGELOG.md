@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Added
 
+- Void writes, undo and the History data surface in the audit layer: voids and inverses are audited in the same transaction, original history is never rewritten, and undo of a soft delete is a real restore write.
 - Persistent storage is requested once on first run and its status is shown in Settings. The Workbox service worker now claims the page on install, and a new `offline.spec.ts` proves offline reload, installability and the status row.
 - Autonomous build mode (`docs/AUTONOMY.md`) with decide-and-record, bounded retries and auto-merge to `dev` after green CI; scheduled nightly runs stay in worktrees and never touch `main`.
 - A global error boundary with a recoverable screen that restores unsaved form values, and an
