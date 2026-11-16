@@ -75,6 +75,17 @@ a resolved-bug history.
 - **Fix Approach:**
 - **Resolved:**
 
+## BUG-003: Dev snapshot harness overflows horizontally on narrow viewports
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-16 (during: T-031 e2e verification at 375px viewport)
+- **Location:** `src/app/dev/SnapshotHarness.tsx:84` (the `<p data-testid="last-sidecar">` element renders an unsplit JSON string)
+- **Description:** At a 375px viewport the dev-only `/__snapshots` verification harness overflows horizontally because the last-sidecar JSON is one long unbroken string. Expected: no horizontal scroll at phone width. Observed: horizontal overflow at 375px. This is a dev/test route (D-025 precedent), not product UI; the T-031 acceptance specs pass on Chromium and Firefox. Not fixed here because the fix approach was not confirmed.
+- **Root Cause:** unknown until diagnosed
+- **Fix Approach:**
+- **Resolved:**
+
 ## In progress
 
 _None._

@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 23:34
+
+### Changes
+
+- `src/core/backup/storage.ts` — `SnapshotStorage` seam and OPFS adapter (D-035 A1).
+- `src/core/backup/snapshots.ts` — create/list, WebCrypto checksum dedupe, time-sortable names,
+  unique suffixes and rotation to 10 with sidecar cleanup.
+- `src/app/dev/SnapshotHarness.tsx`, `src/app/router.ts` — `/__snapshots` verification route.
+- `src/core/backup/snapshots.test.ts` — four unit tests; `e2e/specs/snapshots.spec.ts` — two specs.
+- `docs/DECISIONS.md` — D-035 autonomous decision; `CHANGELOG.md`, `docs/PROGRESS.md`.
+- Branch `feature/snapshots`, from `dev` after T-030 merged as `729ee89`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `session-logger` (subagent roles)
+- `gitnexus`, `playwright`
+
+### Status
+
+in-progress — T-031 implemented and committed; rebased onto dev after T-020 merged. Final
+verification: `pnpm check` green (103 unit tests, 160.7 KB), `pnpm e2e` 70 passed, format check
+green; reviews and PR pending. Two `pnpm check` attempts hit transient Vitest worker failures
+(timeout, then SIGSEGV) while another nightly session ran concurrently; both passed on retry and
+are logged as flaky infrastructure. BUG-003 opened for the dev harness's 375px overflow.
+
 ## Session 2026-11-16 23:18
 
 ### Changes

@@ -598,7 +598,49 @@ helpers, safe soft-delete undo, data-only history).
 - T-020 was already in progress in a concurrent nightly worktree when this ticket started, so
   this run moved on to T-030; the two branches will need a normal rebase before merging.
 
-**Next:** T-031, snapshots with rotation and checksum dedupe.
+**Next:** T-031, snapshots with rotation and checksum dedupe — done below.
+
+### T-031 / P1-2 — Snapshots with rotation and checksum dedupe — **Done** (pending merge)
+
+**Acceptance:** all three T-031 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                             | Result                                                                           |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Twelve changes produce exactly ten snapshot files                           | met — `snapshots.spec.ts` drives 12 changes in Chromium and Firefox; 10 remain   |
+| A snapshot taken while the database is unchanged is skipped                 | met — SHA-256 of `exportBytes()` compared with existing sidecars                 |
+| Each sidecar holds the reason, schema version, SHA-256, size and row counts | met — all five fields written with the `.sqlite` file and asserted in unit + e2e |
+
+**What changed**
+
+- `src/core/backup/storage.ts` — `SnapshotStorage` seam with an OPFS adapter (D-035 A1).
+- `src/core/backup/snapshots.ts` — create/list with WebCrypto dedupe, time-sortable names,
+  unique same-second suffixes and rotation to the newest 10 with paired sidecar deletion.
+- `src/app/dev/SnapshotHarness.tsx`, `src/app/router.ts` — `/__snapshots` test route with
+  change/snapshot controls (D-035 D1; always built like `/__db-spike` so preview E2E can reach it).
+- `src/core/backup/snapshots.test.ts` — four unit tests; `e2e/specs/snapshots.spec.ts` — two specs.
+- `docs/DECISIONS.md` D-035, `CHANGELOG.md`, `session_log.md`.
+
+**Decisions:** D-035 (Autonomous decision for T-031: A1 storage seam, B1 checksum dedupe,
+C1 sorted rotation, D1 dev harness route).
+
+**Results**
+
+| Check        | Result                                                         |
+| ------------ | -------------------------------------------------------------- |
+| `pnpm check` | green; bundle 160.7 KB of 300 KB (final, post-rebase onto dev) |
+| `pnpm test`  | 103 passed (17 files)                                          |
+| `pnpm e2e`   | 70 passed (Chromium, Firefox, smoke)                           |
+
+**Known gaps**
+
+- No product UI yet: the Backups page lands in T-035; `/__snapshots` is a test route only.
+- Two `pnpm check` attempts hit transient Vitest worker failures (a timeout and a SIGSEGV) while
+  another nightly session was running concurrently; both passed on retry and are logged as flaky
+  infrastructure, not a product bug.
+- Rebased onto `dev` after T-020 merged; the harness is a dev-only route with literal strings,
+  matching `/__db-spike`, so it is outside the i18n string rule. BUG-003 records its 375px overflow.
+
+**Next:** T-032, restore from a snapshot safely.
 
 ## P2 Core records
 

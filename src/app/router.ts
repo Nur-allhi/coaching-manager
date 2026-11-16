@@ -15,6 +15,9 @@ const DbSpikeHarness = lazy(() =>
   import('@/app/dev/DbSpikeHarness').then((m) => ({ default: m.DbSpikeHarness })),
 )
 const CrashProbe = lazy(() => import('./dev/CrashProbe').then((m) => ({ default: m.CrashProbe })))
+const SnapshotHarness = lazy(() =>
+  import('./dev/SnapshotHarness').then((m) => ({ default: m.SnapshotHarness })),
+)
 
 export function routeDefinitions(): RouteObject[] {
   return [
@@ -27,6 +30,7 @@ export function routeDefinitions(): RouteObject[] {
         })),
         { path: '/__db-spike', element: createElement(DbSpikeHarness) },
         { path: '/__crash-probe', element: createElement(CrashProbe) },
+        { path: '/__snapshots', element: createElement(SnapshotHarness) },
         { path: '*', element: createElement(NotFound) },
       ],
     },

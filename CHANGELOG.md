@@ -14,10 +14,10 @@ human-readable subset.
 
 ### Added
 
+- OPFS snapshots with a sidecar manifest (reason, schema version, SHA-256, size and row counts), checksum dedupe and rotation to the newest 10, plus an end-to-end spec that proves the offline data can be snapshotted repeatedly.
 - An i18n scaffold: i18next with full English and Bangla resources, a sidebar language toggle,
   an independent Bangla-digits setting using `Intl.NumberFormat('bn-BD')`, and no hard-coded
   user-visible strings in components (T-020, D-033).
-
 - Void writes, undo and the History data surface in the audit layer: voids and inverses are audited in the same transaction, original history is never rewritten, and undo of a soft delete is a real restore write.
 - Persistent storage is requested once on first run and its status is shown in Settings. The Workbox service worker now claims the page on install, and a new `offline.spec.ts` proves offline reload, installability and the status row.
 - Autonomous build mode (`docs/AUTONOMY.md`) with decide-and-record, bounded retries and auto-merge to `dev` after green CI; scheduled nightly runs stay in worktrees and never touch `main`.
