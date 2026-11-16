@@ -425,8 +425,6 @@ Format: dated entries, newest last.
 - **Impact:** router wiring moves to a data router; a form-state persistence helper and a
   global error boundary are added. No new dependency.
 
-> > > > > > > 77a1efe (feat(app): add the error boundary and unsaved-changes guard)
-
 ## D-028 — Smoke tagging is incremental (2026-11-16)
 
 - **Context:** T-006 asked for `@smoke` on W1–W6, whose features and specs land in P2–P4 and do
