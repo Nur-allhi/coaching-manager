@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- The app shell: a module registry, an 11-entry sidebar that becomes a sheet below 768px, a
+  sticky header, a BrowserRouter with one lazy route per module, and a 404 screen.
 - Repository helpers with version-checked updates, soft delete, an audit row written in the
   same transaction, a readable refusal when a parent still has live children, and a context
   argument that carries the actor, time and id generator explicitly.

@@ -282,6 +282,19 @@ Format: dated entries, newest last.
 - **Impact:** `src/core/audit/write.ts` and `repoWithin(t, ctx)` in the repository. T-030's
   acceptance must be updated before that ticket starts.
 
+## D-025 — T-016 shell decisions (2026-11-16)
+
+- **Context:** PLAN.md §3 and `FRONTEND_SPEC.md` lock the nav order, tokens, 240px
+  sidebar→Sheet behaviour and route map, but not the routing mode or the T-016 route content.
+- **Decision (human):** BrowserRouter (clean URLs; supported by `vite preview` and the PWA's
+  `navigateFallback`); a shared `ModulePlaceholder` for each module's lazy route until the real
+  screens land in T-020+; keep the `/__db-spike` harness, lazy, under the router until its
+  removal is ticketed.
+- **Why:** the preview server already does SPA fallback; placeholders satisfy the heading and
+  lazy-chunk checks without throwing away real feature work; the spike still backs four green
+  e2e tests.
+- **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

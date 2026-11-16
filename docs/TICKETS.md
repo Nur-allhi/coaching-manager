@@ -267,6 +267,7 @@ this file wins.
   - [ ] The sidebar collapses into a sheet below 768px.
 - **E2E:** `shell.spec.ts` — navigates every sidebar entry and asserts each route renders its
   heading
+- **Decisions:** D-025 (BrowserRouter, shared placeholder, keep the spike harness lazy)
 - **Version impact:** minor
 
 ### T-017: Add the error boundary and the unsaved-changes guard
