@@ -162,7 +162,7 @@ this file wins.
   `opfs-sahpool` VFS. Create a table, insert a row, reload the page, and confirm the data
   persists. Round-trip `exportBytes` and `importBytes`.
 - **Acceptance:**
-  - [ ] A table survives a full page reload in Chrome, Firefox and Safari.
+  - [ ] A table survives a full page reload in Chrome and Firefox.
   - [ ] `exportBytes()` then `importBytes()` restores the same rows.
   - [ ] The UI thread does not block while a write runs.
   - [ ] The findings are written to `docs/DECISIONS.md`.

@@ -57,6 +57,8 @@ human-readable subset.
 
 ### Removed
 
+- Safari/WebKit as a browser target (D-026). The locked browser list is now Chrome/Edge and
+  Firefox; the WebKit Playwright project and its four OPFS-skipped specs are gone.
 - Five superseded documents (`ARCHITECTURE`, `CONVENTIONS`, `DATA-MODEL`, `UI-GUIDELINES`,
   `TESTING`). Their rules were folded into the new set so that each rule lives in exactly one
   document.

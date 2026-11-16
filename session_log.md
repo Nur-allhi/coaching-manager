@@ -24,6 +24,25 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 17:35
+
+### Changes
+
+- `docs/PLAN.md` (locked browser target + P0-2 acceptance), `docs/TICKETS.md` (T-010),
+  `docs/DECISIONS.md` (D-023 closed, D-026), `docs/PROGRESS.md`, `docs/E2E_TESTING.md`,
+  `docs/DEVELOPMENT.md`, `CHANGELOG.md` — Safari removed as a browser target.
+- `playwright.config.ts` — WebKit project removed. `e2e/sqlite-persistence.spec.ts` — WebKit
+  skip block removed; all specs now run on Chromium and Firefox only.
+
+### Skill(s) / Tool(s) Used
+
+- `code-reviewer`
+
+### Status
+
+in-progress — the scope reduction is implemented; its pull request into `dev` awaits the
+human's merge confirmation.
+
 ## Session 2026-11-16 17:20
 
 ### Changes

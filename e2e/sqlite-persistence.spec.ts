@@ -3,17 +3,6 @@ import { expect, test } from '@playwright/test'
 const SPIKE_URL = '/__db-spike'
 
 test.describe('sqlite-wasm worker spike', () => {
-  // This is a documented platform capability gap, not a hidden failure: the Linux WebKit
-  // build used here has no working OPFS (navigator.storage.getDirectory() throws an
-  // UnknownError and createSyncAccessHandle is undefined). See DECISIONS.md D-023.
-  // Safari on macOS still has to be verified separately.
-  test.beforeEach(({ browserName }) => {
-    test.skip(
-      browserName === 'webkit',
-      'OPFS unavailable in the Linux WebKit build — see docs/DECISIONS.md D-023',
-    )
-  })
-
   test('persists a row across a page reload', async ({ page }) => {
     await page.goto(SPIKE_URL)
     await expect(page.getByTestId('status')).toHaveText('ready')

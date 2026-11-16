@@ -253,21 +253,25 @@ Format: dated entries, newest last.
   and `FileSystemFileHandle.prototype.createSyncAccessHandle` is `undefined`. The sqlite
   specs are therefore skipped on WebKit with an explicit reason pointing at this entry; the
   WebKit smoke specs still run and pass.
-- **Still open:** real Safari on macOS is **not verified**. This Linux environment cannot
-  stand in for it. P0-2's cross-browser acceptance is only partly met; a macOS run is needed
-  before the phase can be declared complete.
-- **The human's call (2026-11-16):** accept the documented gap and keep going. The gap stays
-  open in `docs/PROGRESS.md` and must be verified on a Mac before P0-2 is formally closed;
-  it does not block P0-3 onward.
-- **Local environment fix, not a repository change:** the WebKit bundle needed `libicu74`
-  and `libjpeg-turbo8` extracted from Ubuntu 24.04 `.deb` files into
-  `~/.local/lib/webkit-deps`, and its bundled `MiniBrowser` wrapper needed that path appended
-  to its `LD_LIBRARY_PATH`. Nothing in the repo depends on this; CI uses its own runner.
-- **Transient instability:** one full parallel run saw a WebKit worker exit with SIGSEGV. A
-  rerun passed. Treat a single WebKit crash under load as flaky infrastructure here, not as
-  a product defect, but do not hide repeats of it.
+- **Superseded (2026-11-16):** the human first accepted the unverified-Safari gap, then
+  decided Safari is not a supported target at all. See D-026; this entry is kept for the
+  OPFS finding and the verified Chromium/Firefox evidence, not as an open item.
 
 ---
+
+## D-026 — Safari is not a supported target (2026-11-16)
+
+- **Context:** D-023 carried an unverified Safari/macOS gap and a Linux WebKit OPFS failure.
+  PLAN.md §3 listed Safari 16.4+ as a browser that "must work", and `playwright.config.ts`
+  still ran a WebKit project whose sqlite specs were skipped.
+- **Decision (human):** remove Safari entirely. It is not a supported browser, not a test
+  target, and not a blocker for any phase.
+- **Impact:** the locked browser target in PLAN.md §3 and the P0-2 acceptance now name only
+  Chrome and Firefox; `TICKETS.md` T-010 likewise. The WebKit project is removed from
+  `playwright.config.ts` and the skip block from `sqlite-persistence.spec.ts`; the four
+  previously skipped tests now run on Chromium and Firefox only. D-023 is closed.
+- **Why:** the primary user is on Chrome/Edge at a counter; Safari is irrelevant to them, so
+  maintaining a test target that cannot pass here and cannot be verified has no value.
 
 ## D-024 — T-015 owns the audit write; context is explicit (2026-11-16)
 

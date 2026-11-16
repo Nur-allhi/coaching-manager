@@ -6,6 +6,11 @@ file is updated.
 
 Status legend: `Done` | `In progress` | `Blocked` | `Not started`
 
+> **Current status (2026-11-16):** Safari is **not a supported browser** and no macOS
+> verification is required (D-026). Older entries below still mention a Safari gap — those are
+> the historical record and are superseded by D-026. Playwright now runs Chromium and Firefox
+> only; there are no skipped WebKit specs.
+
 ---
 
 ## P0 Foundation
@@ -186,7 +191,8 @@ Then start T-010, the sqlite-wasm worker spike.
 - One WebKit worker crashed with SIGSEGV in a single parallel run; a rerun passed.
 
 **Next:** T-011, the full `Db` client with a serialized queue and `tx`, then T-012, the
-`better-sqlite3` test double. Ask the human for a macOS runner before closing P0-2.
+`better-sqlite3` test double. P0-2 is closed on the strength of the Chromium and Firefox runs
+(D-026 removed Safari as a target).
 
 ### T-011 — Db client with a serialized queue — **Done** (pending merge into `dev`)
 
