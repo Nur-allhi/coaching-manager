@@ -242,7 +242,8 @@ this file wins.
 - **Branch:** `feature/repository-helpers`
 - **Commit scope:** `db`
 - **Scope:** Implement insert, update with a version check, and soft delete, with the audit
-  row written in the same transaction.
+  row written in the same transaction, using an explicit `{ actorId, now, newId }` context
+  (D-024).
 - **Acceptance:**
   - [ ] A stale `expectedVersion` aborts the update and raises a conflict error.
   - [ ] A soft-deleted row is hidden from list queries.
@@ -341,12 +342,12 @@ this file wins.
 - **Depends on:** T-015
 - **Branch:** `feature/audit-writer`
 - **Commit scope:** `audit`
-- **Scope:** Implement PLAN.md **P1-1**: every write produces an audit row in the same
-  transaction.
+- **Scope:** Implement PLAN.md **P1-1**: void writes, undo, and the History plumbing. The
+  create/update/delete audit row itself is already written by T-015 (D-024).
 - **Acceptance:**
-  - [ ] A create, an update, a delete and a void each produce an audit row.
-  - [ ] The before and after JSON match the row before and after the change.
-  - [ ] The audit row and the change commit or roll back together.
+  - [ ] A void writes an audit row, with before and after JSON matching the row.
+  - [ ] Undo applies the inverse and writes a new audit entry; history is never rewritten.
+  - [ ] The void or undo and its audit row commit or roll back together.
 - **E2E:** n/a — no UI/user-visible behavior
 - **Version impact:** minor
 

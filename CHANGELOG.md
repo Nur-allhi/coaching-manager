@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- Repository helpers with version-checked updates, soft delete, an audit row written in the
+  same transaction, a readable refusal when a parent still has live children, and a context
+  argument that carries the actor, time and id generator explicitly.
 - Core helpers: UUIDv7 ids, an injectable clock, Dhaka date and month helpers, and
   integer-paisa money arithmetic with percent discounts, South Asian grouping and Bengali
   digits. The unused `uuid` dependency was replaced by `uuidv7`.
