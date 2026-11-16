@@ -51,7 +51,18 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 - `CHANGELOG.md`, `session_log.md` — created.
 - `AGENTS.md` — rewritten to the required structure.
 - `.github/pull_request_template.md` — added.
+- `.github/workflows/ci.yml` — the trigger now covers `dev` as well as `main`, for both pushes
+  and pull requests. Without it, the required status checks on `dev` could never pass.
 - `dev` branch — created and pushed.
+- Branch protection on `main` and `dev`: pull request required, both CI jobs required and
+  the branch up to date, no force-push, no deletion, conversation resolution required,
+  enforced on admins.
+- The repository allows squash and merge commits but not rebase, because `dev` takes squash
+  merges from working branches while `main` takes a merge commit from `dev`. GitHub does not
+  support a merge method per branch, so the distinction is enforced by the documented rules
+  in `docs/BRANCHING.md` §7.
+- Pull request #1 opened into `dev`. It is **not** merged: `docs/REPO_RULES.md` §1.3 requires
+  the human's explicit confirmation at merge time.
 
 ### Skill(s) / Tool(s) Used
 

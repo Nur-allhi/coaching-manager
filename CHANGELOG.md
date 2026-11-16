@@ -17,8 +17,13 @@ human-readable subset.
 - The 11 governing documents under `docs/`: PRD, TAD, SECURITY, FRONTEND_SPEC, TICKETS,
   REPO_RULES, BUGS, BRANCHING, COMMIT_SYSTEM, VERSIONING and E2E_TESTING.
 - `session_log.md`, recording every AI session.
+- `CHANGELOG.md`, following Keep a Changelog.
+- The `dev` integration branch, with branch protection on `dev` and `main`: pull request
+  required, CI required, no force-push, no deletion.
+- `.github/pull_request_template.md`, matching the template in `docs/BRANCHING.md` §6.
 - A GitHub Actions CI workflow: typecheck, lint, unit tests, format check, build, the
-  initial-JavaScript budget, then Playwright end-to-end against the production build.
+  initial-JavaScript budget, then Playwright end-to-end against the production build. It runs
+  for pushes and pull requests on `dev` and on `main`.
 - `scripts/check-bundle-budget.mjs`, enforcing the 300 KB initial-JavaScript budget.
 - `public/_headers`, carrying the Content-Security-Policy and the other hardening headers.
 - `scripts/publish-github.sh`, which creates the public repository and pushes it over SSH.
