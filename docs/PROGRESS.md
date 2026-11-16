@@ -431,9 +431,42 @@ owns one behavior.
 - The Agentation dev toolbar (dev-only) is the only element without a visible focus indicator.
 - Safari on macOS remains unverified (D-023).
 
-**Next:** T-017, the global error boundary and unsaved-changes guard.
+### T-017 / P0-6 — Error boundary and unsaved-changes guard — **Done** (pending merge)
 
-### P0-6 — App shell — **Done**; boundary, lock, PWA and i18n still open
+**Acceptance:** all three T-017 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                              | Result                                                         |
+| ------------------------------------------------------------ | -------------------------------------------------------------- |
+| A render error shows a recoverable message, not a blank page | met — `/__crash-probe?crash=1` E2E asserts the recovery screen |
+| Form values survive a boundary error                         | met — persisted to sessionStorage, listed in recovery UI       |
+| Navigating away with unsaved changes asks for confirmation   | met — `useBlocker` + `beforeunload`, E2E asserts the dialog    |
+
+**What changed**
+
+- `src/app/router.ts` / `router-layout.tsx` — migration from `BrowserRouter` to a data router
+  (`createBrowserRouter`/`RouterProvider`) built from the registry, so `useBlocker` works.
+- `src/app/ErrorBoundary.tsx` — class boundary with a recoverable screen and restored drafts.
+- `src/core/ui/form-drafts.ts`, `use-draft-form.ts` — sessionStorage draft persistence.
+- `src/app/useNavigationGuard.ts` — blocker for in-app navigation and tab close/reload.
+- `src/app/dev/CrashProbe.tsx`, `e2e/specs/error-boundary.spec.ts` — deterministic E2E probe and 5 specs.
+
+**Decisions:** D-029 (A1 persist + restore, B1 data router + useBlocker).
+
+**Results**
+
+| Check        | Result                               |
+| ------------ | ------------------------------------ |
+| `pnpm check` | green; bundle 140.3 KB of 300 KB     |
+| `pnpm e2e`   | 49 passed (Chromium, Firefox, smoke) |
+
+**Known gaps**
+
+- Drafts use sessionStorage; File inputs in future forms will need special handling (serialisation).
+- Safari is not a supported target (D-026).
+
+**Next:** T-018, the single-tab lock.
+
+### P0-6 — App shell — **Done**; boundary done; lock, PWA and i18n still open
 
 ## P1 Safety net
 

@@ -1,0 +1,79 @@
+/**
+ * Global error boundary (T-017, decision D-029 A1).
+ *
+ * A render error anywhere under the shell is caught here instead of showing a blank page. The
+ * recovery screen lists any form values restored from sessionStorage, so the admin does not
+ * lose what they were typing. `key` is bumped on retry to force a fresh mount of the crashed
+ * subtree; drafts stay until the admin chooses to discard them.
+ */
+import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { loadAllDrafts } from '@/core/ui/form-drafts'
+import { Button } from '@/components/ui/button'
+
+interface Props {
+  children: ReactNode
+}
+
+interface State {
+  error: Error | null
+  attempt: number
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  override state: State = { error: null, attempt: 0 }
+
+  static getDerivedStateFromError(error: Error): Partial<State> {
+    return { error }
+  }
+
+  override componentDidCatch(error: Error, info: ErrorInfo): void {
+    // The console is the right place for the diagnostic; the user gets plain words below.
+    console.error('Unhandled render error', error, info.componentStack)
+  }
+
+  private retry = () => {
+    this.setState((state) => ({ error: null, attempt: state.attempt + 1 }))
+  }
+
+  override render(): ReactNode {
+    if (!this.state.error) {
+      return <div key={this.state.attempt}>{this.props.children}</div>
+    }
+
+    const drafts = loadAllDrafts()
+    return (
+      <div role="alert" className="mx-auto w-full max-w-3xl space-y-4 px-4 py-10 sm:px-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Something went wrong</h1>
+        <p className="text-muted-foreground text-sm">
+          This screen stopped responding. Your work has not been lost — try again, or go back to the
+          dashboard.
+        </p>
+
+        {drafts.length > 0 && (
+          <section className="bg-card rounded-lg border p-4 text-sm">
+            <h2 className="mb-2 font-medium">Your unsaved values were saved</h2>
+            {drafts.map((draft) => (
+              <div key={draft.formId} className="space-y-1">
+                {Object.entries(draft.values)
+                  .filter(([, value]) => value !== '')
+                  .map(([field, value]) => (
+                    <p key={field}>
+                      <span className="text-muted-foreground">{field}: </span>
+                      <span className="font-medium">{value}</span>
+                    </p>
+                  ))}
+              </div>
+            ))}
+          </section>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={this.retry}>Try again</Button>
+          <Button variant="outline" asChild>
+            <a href="/">Go to dashboard</a>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+}

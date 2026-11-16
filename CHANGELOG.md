@@ -14,6 +14,10 @@ human-readable subset.
 
 ### Added
 
+- A global error boundary with a recoverable screen that restores unsaved form values, and an
+  unsaved-changes guard that blocks in-app navigation and tab close (D-029).
+- A data router (`createBrowserRouter`/`RouterProvider`) built from the module registry, so
+  `useBlocker` can guard navigation.
 - A `smoke` Playwright project and a CI gate that runs `@smoke` specs on pull requests; the
   offline and shell-route specs are tagged, with W1–W6 tagged as those features land (D-028).
 - A release workflow that publishes a GitHub release from a `vX.Y.Z` tag, using that version's

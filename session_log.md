@@ -48,6 +48,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 in-progress — on branch `chore/subagent-permissions`; not committed or merged yet. T-017 work is
 stashed on `feature/error-boundary`.
 
+## Session 2026-11-16 21:55
+
+### Changes
+
+- `src/app/router.ts`, `src/app/router-layout.tsx` — T-017: data router migration.
+- `src/app/ErrorBoundary.tsx` — global ErrorBoundary with a recoverable screen.
+- `src/core/ui/form-drafts.ts`, `src/core/ui/use-draft-form.ts` — sessionStorage draft persistence.
+- `src/app/useNavigationGuard.ts` — unsaved-changes guard.
+- dev `CrashProbe` route — development-only crash trigger for verification.
+- `e2e/specs/error-boundary.spec.ts` — 5 e2e specs for the error boundary.
+- `docs/DECISIONS.md` (D-029), `docs/PROGRESS.md`, `CHANGELOG.md` — decision record and
+  housekeeping updates. Work is on branch `feature/error-boundary`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`
+- `branch-manager`
+- `e2e-tester`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-017 implemented locally on branch `feature/error-boundary`; not committed or
+merged yet.
+
 ## Session 2026-11-16 20:37
 
 ### Changes
