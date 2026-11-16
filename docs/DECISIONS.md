@@ -259,6 +259,22 @@ Format: dated entries, newest last.
 
 ---
 
+## D-030 — Subagents act end-to-end without per-action prompts (2026-11-16)
+
+- **Context:** after the subagents were installed, routine in-scope actions (`git branch`,
+  `git switch`, `git push` to a feature branch, PR creation, e2e spec edits, release file edits)
+  still used `ask`, so the human was prompted repeatedly. Several agents also lacked permissions
+  their job requires (commit-writer could not run the mandatory GitNexus graph analysis;
+  code-reviewer and security-auditor lacked `pnpm budget`/GitNexus; e2e-tester could not start a
+  dev server).
+- **Decision (human, "maximum"):** convert in-scope actions from `ask` to `allow` across all nine
+  agents, including `git commit` and `git tag`, and add the missing tool permissions. Hard gates
+  stay: no merge, no force-push, no branch delete, no push to `main`/`dev`, no secret output, no
+  edits outside an agent's file. The user still confirms merges (REPO_RULES §1.3).
+- **Why:** removes repeated prompts while preserving every action that can damage the shared
+  branches or leak a secret. Agent bodies were updated to stop asking and act.
+- **Impact:** six agent files changed; no shared config, no code, no new dependency.
+
 ## D-028 — Smoke tagging is incremental (2026-11-16)
 
 - **Context:** T-006 asked for `@smoke` on W1–W6, whose features and specs land in P2–P4 and do

@@ -16,6 +16,8 @@ permissions:
   - { action: shell, resource: "pnpm typecheck *", effect: allow }
   - { action: shell, resource: "pnpm test *", effect: allow }
   - { action: shell, resource: "pnpm format:check *", effect: allow }
+  - { action: shell, resource: "pnpm budget *", effect: allow }
+  - { action: shell, resource: "node .gitnexus/run.cjs *", effect: allow }
   - { action: webfetch, resource: "*", effect: deny }
   - { action: edit, resource: "*", effect: deny }
 request:

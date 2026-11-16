@@ -9,11 +9,15 @@ permissions:
   - { action: glob, resource: '*', effect: allow }
   - { action: grep, resource: '*', effect: allow }
   - { action: shell, resource: 'pnpm e2e*', effect: allow }
-  - { action: shell, resource: 'pnpm exec playwright test *', effect: allow }
+  - { action: shell, resource: 'pnpm exec playwright *', effect: allow }
   - { action: shell, resource: 'pnpm build *', effect: allow }
+  - { action: shell, resource: 'pnpm dev *', effect: allow }
+  - { action: shell, resource: 'pnpm format:check *', effect: allow }
+  - { action: shell, resource: 'git status *', effect: allow }
+  - { action: shell, resource: 'node .gitnexus/run.cjs *', effect: allow }
   - { action: mcp_playwright_*, resource: '*', effect: allow }
   - { action: edit, resource: '*', effect: deny }
-  - { action: edit, resource: 'e2e/**', effect: ask }
+  - { action: edit, resource: 'e2e/**', effect: allow }
   - { action: webfetch, resource: '*', effect: deny }
 request:
   body:
@@ -33,7 +37,7 @@ Read `docs/E2E_TESTING.md`. If it is missing or ambiguous, stop and report. Do n
 3. Check the console for zero errors and the network for no external hosts.
 4. Check three viewports with `browser_resize` and walk the page with Tab for focus order.
 5. Record the evidence: viewports, error counts, screenshot paths.
-6. Convert what you verified into a spec under `e2e/specs/`. Ask before writing the spec file.
+6. Convert what you verified into a spec under `e2e/specs/` and write it.
 7. Run the suite and report pass or fail. Produce the PR evidence block.
 
 ## Never
