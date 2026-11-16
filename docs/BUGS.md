@@ -42,7 +42,18 @@ a resolved-bug history.
 
 ## Open
 
-_No known bugs._
+## BUG-001: Stray Git conflict marker in the decisions log
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-16 (during: autonomous nightly build — reading docs before T-019)
+- **Location:** `docs/DECISIONS.md` — between D-029 and D-028 (line 330 after D-032 was added; was 310 when found)
+- **Description:** A leftover conflict marker line (`> > > > > > > 77a1efe …`) sits between
+  D-029 and D-028 in the committed decisions log. Expected: a clean Markdown document with no
+  conflict markers. Present in `dev` at `41afdfd`; breaks the rendered log between two entries.
+- **Root Cause:** unknown until diagnosed
+- **Fix Approach:**
+- **Resolved:**
 
 ## In progress
 
