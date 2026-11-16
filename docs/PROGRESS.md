@@ -521,7 +521,45 @@ owns one behavior.
 
 ## P1 Safety net
 
-_(not started)_
+### T-030 / P1-1 — Audit writer: void, undo and History plumbing — **Done** (pending merge)
+
+**Acceptance:** all three T-030 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                          | Result                                                                             |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| A void writes an audit row, with before and after JSON matching the row  | met — `voidRecordWithin` audits the live row, status and version in one tx         |
+| Undo applies the inverse and writes a new audit entry; history unchanged | met — inverse goes through the audited repo helpers; the original row is read-only |
+| The void or undo and its audit row commit or roll back together          | met — both run in one `db.tx`; duplicate-id rollback tests prove it                |
+
+**What changed**
+
+- `src/core/db/void-restore.ts` — `voidRecord` / `restoreRecord` and their `Within` variants;
+  only `payments` is voidable, and un-delete is a real audited `restore` write.
+- `src/core/audit/undo.ts` — `undo` / `undoWithin` apply the inverse of create, update, delete,
+  void and restore entries, plus `listHistory` for the T-034 panel.
+- `src/core/audit/write.ts` — `restore` added to the audit action union (no behaviour change).
+- `src/core/audit/undo.test.ts` — ten tests, including undo-of-restore and void/undo rollback atomicity.
+- `docs/DECISIONS.md` D-034, `CHANGELOG.md`, `session_log.md`.
+
+**Decisions:** D-034 (Autonomous decision for T-030: repo-adjacent helpers, inverse via audited
+helpers, safe soft-delete undo, data-only history).
+
+**Results**
+
+| Check        | Result                               |
+| ------------ | ------------------------------------ |
+| `pnpm check` | green; bundle 140.5 KB of 300 KB     |
+| `pnpm test`  | 92 passed (14 files)                 |
+| `pnpm e2e`   | 55 passed (Chromium, Firefox, smoke) |
+
+**Known gaps**
+
+- No UI: the History panel and Undo toast land in T-034; the data surface exists now.
+- Undoing a create still refuses when the record has live children (D-034 C1).
+- T-020 was already in progress in a concurrent nightly worktree when this ticket started, so
+  this run moved on to T-030; the two branches will need a normal rebase before merging.
+
+**Next:** T-031, snapshots with rotation and checksum dedupe.
 
 ## P2 Core records
 
