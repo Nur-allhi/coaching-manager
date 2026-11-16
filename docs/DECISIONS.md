@@ -279,6 +279,26 @@ Format: dated entries, newest last.
 - **Impact:** one small persistence helper and one status row. No new dependency, no schema or
   backup-behaviour change, and no change to the locked PWA stack or the test matrix.
 
+## D-036 — T-032 restore decisions (2026-11-16)
+
+- **Context:** T-032 must follow PLAN.md §7.3's order — validate, summarise, snapshot, restore —
+  and leave the live database untouched when any step fails. T-031 already supplies snapshots,
+  sidecars and the storage seam. The decision-advisor noted that adding a method to the locked
+  worker RPC contract would need a human, so that route is not available overnight.
+- **Autonomous decision (T-032), taking the advisor's leans:**
+  - **A1** — validate with WebCrypto checksum, the SQLite file header and the sidecar's schema
+    version against the app's; an optional injectable inspector runs `PRAGMA integrity_check` in
+    unit tests. The locked `Db` worker contract is not changed.
+  - **B1** — export the live bytes and write a forced `pre-restore` snapshot before importing the
+    chosen file; the forced write is an explicit safety copy, not an automatically deduped one.
+  - **C1** — keep the exported bytes and re-import them if `importBytes` throws, then rethrow.
+  - **D1** — extend the existing `/__snapshots` dev harness with break-data/restore controls and
+    a visible data count for the E2E spec (same reasoning as D-035 D1).
+- **Why:** the four acceptance lines are met in a browser without touching a Locked Decision,
+  the schema conventions or the backup/restore behaviour specified in §7.3.
+- **Impact:** new `src/core/backup/restore.ts`, a small additive `force` option on snapshot
+  creation, harness controls, an E2E spec and unit tests; no dependency, version bump or UI.
+
 ## D-035 — T-031 snapshot decisions (2026-11-16)
 
 - **Context:** T-031 writes OPFS snapshots with a sidecar manifest, keeps the newest 10 and skips

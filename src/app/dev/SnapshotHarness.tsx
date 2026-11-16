@@ -6,7 +6,8 @@
  * snapshot, and read the snapshot count and the newest sidecar.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { createSnapshot, listSnapshots } from '@/core/backup/snapshots'
+import { restoreFromSnapshot } from '@/core/backup/restore'
+import { createSnapshot, listSnapshots, schemaVersion } from '@/core/backup/snapshots'
 import { opfsStorage } from '@/core/backup/storage'
 import { getDb } from '@/core/db/client'
 
@@ -17,6 +18,7 @@ export function SnapshotHarness() {
   const storage = useMemo(() => opfsStorage(), [])
   const [status, setStatus] = useState('starting…')
   const [changes, setChanges] = useState(0)
+  const [dataCount, setDataCount] = useState(0)
   const [count, setCount] = useState(0)
   const [lastSidecar, setLastSidecar] = useState('{}')
 
@@ -25,7 +27,9 @@ export function SnapshotHarness() {
     setCount(files.length)
     const newest = files[files.length - 1]
     if (newest) setLastSidecar(JSON.stringify(newest.sidecar))
-  }, [storage])
+    const rows = await db.query<{ n: number }>(`SELECT COUNT(*) AS n FROM ${SPIKE_TABLE}`)
+    setDataCount(rows[0]?.n ?? 0)
+  }, [db, storage])
 
   useEffect(() => {
     void (async () => {
@@ -49,6 +53,7 @@ export function SnapshotHarness() {
       ])
       setChanges(changes + 1)
       setStatus('changed')
+      await refresh()
     } catch (error) {
       setStatus(`error: ${String(error)}`)
     }
@@ -73,6 +78,36 @@ export function SnapshotHarness() {
     }
   }
 
+  async function breakData() {
+    try {
+      await db.run(`DELETE FROM ${SPIKE_TABLE}`)
+      setStatus('broken')
+      await refresh()
+    } catch (error) {
+      setStatus(`error: ${String(error)}`)
+    }
+  }
+
+  async function restore() {
+    try {
+      setStatus('restoring…')
+      const files = await listSnapshots(storage)
+      const newest = files[files.length - 1]
+      if (!newest) throw new Error('no snapshot to restore')
+      const summary = await restoreFromSnapshot({
+        db,
+        storage,
+        file: newest.file,
+        appSchemaVersion: await schemaVersion(db),
+        now: Date.now(),
+      })
+      setStatus(`restored ${summary.file} (pre-restore: ${summary.preRestoreSnapshot})`)
+      await refresh()
+    } catch (error) {
+      setStatus(`error: ${String(error)}`)
+    }
+  }
+
   return (
     <main className="mx-auto max-w-2xl space-y-4 p-6">
       <h1 className="text-2xl font-semibold">Snapshot verification</h1>
@@ -80,6 +115,7 @@ export function SnapshotHarness() {
         {status}
       </p>
       <p data-testid="change-count">{changes}</p>
+      <p data-testid="data-count">{dataCount}</p>
       <p data-testid="snapshot-count">{count}</p>
       <p data-testid="last-sidecar">{lastSidecar}</p>
       <div className="flex flex-wrap gap-2">
@@ -88,6 +124,12 @@ export function SnapshotHarness() {
         </button>
         <button type="button" data-testid="take-snapshot" onClick={() => void takeSnapshot()}>
           Take snapshot
+        </button>
+        <button type="button" data-testid="break-data" onClick={() => void breakData()}>
+          Break data
+        </button>
+        <button type="button" data-testid="restore" onClick={() => void restore()}>
+          Restore
         </button>
       </div>
     </main>

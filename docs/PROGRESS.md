@@ -625,11 +625,14 @@ C1 sorted rotation, D1 dev harness route).
 
 **Results**
 
-| Check        | Result                               |
-| ------------ | ------------------------------------ |
-| `pnpm check` | green; bundle 140.6 KB of 300 KB     |
-| `pnpm test`  | 96 passed (15 files)                 |
-| `pnpm e2e`   | 59 passed (Chromium, Firefox, smoke) |
+| Check        | Result                                                         |
+| ------------ | -------------------------------------------------------------- |
+| `pnpm check` | green; bundle 160.7 KB of 300 KB (final, post-rebase onto dev) |
+| `pnpm test`  | 103 passed (17 files)                                          |
+| `pnpm e2e`   | 70 passed (Chromium, Firefox, smoke)                           |
+
+The first run of T-031, before the concurrent T-020 work merged into `dev`, was green with a
+140.6 KB bundle, 96 unit tests and 59 e2e tests.
 
 **Known gaps**
 
@@ -637,10 +640,55 @@ C1 sorted rotation, D1 dev harness route).
 - Two `pnpm check` attempts hit transient Vitest worker failures (a timeout and a SIGSEGV) while
   another nightly session was running concurrently; both passed on retry and are logged as flaky
   infrastructure, not a product bug.
-- The i18n scaffold from the concurrent T-020 session is not in this branch yet; the harness is a
-  dev-only route with literal strings, matching `/__db-spike`.
+- Rebased onto `dev` after T-020 merged; the harness is a dev-only route with literal strings,
+  matching `/__db-spike`, so it is outside the i18n string rule. BUG-003 records its 375px overflow.
+  Before this merge, `dev` noted that the i18n scaffold was not yet in this branch; the merge
+  resolves that.
 
-**Next:** T-032, restore from a snapshot safely.
+**Next:** T-032, restore from a snapshot safely — done below.
+
+### T-032 / P1-3 — Restore from a snapshot safely — **Done** (pending merge)
+
+**Acceptance:** all four T-032 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                        | Result                                                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| A corrupt file is rejected and the live data is unchanged              | met — checksum + SQLite header validation, unit test with a flipped byte |
+| A newer schema version file is rejected and the live data is unchanged | met — sidecar schema version compared with the app's before any import   |
+| A good restore round-trips the data                                    | met — unit test and `restore.spec.ts` in Chromium and Firefox            |
+| A pre-restore snapshot exists before the live database is replaced     | met — forced `pre-restore` snapshot written before `importBytes`         |
+
+**What changed**
+
+- `src/core/backup/restore.ts` — validate → summarise → forced pre-restore snapshot → import, with
+  re-import of the exported bytes on failure and an optional `PRAGMA integrity_check` inspector.
+- `src/core/backup/snapshots.ts` — additive `force` option so a pre-restore copy is never deduped.
+- `src/app/dev/SnapshotHarness.tsx` — break-data and restore controls plus a visible data count.
+- `src/core/backup/restore.test.ts` — five tests; `e2e/specs/restore.spec.ts` — one spec.
+- `docs/DECISIONS.md` D-036, `CHANGELOG.md`, `session_log.md`.
+
+**Decisions:** D-036 (Autonomous decision for T-032: A1 JS validation + injectable inspector,
+B1 pre-restore snapshot first, C1 re-import on failure, D1 extend the harness route). The locked
+worker `Db` contract is untouched; full browser-side `PRAGMA integrity_check` would require a
+human decision (D-036 A2).
+
+**Results**
+
+| Check        | Result                               |
+| ------------ | ------------------------------------ |
+| `pnpm check` | green; bundle 160.7 KB of 300 KB     |
+| `pnpm test`  | 108 passed (18 files)                |
+| `pnpm e2e`   | 72 passed (Chromium, Firefox, smoke) |
+
+**Known gaps**
+
+- The browser path validates checksum, header and schema version; `PRAGMA integrity_check` runs
+  through the injected inspector in unit tests, not in the browser (D-036 A1/A2).
+- BUG-003 (dev harness horizontal overflow at 375px) remains open and was not touched here.
+- The first `restore.spec.ts` run failed because `dist` was stale after the harness fix; rebuilding
+  and re-running passed. No product defect was logged.
+
+**Next:** T-033, export and import the database file (T-032 is done above).
 
 ## P2 Core records
 

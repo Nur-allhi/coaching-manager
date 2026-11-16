@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 23:55
+
+### Changes
+
+- `src/core/backup/restore.ts` — validate, summarise, forced pre-restore snapshot, import, and
+  re-import of live bytes on failure (D-036).
+- `src/core/backup/snapshots.ts` — additive `force` option for explicit safety copies.
+- `src/app/dev/SnapshotHarness.tsx` — break-data and restore controls plus data count.
+- `src/core/backup/restore.test.ts` — five tests; `e2e/specs/restore.spec.ts` — one spec.
+- `docs/DECISIONS.md` — D-036 autonomous decision; `CHANGELOG.md`, `docs/PROGRESS.md`.
+- Branch `feature/restore`, from `dev` after T-031 merged as `b1921a9`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `session-logger` (subagent roles)
+- `gitnexus`, `playwright`
+
+### Status
+
+in-progress — T-032 implemented; `pnpm check` green, 108 unit tests and 72 e2e passed; reviews,
+commit and PR pending. The first restore e2e run used a stale `dist`; rebuilding fixed it. BUG-003
+(dev harness overflow) and BUG-001/002 remain open and untouched.
+
 ## Session 2026-11-16 23:34
 
 ### Changes
@@ -45,10 +70,13 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ### Status
 
-in-progress — T-031 implemented; `pnpm check` green, 96 unit tests and 59 e2e passed; reviews,
-commit and PR pending. Two `pnpm check` attempts hit transient Vitest worker failures (timeout,
-then SIGSEGV in unrelated tests) while another nightly session ran concurrently; both passed on
-retry, logged as flaky infrastructure. T-020 remains in the other session's PR #22.
+in-progress — T-031 implemented and committed; rebased onto dev after T-020 merged. Final
+verification: `pnpm check` green (103 unit tests, 160.7 KB), `pnpm e2e` 70 passed, format check
+green; reviews and PR pending. Two `pnpm check` attempts hit transient Vitest worker failures
+(timeout, then SIGSEGV) while another nightly session ran concurrently; both passed on retry and
+are logged as flaky infrastructure. BUG-003 opened for the dev harness's 375px overflow.
+The original pre-merge run of T-031 was green with 96 unit tests and 59 e2e tests, at which point
+T-020 was still the other session's open PR #22.
 
 ## Session 2026-11-16 23:18
 

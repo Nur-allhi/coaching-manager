@@ -62,25 +62,34 @@ export async function listSnapshots(storage: SnapshotStorage): Promise<SnapshotF
   return found
 }
 
-async function rowCount(db: Db, table: 'students' | 'payments'): Promise<number> {
+/** The dev harness may run before migrations, so a missing table is the only tolerated error. */
+function isMissingTable(error: unknown): boolean {
+  return error instanceof Error && /no such table/i.test(error.message)
+}
+
+/** Shared so snapshot sidecars and restore summaries count rows the same way. */
+export async function rowCount(db: Db, table: 'students' | 'payments'): Promise<number> {
   try {
     const rows = await db.query<{ n: number }>(
       `SELECT COUNT(*) AS n FROM ${table} WHERE deleted_at IS NULL`,
     )
     return rows[0]?.n ?? 0
-  } catch {
-    return 0 // migrations have not run yet in the dev harness
+  } catch (error) {
+    if (isMissingTable(error)) return 0
+    throw error
   }
 }
 
-async function schemaVersion(db: Db): Promise<number> {
+/** The app's current schema version, or 0 before the migration runner has created app_meta. */
+export async function schemaVersion(db: Db): Promise<number> {
   try {
     const rows = await db.query<{ value: string }>(
       "SELECT value FROM app_meta WHERE key = 'schema_version'",
     )
     return Number(rows[0]?.value ?? 0)
-  } catch {
-    return 0 // app_meta does not exist until the migration runner has run
+  } catch (error) {
+    if (isMissingTable(error)) return 0
+    throw error
   }
 }
 
@@ -100,6 +109,8 @@ export interface CreateSnapshotOptions {
   storage: SnapshotStorage
   reason: SnapshotReason
   now: number
+  /** A pre-restore copy is an explicit safety copy, even when the bytes are unchanged. */
+  force?: boolean
 }
 
 export async function createSnapshot({
@@ -107,12 +118,13 @@ export async function createSnapshot({
   storage,
   reason,
   now,
+  force = false,
 }: CreateSnapshotOptions): Promise<SnapshotOutcome> {
   const bytes = await db.exportBytes()
   const hash = await checksum(bytes)
   const existing = await listSnapshots(storage)
 
-  const duplicate = existing.find((entry) => entry.sidecar.sha256 === hash)
+  const duplicate = force ? undefined : existing.find((entry) => entry.sidecar.sha256 === hash)
   if (duplicate) return { status: 'skipped', duplicateOf: duplicate.file }
 
   const file = await uniqueFileName(storage, `${fileTime(now)}_${reason}`)
