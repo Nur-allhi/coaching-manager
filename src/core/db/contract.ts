@@ -38,7 +38,7 @@ export function describeDbContract(name: string, factory: () => Db): void {
       const db = factory()
       await db.run('CREATE TABLE t (id INTEGER PRIMARY KEY, value TEXT)')
 
-      await db.tx(async (t) => {
+      await db.tx(async (t: Db) => {
         await t.run('INSERT INTO t (value) VALUES (?)', ['kept'])
       })
 
