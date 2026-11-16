@@ -384,9 +384,50 @@ owns one behavior.
 
 ### P0-5 — Repository helpers — **Done** pending merge
 
-### P0-6 — App shell, registry, router, error boundary, single-tab lock, PWA, storage
+### T-016 / P0-6 — App shell, registry and router — **Done** (pending merge into `dev`)
 
-persist, i18n scaffold — **Not started**
+**Acceptance:** all four T-016 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                       | Result                                                    |
+| --------------------------------------------------------------------- | --------------------------------------------------------- |
+| Every module registers a manifest and appears in the navigation       | met — 11 manifests, 11 nav entries, tested                |
+| Each route chunk is lazy; the initial bundle stays under 300 KB       | met — 11 `Screen-*` chunks; initial JS 123.2 KB of 300 KB |
+| The layout works at 375px, 768px and 1280px with no horizontal scroll | met — browser checker: 0px overflow at 375 and 1280       |
+| The sidebar collapses into a sheet below 768px                        | met — shadcn Sheet via `useIsMobile` (768px)              |
+
+**What changed**
+
+- `src/app/module-contract.ts` — the manifest type: id, nav (label, Lucide icon, order, path),
+  permissions, lazy routes, optional migrations.
+- `src/modules/<id>/index.ts` + `Screen.tsx` for all 11 modules — each registers its own
+  manifest and lazy placeholder screen.
+- `src/app/registry.ts` — the single source of truth; the shell and router read it and name no
+  module directly. `src/app/App.tsx` — one `BrowserRouter`.
+- `src/app/AppShell.tsx` — shadcn sidebar (240px, Sheet below 768px), sticky header, brand.
+  `src/app/routes.tsx` — lazy route tree with the spike harness kept lazy and a 404 screen.
+- `src/test/setup.ts` — a `matchMedia` polyfill so jsdom can render the sidebar.
+- `e2e/shell.spec.ts` — navigates all 11 entries and checks each heading by URL and by click.
+
+**Decisions:** D-025.
+
+**Results**
+
+| Check        | Result                                                                                        |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `pnpm check` | green; bundle 123.2 KB of 300 KB                                                              |
+| `pnpm e2e`   | 50 passed, 4 skipped (WebKit OPFS, D-023)                                                     |
+| Browser      | 0px overflow at 375/1280; no console errors; Sheet opens on tap at 375px, closes on selection |
+
+**Known gaps**
+
+- Module screens are placeholders; the real UI lands in T-020+.
+- i18n, error boundary, single-tab lock, PWA persistence request are separate tickets in P0-6.
+- The Agentation dev toolbar (dev-only) is the only element without a visible focus indicator.
+- Safari on macOS remains unverified (D-023).
+
+**Next:** T-017, the global error boundary and unsaved-changes guard.
+
+### P0-6 — App shell — **Done** pending merge; boundary, lock, PWA and i18n still open
 
 ## P1 Safety net
 

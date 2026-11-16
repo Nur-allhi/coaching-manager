@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
 
-test('the app shell loads and renders the product heading', async ({ page }) => {
+test('the app shell loads and renders the product brand', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Coaching Manager' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /coaching manager/i })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible()
 })
 
 test('the app makes no network requests other than its own assets', async ({ page }) => {
@@ -15,6 +16,6 @@ test('the app makes no network requests other than its own assets', async ({ pag
   })
 
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Coaching Manager' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /coaching manager/i })).toBeVisible()
   expect(external).toEqual([])
 })

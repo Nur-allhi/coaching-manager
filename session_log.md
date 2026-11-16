@@ -24,6 +24,29 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 17:20
+
+### Changes
+
+- `src/app/module-contract.ts`, `src/app/registry.ts`, `src/app/AppShell.tsx`,
+  `src/app/routes.tsx`, `src/app/App.tsx`, `src/app/ModulePlaceholder.tsx` — the shell,
+  registry and BrowserRouter tree.
+- 11 module manifests + lazy screens under `src/modules/*/`.
+- `src/test/setup.ts` — `matchMedia` polyfill for jsdom; `e2e/shell.spec.ts` — 12 new e2e tests.
+- `docs/DECISIONS.md` (D-025), `docs/TICKETS.md`, `docs/PROGRESS.md`, `CHANGELOG.md` — updated.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `ui-ux-pro-max`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-016 is implemented and green; its pull request into `dev` awaits the human's
+merge confirmation.
+
 ## Session 2026-11-16 16:50
 
 ### Changes
