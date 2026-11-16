@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 23:55
+
+### Changes
+
+- `src/core/backup/restore.ts` — validate, summarise, forced pre-restore snapshot, import, and
+  re-import of live bytes on failure (D-036).
+- `src/core/backup/snapshots.ts` — additive `force` option for explicit safety copies.
+- `src/app/dev/SnapshotHarness.tsx` — break-data and restore controls plus data count.
+- `src/core/backup/restore.test.ts` — five tests; `e2e/specs/restore.spec.ts` — one spec.
+- `docs/DECISIONS.md` — D-036 autonomous decision; `CHANGELOG.md`, `docs/PROGRESS.md`.
+- Branch `feature/restore`, from `dev` after T-031 merged as `b1921a9`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `session-logger` (subagent roles)
+- `gitnexus`, `playwright`
+
+### Status
+
+in-progress — T-032 implemented; `pnpm check` green, 108 unit tests and 72 e2e passed; reviews,
+commit and PR pending. The first restore e2e run used a stale `dist`; rebuilding fixed it. BUG-003
+(dev harness overflow) and BUG-001/002 remain open and untouched.
+
 ## Session 2026-11-16 23:34
 
 ### Changes

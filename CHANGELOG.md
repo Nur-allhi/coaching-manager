@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Added
 
+- Safe restore from a snapshot: checksum/header/schema validation, a summary, a forced pre-restore snapshot, rollback of the live bytes if the import fails, and an end-to-end spec that breaks and restores the data.
 - OPFS snapshots with a sidecar manifest (reason, schema version, SHA-256, size and row counts), checksum dedupe and rotation to the newest 10, plus an end-to-end spec that proves the offline data can be snapshotted repeatedly.
 - An i18n scaffold: i18next with full English and Bangla resources, a sidebar language toggle,
   an independent Bangla-digits setting using `Intl.NumberFormat('bn-BD')`, and no hard-coded
