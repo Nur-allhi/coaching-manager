@@ -75,6 +75,8 @@ verification: `pnpm check` green (103 unit tests, 160.7 KB), `pnpm e2e` 70 passe
 green; reviews and PR pending. Two `pnpm check` attempts hit transient Vitest worker failures
 (timeout, then SIGSEGV) while another nightly session ran concurrently; both passed on retry and
 are logged as flaky infrastructure. BUG-003 opened for the dev harness's 375px overflow.
+The original pre-merge run of T-031 was green with 96 unit tests and 59 e2e tests, at which point
+T-020 was still the other session's open PR #22.
 
 ## Session 2026-11-16 23:18
 

@@ -631,6 +631,9 @@ C1 sorted rotation, D1 dev harness route).
 | `pnpm test`  | 103 passed (17 files)                                          |
 | `pnpm e2e`   | 70 passed (Chromium, Firefox, smoke)                           |
 
+The first run of T-031, before the concurrent T-020 work merged into `dev`, was green with a
+140.6 KB bundle, 96 unit tests and 59 e2e tests.
+
 **Known gaps**
 
 - No product UI yet: the Backups page lands in T-035; `/__snapshots` is a test route only.
@@ -639,6 +642,8 @@ C1 sorted rotation, D1 dev harness route).
   infrastructure, not a product bug.
 - Rebased onto `dev` after T-020 merged; the harness is a dev-only route with literal strings,
   matching `/__db-spike`, so it is outside the i18n string rule. BUG-003 records its 375px overflow.
+  Before this merge, `dev` noted that the i18n scaffold was not yet in this branch; the merge
+  resolves that.
 
 **Next:** T-032, restore from a snapshot safely — done below.
 
@@ -683,7 +688,7 @@ human decision (D-036 A2).
 - The first `restore.spec.ts` run failed because `dist` was stale after the harness fix; rebuilding
   and re-running passed. No product defect was logged.
 
-**Next:** T-033, export and import the database file.
+**Next:** T-033, export and import the database file (T-032 is done above).
 
 ## P2 Core records
 
