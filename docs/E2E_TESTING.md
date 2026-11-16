@@ -106,8 +106,10 @@ Every UI ticket in [`TICKETS.md`](TICKETS.md) lists at least one spec in its **E
 The specs run on Chromium and Firefox. Safari/WebKit is not a supported target (D-026), so
 there is no WebKit project and no skipped spec.
 
-The smoke suite runs on every pull request into `dev`. The full suite runs before any
-`dev` → `main` merge.
+The `smoke` Playwright project runs only specs tagged `@smoke` (T-006). Pull requests into
+`dev` run that project; pushes to `dev` and `main` run the full suite. The offline guarantee
+and the shell's route check carry `@smoke` today; the W1–W6 journey specs are tagged as those
+features land in P2–P4, so the tag set grows with the product rather than being faked now.
 
 ## 7. Unit and integration tests
 

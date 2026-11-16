@@ -126,10 +126,12 @@ this file wins.
 - **Scope:** Tag the critical journeys from `PRD.md` §5 with `@smoke` and make the smoke
   project run on every pull request into `dev`, separately from the full suite.
 - **Acceptance:**
-  - [ ] At least one spec per critical journey in `PRD.md` §5 carries `@smoke`.
-  - [ ] `pnpm e2e --grep @smoke` runs only the smoke specs.
+  - [ ] A `smoke` Playwright project runs only specs tagged `@smoke`.
+  - [ ] `pnpm exec playwright test --project=smoke` runs only the smoke specs.
   - [ ] The CI e2e job runs the smoke project on pull requests and the full suite on `dev`
         and `main`.
+  - [ ] The W1–W6 journey specs are tagged `@smoke` as they land in P2–P4 (incremental; the
+        infrastructure and the existing specs are done here).
 - **E2E:** `smoke.spec.ts` — one spec per critical journey, each asserting its outcome
 - **Version impact:** none
 

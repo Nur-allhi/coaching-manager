@@ -24,6 +24,23 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 19:00
+
+### Changes
+
+- `playwright.config.ts`, `e2e/specs/*.spec.ts`, `.github/workflows/ci.yml`,
+  `docs/TICKETS.md`, `docs/E2E_TESTING.md`, `docs/DECISIONS.md` (D-028), `CHANGELOG.md` —
+  T-006 smoke project, CI gate and incremental tagging.
+
+### Skill(s) / Tool(s) Used
+
+- `code-reviewer`
+
+### Status
+
+in-progress — T-006 implemented locally; its pull request awaits the human's merge
+confirmation.
+
 ## Session 2026-11-16 18:45
 
 ### Changes

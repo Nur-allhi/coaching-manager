@@ -259,6 +259,17 @@ Format: dated entries, newest last.
 
 ---
 
+## D-028 — Smoke tagging is incremental (2026-11-16)
+
+- **Context:** T-006 asked for `@smoke` on W1–W6, whose features and specs land in P2–P4 and do
+  not exist yet.
+- **Decision (human):** set up the tag infrastructure now — a `smoke` Playwright project with
+  `grep: /@smoke/` and a CI step that runs it on pull requests — tag the specs that exist today,
+  and tag each W1–W6 spec as it lands. Do not write placeholder journeys just to satisfy the
+  acceptance line.
+- **Impact:** the fast CI gate is real from now on; the W1–W6 part of T-006 completes
+  incrementally with P2–P4.
+
 ## D-027 — Release workflow has scoped write permission (2026-11-16)
 
 - **Context:** T-004 asked for a release workflow that publishes a GitHub release, while also
