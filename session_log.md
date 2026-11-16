@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 23:34
+
+### Changes
+
+- `src/core/backup/storage.ts` — `SnapshotStorage` seam and OPFS adapter (D-035 A1).
+- `src/core/backup/snapshots.ts` — create/list, WebCrypto checksum dedupe, time-sortable names,
+  unique suffixes and rotation to 10 with sidecar cleanup.
+- `src/app/dev/SnapshotHarness.tsx`, `src/app/router.ts` — `/__snapshots` verification route.
+- `src/core/backup/snapshots.test.ts` — four unit tests; `e2e/specs/snapshots.spec.ts` — two specs.
+- `docs/DECISIONS.md` — D-035 autonomous decision; `CHANGELOG.md`, `docs/PROGRESS.md`.
+- Branch `feature/snapshots`, from `dev` after T-030 merged as `729ee89`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`, `e2e-tester`, `code-reviewer`, `security-auditor`,
+  `commit-writer`, `session-logger` (subagent roles)
+- `gitnexus`, `playwright`
+
+### Status
+
+in-progress — T-031 implemented; `pnpm check` green, 96 unit tests and 59 e2e passed; reviews,
+commit and PR pending. Two `pnpm check` attempts hit transient Vitest worker failures (timeout,
+then SIGSEGV in unrelated tests) while another nightly session ran concurrently; both passed on
+retry, logged as flaky infrastructure. T-020 remains in the other session's PR #22.
+
 ## Session 2026-11-16 23:18
 
 ### Changes

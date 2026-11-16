@@ -279,6 +279,29 @@ Format: dated entries, newest last.
 - **Impact:** one small persistence helper and one status row. No new dependency, no schema or
   backup-behaviour change, and no change to the locked PWA stack or the test matrix.
 
+## D-035 — T-031 snapshot decisions (2026-11-16)
+
+- **Context:** T-031 writes OPFS snapshots with a sidecar manifest, keeps the newest 10 and skips
+  a snapshot when the database is unchanged. PLAN.md §7.3 fixes the filename, sidecar fields and
+  rotation count; §11 locks WebCrypto SHA-256. `src/core/backup/` is still empty and the Vitest
+  `Db` double has no OPFS. A decision-advisor surfaced two viable options per open choice.
+- **Autonomous decision (T-031), taking the advisor's leans:**
+  - **A1** — a small `SnapshotStorage` interface (list/read/write/remove) with an OPFS adapter.
+    Unit tests inject an in-memory fake; no new dependency and the locked `Db` RPC surface is
+    untouched.
+  - **B1** — dedupe by comparing the WebCrypto SHA-256 of `exportBytes()` with the checksum in
+    existing sidecars; no separate index file to keep in sync.
+  - **C1** — sort the time-prefixed `YYYYMMDD-HHmmss_reason` names, keep the newest 10 and delete
+    each older `.sqlite` together with its `.json` sidecar. A numeric suffix keeps names unique
+    within one second.
+  - **D1** — a small dev harness route `/__snapshots` with "change data" and "snapshot" controls
+    and a visible count for the spec. Like `/__db-spike` (D-025) it is a test route under the
+    router, not gated by `import.meta.env.DEV`, so the production-preview E2E can reach it.
+- **Why:** one checksum source (the sidecar), deterministic rotation and a real-browser proof,
+  with no schema, backup-spec, migration or Locked Decision change.
+- **Impact:** new `src/core/backup/*`, one dev harness and route, an E2E spec plus unit tests;
+  no version bump.
+
 ## D-034 — T-030 audit writer decisions (2026-11-16)
 
 - **Context:** T-030 adds void writes, undo and the History plumbing on top of T-015's audit
