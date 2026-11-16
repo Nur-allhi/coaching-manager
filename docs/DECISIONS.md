@@ -259,6 +259,23 @@ Format: dated entries, newest last.
 
 ---
 
+## D-031 — Autonomous overnight build mode (2026-11-16)
+
+- **Context:** the human wants the app built overnight without per-step confirmation: the
+  agent decides on its own, retries on failure, and merges after green CI.
+- **Decision (human, Option 1 full autonomy):** add `docs/AUTONOMY.md` defining autonomous mode
+  (`AUTONOMOUS_MODE=true`, set only on scheduled runs). The agent follows §1.1 (two options and
+  a lean) then takes its own lean and records it in `docs/DECISIONS.md`; auto-merge into `dev`
+  only after both CI checks are green, branch up to date and both reviews PASS; retry a failed
+  step up to three times then log a BUG and move on.
+- **Hard safety line:** no `main` merge, release, version tag, branch delete, force-push,
+  credential/permission/protection change, browser-target change, or Locked Decision change.
+  Those tickets are skipped with a BUG. GitHub auto-merge is enabled on `dev` only.
+- **Why:** removes the human from the loop while keeping every irreversible or shared-state
+  action human-only. Normal interactive sessions keep the REPO_RULES §1 gates.
+- **Impact:** new governing doc, two rule links, AGENTS/CLAUDE wiring, a nightly scheduled task
+  in a fresh worktree with goal mode. No code changes.
+
 ## D-030 — Subagents act end-to-end without per-action prompts (2026-11-16)
 
 - **Context:** after the subagents were installed, routine in-scope actions (`git branch`,

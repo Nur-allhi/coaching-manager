@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-16 22:27
+
+### Changes
+
+- `docs/AUTONOMY.md` — added: autonomous overnight build mode (decide-and-record, retries,
+  auto-merge to dev after green CI and passing reviews; main, releases and locked decisions
+  stay human-only).
+- `docs/REPO_RULES.md` (§1/§10), `AGENTS.md`, `CLAUDE.md` — linked AUTONOMY.md as the exception
+  to the confirmation protocol and bug protocol.
+- `docs/DECISIONS.md` — added D-031.
+- `CHANGELOG.md`, `docs/PROGRESS.md` — housekeeping updates.
+- GitHub — enabled auto-merge on `dev`.
+- OpenChamber — created scheduled task 'Coaching Manager — autonomous nightly build' (daily
+  22:00 Asia/Dhaka, goal mode 400k tokens, fresh worktree from `dev`).
+- Branch `docs/autonomous-mode`.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus`
+- `code-reviewer`
+- `senior-backend` (or `opencode`)
+
+### Status
+
+in-progress — on branch `docs/autonomous-mode`; docs not committed or merged yet.
+
 ## Session 2026-11-16 21:34
 
 ### Changes
