@@ -28,6 +28,22 @@ test('twelve changes leave ten snapshots with complete sidecars', async ({ page 
   expect(external).toEqual([])
 })
 
+test('the harness has no horizontal overflow at phone width (BUG-003)', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 })
+  await page.goto('/__snapshots')
+  await expect(page.getByTestId('snapshot-status')).toHaveText('ready')
+
+  // Take a snapshot so the last-sidecar element holds a long, unbroken JSON string.
+  await page.getByTestId('change-data').click()
+  await page.getByTestId('take-snapshot').click()
+  await expect(page.getByTestId('snapshot-count')).toHaveText('1')
+
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  )
+  expect(overflow).toBe(0)
+})
+
 test('an unchanged database does not create another snapshot', async ({ page }) => {
   const external = collectExternalRequests(page)
   await page.goto('/__snapshots')

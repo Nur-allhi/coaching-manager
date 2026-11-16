@@ -84,14 +84,14 @@ a resolved-bug history.
 
 ## BUG-003: Dev snapshot harness overflows horizontally on narrow viewports
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-16 (during: T-031 e2e verification at 375px viewport)
-- **Location:** `src/app/dev/SnapshotHarness.tsx:84` (the `<p data-testid="last-sidecar">` element renders an unsplit JSON string)
-- **Description:** At a 375px viewport the dev-only `/__snapshots` verification harness overflows horizontally because the last-sidecar JSON is one long unbroken string. Expected: no horizontal scroll at phone width. Observed: horizontal overflow at 375px. This is a dev/test route (D-025 precedent), not product UI; the T-031 acceptance specs pass on Chromium and Firefox. Not fixed here because the fix approach was not confirmed.
-- **Root Cause:** unknown until diagnosed
-- **Fix Approach:**
-- **Resolved:**
+- **Location:** `src/app/dev/SnapshotHarness.tsx` (the `<p data-testid="last-sidecar">` element renders an unsplit JSON string)
+- **Description:** At a 375px viewport the dev-only `/__snapshots` verification harness overflows horizontally because the last-sidecar JSON is one long unbroken string. Expected: no horizontal scroll at phone width. Observed: horizontal overflow at 375px (1075px). Dev/test route (D-025 precedent), not product UI.
+- **Root Cause:** the sidecar is rendered via `JSON.stringify` with no wrapping rule. The default `overflow-wrap: normal` never breaks an unbroken token, so the long JSON string forced the document wider than the viewport.
+- **Fix Approach:** add Tailwind `wrap-anywhere` (`overflow-wrap: anywhere`) to the sidecar element; add a regression spec that takes a snapshot at 375px and asserts zero document overflow. Confirmed by the human.
+- **Resolved:** 2026-11-17 — fix branch `fix/bug-003-harness-overflow`
 
 ## In progress
 

@@ -24,6 +24,30 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 00:59
+
+### Changes
+
+- `src/app/dev/SnapshotHarness.tsx` — added Tailwind `wrap-anywhere` to the sidecar `<p>` so the
+  JSON string wraps at phone width (BUG-003 fix).
+- `e2e/specs/snapshots.spec.ts` — regression spec: takes a snapshot at 375px, asserts zero
+  document overflow.
+- `docs/BUGS.md` — BUG-003 marked fixed with root cause.
+- `CHANGELOG.md` — Fixed entry added.
+- Branch `fix/bug-003-harness-overflow`. Regression test failed before the fix (1075px overflow)
+  and passed after (0); `pnpm check` green, `pnpm e2e` 80 passed.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `gitnexus`
+- `playwright`
+
+### Status
+
+in-progress — BUG-003 fixed and verified on branch `fix/bug-003-harness-overflow`; not committed
+or merged yet.
+
 ## Session 2026-11-17 00:41
 
 ### Changes

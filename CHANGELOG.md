@@ -12,6 +12,10 @@ human-readable subset.
 
 ## [Unreleased]
 
+### Fixed
+
+- The dev snapshot harness no longer overflows horizontally at 375px; the sidecar JSON now wraps (BUG-003).
+
 ### Added
 
 - A single-tab lock: a second tab shows an "already open in another tab" screen before any Worker or database client is created, and the lock releases when the tab closes (T-018, D-037).
