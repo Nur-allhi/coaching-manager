@@ -53,9 +53,9 @@ in place. `docs/ARCHITECTURE.md`, `CONVENTIONS.md`, `DATA-MODEL.md`, `UI-GUIDELI
     flows.
   - Agentation's dev-only toolbar in `src/app/dev/DevFeedback.tsx`, lazily imported behind
     `import.meta.env.DEV` so it is absent from the production bundle.
-- Documentation set: `AGENTS.md` at the root, and `docs/ARCHITECTURE.md`,
-  `docs/CONVENTIONS.md`, `docs/DATA-MODEL.md`, `docs/DEVELOPMENT.md`, `docs/TESTING.md`,
-  `docs/UI-GUIDELINES.md` alongside `PLAN.md`, `PROGRESS.md` and `DECISIONS.md`.
+- Documentation set: the eleven governing documents described in `docs/DECISIONS.md` D-014,
+  plus `AGENTS.md`, `CHANGELOG.md` and `session_log.md` at the root, alongside `PLAN.md`,
+  `PROGRESS.md` and `DECISIONS.md`.
 
 **Tests added**
 
