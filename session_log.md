@@ -24,6 +24,30 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 00:41
+
+### Changes
+
+- `src/app/single-tab.ts` — Web Locks owner acquisition with dev bypass (T-018, single-tab lock).
+- `src/app/LockScreen.tsx` — bilingual lock screen shown to non-owner tabs.
+- `en`/`bn` locale files — lock screen strings.
+- `src/main.tsx` — top-level await to acquire the tab lock before render.
+- `src/app/__tests__/single-tab.test.ts` — four unit tests.
+- `e2e/specs/single-tab.spec.ts` — three E2E specs.
+- `docs/DECISIONS.md` (D-037), `docs/PROGRESS.md`, `CHANGELOG.md` — documentation updates.
+- Branch `feature/single-tab-lock` for T-018. E2E spec was written by the primary agent: an
+  `e2e-tester` subagent flagged a prompt injection in its tool output and did not write its file.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager` (subagent roles)
+- `gitnexus`, `playwright`
+
+### Status
+
+in-progress — T-018 implemented on branch `feature/single-tab-lock`; not committed or merged yet.
+
 ## Session 2026-11-16 23:55
 
 ### Changes
