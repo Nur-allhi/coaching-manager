@@ -290,11 +290,56 @@ rollback on error; `pnpm test` runs in under 5 seconds.
   is fine for v1's small schema; FTS5 and later migrations need a check in P6-4.
 - Safari on macOS remains unverified (D-023).
 
-**Next:** T-014, the core helpers (UUIDv7, clock, money, dates, repository helpers).
+**Next:** T-014, the core helpers (UUIDv7, clock, money, dates). Repository helpers are T-015.
 
-### P0-4 — Migration runner implemented; awaiting merge
+### P0-4 — Migration runner — **Done**, merged into `dev` as PR #6
 
-### P0-5 — Core helpers (uuid, clock, money, dates, repository helpers) — **Not started**
+### T-014 / P0-5 — Core helpers (uuid, clock, money, dates) — **Done** (pending merge into `dev`)
+
+**Acceptance:** the four T-014 acceptance lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                | Result                                                           |
+| -------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `applyPercentDiscount(3333, 15)` is `500`, `(1000, 7)` is `70` | met, with tie, boundary and range tests                          |
+| No money helper accepts or returns a non-integer               | met — `assertMinor` on every entry point; integers only          |
+| The clock is injectable; no test depends on wall-clock time    | met — `Clock` type with `systemClock` and `fixedClock`           |
+| Bangla and English formatting both produce correct output      | met — Latin and Bengali digits, South Asian grouping, round trip |
+
+**What changed**
+
+- `src/core/db/uuid.ts` — one `newId()` generator using the `uuidv7` package named in PLAN §3.
+  The unused `uuid` package was removed from `package.json` and the lockfile.
+- `src/core/dates/clock.ts` — the `Clock` seam.
+- `src/core/dates/dates.ts` — Dhaka date/month helpers. Instant maths uses explicit UTC
+  arithmetic because Dhaka is a fixed UTC+6, not the CI machine's local timezone.
+- `src/core/money/money.ts` — integer-paisa arithmetic, percent and fixed discounts, South
+  Asian digit grouping, Bengali-digit rendering, and a parser that accepts either script.
+- 30 new tests across three files.
+
+**A specification bug caught by the tests:** the first implementation treated
+`applyPercentDiscount` as the _net_ amount and returned `2833`; T-014 specifies `500`, the
+discount itself. The helper now returns the discount, and `netAmount` does the subtraction.
+The first formatter also used `Intl.NumberFormat('en-BD')`, which groups in threes
+(`150,000`) rather than the South Asian lakh grouping (`1,50,000`) used for taka.
+
+**Results**
+
+| Check         | Result                              |
+| ------------- | ----------------------------------- |
+| `pnpm test`   | 52 passed across 9 files, in 3.68 s |
+| `pnpm check`  | green                               |
+| `pnpm build`  | green                               |
+| `pnpm budget` | 69.7 KB of a 300 KB budget          |
+
+**Known gaps**
+
+- Repository helpers were pulled out of this branch: `docs/TICKETS.md` T-015 owns them and
+  adds audit rows, which are not implemented here.
+- Safari on macOS remains unverified (D-023; human accepted the gap on 2026-11-16).
+
+**Next:** T-015, repository helpers with version checks, soft delete and audit rows.
+
+### P0-5 — Core helpers (uuid, clock, money, dates) — **Done** pending merge; audit rows in T-015
 
 ### P0-6 — App shell, registry, router, error boundary, single-tab lock, PWA, storage
 

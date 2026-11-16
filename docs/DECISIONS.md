@@ -256,6 +256,9 @@ Format: dated entries, newest last.
 - **Still open:** real Safari on macOS is **not verified**. This Linux environment cannot
   stand in for it. P0-2's cross-browser acceptance is only partly met; a macOS run is needed
   before the phase can be declared complete.
+- **The human's call (2026-11-16):** accept the documented gap and keep going. The gap stays
+  open in `docs/PROGRESS.md` and must be verified on a Mac before P0-2 is formally closed;
+  it does not block P0-3 onward.
 - **Local environment fix, not a repository change:** the WebKit bundle needed `libicu74`
   and `libjpeg-turbo8` extracted from Ubuntu 24.04 `.deb` files into
   `~/.local/lib/webkit-deps`, and its bundled `MiniBrowser` wrapper needed that path appended

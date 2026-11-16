@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- Core helpers: UUIDv7 ids, an injectable clock, Dhaka date and month helpers, and
+  integer-paisa money arithmetic with percent discounts, South Asian grouping and Bengali
+  digits. The unused `uuid` dependency was replaced by `uuidv7`.
 - An append-only migration runner with `app_meta.schema_version`, a pre-migration snapshot
   hook, rollback on failure, and seven module-owned SQL migrations covering the full schema.
 - A `better-sqlite3` implementation of the `Db` contract and a shared contract suite, so
