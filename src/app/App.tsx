@@ -1,10 +1,13 @@
 import { lazy, Suspense } from 'react'
+import { DbSpikeHarness } from '@/app/dev/DbSpikeHarness'
 
 /**
  * Application root.
  *
  * P0-1 only renders the scaffold landing screen. The real shell, router,
  * registry, error boundary and i18n wiring land in P0-6.
+ *
+ * `/__db-spike` is a temporary harness for P0-2 and is removed in P0-3.
  */
 
 // Dev-only visual feedback toolbar. `import.meta.env.DEV` is statically false in a
@@ -14,6 +17,8 @@ const DevFeedback = import.meta.env.DEV
   : null
 
 export function App() {
+  if (window.location.pathname === '/__db-spike') return <DbSpikeHarness />
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-6 p-6">
       <header className="space-y-2">

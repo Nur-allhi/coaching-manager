@@ -89,18 +89,24 @@ No file in `e2e/` may exceed 300 LOC.
 
 ## 6. Coverage matrix
 
-| Journey                   | Source           | Spec                              | Tag      |
-| ------------------------- | ---------------- | --------------------------------- | -------- |
-| W1 Collect a fee          | `PRD.md` §5      | `payments.spec.ts`                | `@smoke` |
-| W2 Admit a student        | `PRD.md` §5      | `students.spec.ts`                | `@smoke` |
-| W3 Mark attendance        | `PRD.md` §5      | `attendance.spec.ts`              | `@smoke` |
-| W4 Record an exam         | `PRD.md` §5      | `marks.spec.ts`                   | `@smoke` |
-| W5 Recover from a mistake | `PRD.md` §5      | `undo.spec.ts`, `restore.spec.ts` | `@smoke` |
-| W6 Take the data away     | `PRD.md` §5      | `file-transfer.spec.ts`           | `@smoke` |
-| Offline guarantee         | `SECURITY.md` §9 | `smoke.spec.ts`                   | `@smoke` |
-| The whole journey         | `PLAN.md` P7-1   | `full-journey.spec.ts`            | —        |
+| Journey                   | Source             | Spec                              | Tag      |
+| ------------------------- | ------------------ | --------------------------------- | -------- |
+| W1 Collect a fee          | `PRD.md` §5        | `payments.spec.ts`                | `@smoke` |
+| W2 Admit a student        | `PRD.md` §5        | `students.spec.ts`                | `@smoke` |
+| W3 Mark attendance        | `PRD.md` §5        | `attendance.spec.ts`              | `@smoke` |
+| W4 Record an exam         | `PRD.md` §5        | `marks.spec.ts`                   | `@smoke` |
+| W5 Recover from a mistake | `PRD.md` §5        | `undo.spec.ts`, `restore.spec.ts` | `@smoke` |
+| W6 Take the data away     | `PRD.md` §5        | `file-transfer.spec.ts`           | `@smoke` |
+| Offline guarantee         | `SECURITY.md` §9   | `smoke.spec.ts`                   | `@smoke` |
+| SQLite persistence        | `TICKETS.md` T-010 | `sqlite-persistence.spec.ts`      | —        |
+| The whole journey         | `PLAN.md` P7-1     | `full-journey.spec.ts`            | —        |
 
 Every UI ticket in [`TICKETS.md`](TICKETS.md) lists at least one spec in its **E2E** field.
+
+The sqlite specs run on Chromium and Firefox. They are skipped on the Linux WebKit build
+because it has no working OPFS — a documented platform gap in
+[`DECISIONS.md`](DECISIONS.md) D-023, not a hidden failure. The WebKit smoke specs still run.
+Safari on macOS remains to be verified.
 
 The smoke suite runs on every pull request into `dev`. The full suite runs before any
 `dev` → `main` merge.

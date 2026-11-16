@@ -236,6 +236,36 @@ Format: dated entries, newest last.
 
 ---
 
+## 2026-11-16 — P0-2 findings
+
+### D-023 sqlite-wasm worker spike: what works and what is still open
+
+- **Decision:** Keep the locked choice from PLAN §3 — sqlite-wasm in a dedicated Worker, with
+  the `opfs-sahpool` VFS. The spike confirmed that **no COOP/COEP headers are needed**: the
+  app was served by plain `vite preview` with neither header, and both browsers worked.
+- **Verified in Chromium:** create a table, insert a row, reload the page, the row survives;
+  `exportBytes()` then `importBytes()` round-trips the same row; zero console errors; zero
+  requests to any host other than the app's origin.
+- **Verified in Firefox:** the same three checks pass.
+- **Finding — WebKit on Linux has no working OPFS.** In the Playwright WebKit build used
+  here, `navigator.storage.getDirectory()` throws
+  `UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)`
+  and `FileSystemFileHandle.prototype.createSyncAccessHandle` is `undefined`. The sqlite
+  specs are therefore skipped on WebKit with an explicit reason pointing at this entry; the
+  WebKit smoke specs still run and pass.
+- **Still open:** real Safari on macOS is **not verified**. This Linux environment cannot
+  stand in for it. P0-2's cross-browser acceptance is only partly met; a macOS run is needed
+  before the phase can be declared complete.
+- **Local environment fix, not a repository change:** the WebKit bundle needed `libicu74`
+  and `libjpeg-turbo8` extracted from Ubuntu 24.04 `.deb` files into
+  `~/.local/lib/webkit-deps`, and its bundled `MiniBrowser` wrapper needed that path appended
+  to its `LD_LIBRARY_PATH`. Nothing in the repo depends on this; CI uses its own runner.
+- **Transient instability:** one full parallel run saw a WebKit worker exit with SIGSEGV. A
+  rerun passed. Treat a single WebKit crash under load as flaky infrastructure here, not as
+  a product defect, but do not hide repeats of it.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

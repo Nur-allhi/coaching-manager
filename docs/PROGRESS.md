@@ -147,7 +147,46 @@ go to `docs/DECISIONS.md`.
 **Next:** wait for the human's confirmation before squash-merging the T-002 PR into `dev`.
 Then start T-010, the sqlite-wasm worker spike.
 
-### P0-2 — sqlite-wasm worker spike — **Not started**
+### T-010 / P0-2 — sqlite-wasm worker spike — **Done in Chromium and Firefox; Safari open**
+
+**Acceptance:** create a table, insert, reload, data persists; `exportBytes` and
+`importBytes` round-trip; passes in Chrome, Firefox and Safari; findings in
+`docs/DECISIONS.md`.
+
+**What changed**
+
+- `src/core/db/worker.ts` — the Worker owns the whole SQLite connection: sqlite-wasm with
+  the `opfs-sahpool` VFS, `PRAGMA foreign_keys = ON`, and a Comlink API exposing `query`,
+  `run`, `exportBytes` and `importBytes`. `tx` and repositories are P0-3.
+- `src/core/db/client.ts` — the main-thread half: one Worker, wrapped with Comlink.
+- `src/app/dev/DbSpikeHarness.tsx` — a small temporary harness at `/__db-spike`, removed in
+  P0-3. It makes the acceptance line observable in a real browser.
+- `e2e/sqlite-persistence.spec.ts` — three specs: persistence across reload, byte
+  round-trip, and zero console errors / zero external requests.
+- `playwright.config.ts` — added `firefox` and `webkit` projects.
+
+**Results**
+
+| Browser        | Persistence                       | Byte round-trip | Console/network clean |
+| -------------- | --------------------------------- | --------------- | --------------------- |
+| Chromium       | pass                              | pass            | pass                  |
+| Firefox        | pass                              | pass            | pass                  |
+| WebKit (Linux) | skipped — OPFS unavailable, D-023 | skipped         | skipped               |
+
+`pnpm e2e`: **12 passed, 3 skipped**. `pnpm check` green.
+
+**Known gaps**
+
+- **Safari on macOS is not verified.** The Linux WebKit build has no working OPFS (D-023).
+  P0-2's cross-browser acceptance is only partly met and the phase cannot be declared
+  complete until a macOS run happens.
+- No COOP/COEP headers were needed, which confirms the locked VFS choice.
+- The harness calls the spike client directly; it is a test tool, not product UI, and is
+  deleted in P0-3.
+- One WebKit worker crashed with SIGSEGV in a single parallel run; a rerun passed.
+
+**Next:** T-011, the full `Db` client with a serialized queue and `tx`, then T-012, the
+`better-sqlite3` test double. Ask the human for a macOS runner before closing P0-2.
 
 ### P0-3 — `Db` client + `better-sqlite3` test double — **Not started**
 
