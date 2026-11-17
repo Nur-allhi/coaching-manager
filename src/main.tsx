@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App } from '@/app/App'
 import { LockScreen } from '@/app/LockScreen'
+import { RecoveryScreen } from '@/app/RecoveryScreen'
+import { bootstrapApp } from '@/app/bootstrap'
 import { acquireDbOwnerLock } from '@/app/single-tab'
 import { requestPersistenceOnFirstRun } from '@/app/persistent-storage'
 import { initI18n } from '@/core/i18n'
@@ -19,18 +21,24 @@ initI18n()
 // lock screen and never constructs the router, Worker or Db client, so it makes no DB call.
 const ownsDb = await acquireDbOwnerLock()
 
-if (ownsDb) void requestPersistenceOnFirstRun()
+// T-040: run migrations at startup (after a pre-migration snapshot) before any real screen reads
+// a table. A failure shows a recovery screen instead of a broken app (PLAN §7.4).
+const boot = ownsDb ? await bootstrapApp() : { ok: true }
+
+if (ownsDb && boot.ok) void requestPersistenceOnFirstRun()
 
 const queryClient = new QueryClient()
 
 createRoot(container).render(
   <StrictMode>
-    {ownsDb ? (
+    {!ownsDb ? (
+      <LockScreen />
+    ) : !boot.ok ? (
+      <RecoveryScreen message={boot.error ?? 'unknown error'} />
+    ) : (
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
-    ) : (
-      <LockScreen />
     )}
   </StrictMode>,
 )

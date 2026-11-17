@@ -8,6 +8,11 @@ export const en = {
     shell: {
       openNavigation: 'Open navigation menu',
     },
+    recovery: {
+      title: 'Could not start the app',
+      description: 'The database could not be prepared. Your data is safe — please try again.',
+      retry: 'Try again',
+    },
     singleTab: {
       title: 'Already open in another tab',
       description:
@@ -78,6 +83,26 @@ export const en = {
       },
     },
     settings: {
+      title: 'Settings',
+      profile: 'Centre profile',
+      centreName: 'Centre name',
+      centreAddress: 'Address',
+      centrePhone: 'Phone',
+      centreLogo: 'Logo (data URI)',
+      currency: 'Currency',
+      receiptFormat: 'Receipt format',
+      gradingScale: 'Grading scale',
+      grade: 'Grade',
+      minMarks: 'Min',
+      maxMarks: 'Max',
+      points: 'Points',
+      save: 'Save',
+      saving: 'Saving…',
+      saved: 'Saved',
+      saveFailed: 'Could not save — nothing was changed.',
+      backupStatus: 'Backup status',
+      lastExport: 'Last file export',
+      snapshotCount: 'Snapshots',
       storage: 'Storage',
       persistence: 'Persistent storage',
       persistenceChecking: 'Checking…',

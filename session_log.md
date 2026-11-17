@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 13:50
+
+### Changes
+
+- `src/modules/settings/defaults.ts`, `src/modules/settings/repository.ts` — Zod-validated typed
+  settings over the settings table with audited writes (T-040, first P2 ticket).
+- `src/modules/settings/SettingsScreen.tsx` — centre profile, currency, receipt format, fixed
+  7-row grading scale with TAD defaults, language toggle, backup/storage status.
+- `src/app/bootstrap.ts`, `src/app/RecoveryScreen.tsx` — startup migration with a real
+  pre-migration snapshot (skipped on first install) and a recovery screen; closes a PLAN §7.4 gap.
+- `en`/`bn` i18n keys added; six repository unit tests; `e2e/specs/settings.spec.ts` (3 tests).
+- `docs/DECISIONS.md` (D-041), `docs/PROGRESS.md`, `CHANGELOG.md` — documentation updates.
+- Branch `feature/settings-module`. All E2E green across both halves. No BUG ids touched.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`, `senior-frontend`
+- `decision-advisor`, `branch-manager`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-040 implemented on branch `feature/settings-module`; not committed or merged yet.
+
 ## Session 2026-11-17 13:15
 
 ### Changes

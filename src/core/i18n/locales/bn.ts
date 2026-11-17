@@ -13,6 +13,11 @@ export const bn: { translation: Translation } = {
     shell: {
       openNavigation: 'নেভিগেশন মেনু খুলুন',
     },
+    recovery: {
+      title: 'অ্যাপটি চালু করা যায়নি',
+      description: 'ডেটাবেস প্রস্তুত করা যায়নি। আপনার ডেটা নিরাপদ — আবার চেষ্টা করুন।',
+      retry: 'আবার চেষ্টা করুন',
+    },
     singleTab: {
       title: 'অন্য ট্যাবে ইতিমধ্যে খোলা আছে',
       description:
@@ -83,6 +88,26 @@ export const bn: { translation: Translation } = {
       },
     },
     settings: {
+      title: 'সেটিংস',
+      profile: 'কেন্দ্রের প্রোফাইল',
+      centreName: 'কেন্দ্রের নাম',
+      centreAddress: 'ঠিকানা',
+      centrePhone: 'ফোন',
+      centreLogo: 'লোগো (ডেটা URI)',
+      currency: 'মুদ্রা',
+      receiptFormat: 'রিসিট ফরম্যাট',
+      gradingScale: 'গ্রেডিং স্কেল',
+      grade: 'গ্রেড',
+      minMarks: 'সর্বনিম্ন',
+      maxMarks: 'সর্বোচ্চ',
+      points: 'পয়েন্ট',
+      save: 'সংরক্ষণ',
+      saving: 'সংরক্ষণ হচ্ছে…',
+      saved: 'সংরক্ষিত',
+      saveFailed: 'সংরক্ষণ করা যায়নি — কিছু পরিবর্তন হয়নি।',
+      backupStatus: 'ব্যাকআপ স্থিতি',
+      lastExport: 'শেষ ফাইল রপ্তানি',
+      snapshotCount: 'স্ন্যাপশট',
       storage: 'সংরক্ষণ',
       persistence: 'স্থায়ী সংরক্ষণ',
       persistenceChecking: 'পরীক্ষা করা হচ্ছে…',

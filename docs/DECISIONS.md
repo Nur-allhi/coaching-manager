@@ -259,6 +259,23 @@ Format: dated entries, newest last.
 
 ---
 
+## D-041 — T-040 Settings module design (2026-11-17)
+
+- **Context:** T-040 is the first P2 ticket. The `settings` table (key/value/updated_at) exists
+  from migrations but is unused. TAD §5.7 puts an editable grading scale in `settings` with a
+  fixed default; TAD §11 locks TanStack Query + the shared optimistic mutation helper.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — a typed settings
+  repository over the `settings` table with Zod validation at the boundary. B1 — TanStack Query
+  `useQuery` to load + `useOptimisticMutation` to save (rollback on error). C2 — the grading
+  scale is a fixed set of seven editable rows (label, min, max, points) matching the TAD default,
+  stored as one JSON value under `grading_scale`; no add/remove of bands. D1 — the real Settings
+  screen + `settings.spec.ts` changing the centre name and reloading.
+- **Why:** closest fit to TAD's module ownership and locked state model; the fixed seven bands
+  match the documented default exactly and avoid overlap-validation complexity.
+- **Impact:** new `src/modules/settings/repository.ts` + defaults, real `Screen.tsx`, i18n keys in
+  en+bn, `settings.spec.ts`. No new dependency. Writes go through audited repo helpers and the
+  shared mutation helper.
+
 ## D-040 — T-035 Backups page and optimistic mutation helper (2026-11-17)
 
 - **Context:** T-035 is the last P1 ticket: a real Backups page plus one shared optimistic
