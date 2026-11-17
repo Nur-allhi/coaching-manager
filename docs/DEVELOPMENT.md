@@ -199,6 +199,14 @@ pnpm e2e -- --headed                        # watch it run
 function, so a given `--seed` yields byte-identical rows everywhere. The browser database is
 seeded through the test-only `/__seed-fixture` route.
 
+## 8.1 Performance budgets
+
+`pnpm perf` builds a migrated SQLite database with 5,000 students, 60,000 payments and 200,000
+marks and times the shipped read functions. It fails with a non-zero exit when the student
+list/search exceeds 100 ms or any report exceeds 2 s. It is intentionally **not** part of
+`pnpm check`: timing assertions do not belong in CI's unit job. The initial-JavaScript budget is
+gated separately by `pnpm budget` (inside `pnpm check`).
+
 ## 9. Common tasks
 
 **Add a UI component**

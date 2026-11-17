@@ -1679,6 +1679,49 @@ service-side `audit.read` gate was taken as the default required by SECURITY §4
 
 **Next:** T-083, the performance pass.
 
+### T-083 / P6-4 — Performance pass — **Done** (pending merge)
+
+**Acceptance:** all three T-083 lines from `docs/TICKETS.md`, measured by `pnpm perf`.
+
+| Acceptance line                           | Result                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| Student list and search under 100 ms      | met — 8.6 ms / 1.9 ms at 5,000 students                                   |
+| Every report under 2 s at 60,000 payments | met — slowest 401.4 ms (result sheets) across nine report/dashboard reads |
+| Initial JavaScript under 300 KB gzipped   | met — 281.0 KB, gated by `pnpm budget` inside `pnpm check`                |
+
+**What changed**
+
+- `scripts/seed-data.ts` — deterministic `generatePayments` and `generateMarks` alongside students
+  (D-063 B1); marks produce one unique roster per exam so the junction primary key holds.
+- `scripts/perf.budget.ts` + `vitest.perf.config.ts` + `pnpm perf` — a standalone harness that builds
+  a real migrated SQLite DB with 5,000 students / 60,000 payments / 200,000 marks / 40 exams and
+  times the shipped read functions. Excluded from `pnpm check` so CI is not pinned to timings.
+- `src/modules/payments/payments-repository.ts` — `duesByStudent` now aggregates allocations once
+  and LEFT JOINs charges instead of re-scanning every allocation per charge. This was the only
+  measured miss: 46,396 ms → 57.2 ms. No index migration was needed (D-063 C1).
+- `tsconfig.node.json` excludes the perf harness (browser-source imports need the app resolver);
+  D-063, CHANGELOG, session log and DEVELOPMENT.md updated.
+
+**Decisions:** D-063 (Autonomous decision for T-083: A1 standalone perf command outside `pnpm check`,
+B1 deterministic shared generators, C1 measure-then-fix, D1 a non-zero-exit budget gate).
+
+**Results**
+
+| Check        | Result                                                         |
+| ------------ | -------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 281.0 KB of 300 KB                           |
+| `pnpm perf`  | 2 passed — list 8.6 ms, search 1.9 ms, slowest report 401.4 ms |
+
+**Known gaps**
+
+- The harness seeds a flat batch/class structure; it measures read paths, not import or UI render
+  time. UI virtualization at 5,000 rows is covered by the student module's own benchmark.
+- The 2 s gate covers report loaders plus the admin report and dashboard extras; it does not
+  include browser rendering of 200,000 result rows (the screen paginates/filters by date).
+- BUG-006/007/008/012/013 remain open and deferred.
+
+**Next:** T-084, the accessibility and Bangla review.
+
 ## P7 Release
 
 ### T-090 / P7-1 — End-to-end scenarios — **Done** (pending merge)

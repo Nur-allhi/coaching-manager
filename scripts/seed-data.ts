@@ -78,3 +78,62 @@ export function generateStudents(count: number, seed = 1, year = 2026): SeedStud
   }
   return rows
 }
+
+/** Deterministic payment rows for the T-083 budget run, keyed to generated student numbers. */
+export interface SeedPayment {
+  id: string
+  student_no: string
+  receipt_no: string
+  paid_on: string
+  amount_minor: number
+  method: 'cash' | 'bank' | 'mobile'
+}
+
+export function generatePayments(
+  count: number,
+  seed = 2,
+  studentCount = 5000,
+  year = 2026,
+): SeedPayment[] {
+  const random = prng(seed)
+  const methods = ['cash', 'bank', 'mobile'] as const
+  return Array.from({ length: count }, (_, index) => {
+    const month = 1 + Math.floor(random() * 12)
+    const day = 1 + Math.floor(random() * 28)
+    return {
+      id: `p-${String(index + 1).padStart(6, '0')}`,
+      student_no: `${year}-${String((index % studentCount) + 1).padStart(4, '0')}`,
+      receipt_no: `R-${String(index + 1).padStart(6, '0')}`,
+      paid_on: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+      amount_minor: 1000 + Math.floor(random() * 20_000),
+      method: methods[Math.floor(random() * methods.length)] as SeedPayment['method'],
+    }
+  })
+}
+
+/** Deterministic exam-result rows: `examCount` exams x `studentCount` students = `count`. */
+export interface SeedMark {
+  exam_index: number
+  student_no: string
+  marks: number
+  absent: number
+  updated_at: number
+}
+
+export function generateMarks(
+  count: number,
+  seed = 3,
+  studentCount = 5000,
+  examCount = 40,
+  year = 2026,
+): SeedMark[] {
+  const random = prng(seed)
+  return Array.from({ length: count }, (_, index) => ({
+    // One full roster per exam: (exam, student) pairs must be unique for the junction PK.
+    exam_index: Math.floor(index / studentCount) % examCount,
+    student_no: `${year}-${String((index % studentCount) + 1).padStart(4, '0')}`,
+    marks: random() < 0.02 ? 0 : Math.round(random() * 100),
+    absent: random() < 0.02 ? 1 : 0,
+    updated_at: Date.UTC(year, 0, 1) + index,
+  }))
+}
