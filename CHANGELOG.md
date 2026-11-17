@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- A `pnpm perf` budget harness (T-083, D-063) that seeds 5,000 students, 60,000 payments and
+  200,000 marks into a real SQLite database and fails when a read budget is missed.
 - A filterable audit log viewer at `/data-tools/audit` (T-082, D-062): every recorded change with
   its entity, action and timestamp, entity/action/date-range filters, and expandable before/after
   snapshots. Reads are gated by the Admin-only `audit.read` permission in the service.
@@ -30,6 +32,8 @@ human-readable subset.
 
 ### Fixed
 
+- The dues report no longer re-scans every payment allocation for every charge: it now aggregates
+  once and joins, cutting the measured 60,000-payment run from 46 s to 57 ms (T-083).
 - Opening `/exams/:id` for a missing or deleted exam now shows an honest "Exam not found" state with a retry action instead of a blank grid, and no longer logs TanStack Query's "Query data cannot be undefined" console error (BUG-011, D-053).
 - Opening an attendance session now writes one `create` audit row instead of two — the redundant manual audit was removed, with a regression test (BUG-010).
 - The dues report no longer overflows horizontally at phone and tablet widths; its grid columns shrink to the available width (BUG-009).

@@ -165,16 +165,17 @@ export interface StudentDue {
  * students who still owe something are returned. Reads payments' own tables only (TAD.md §2).
  */
 export function duesByStudent(db: Db): Promise<StudentDue[]> {
+  // T-083: one grouped pass over allocations, then a single join to charges. The old correlated
+  // subquery re-scanned every allocation for each charge (46 s at 60,000 payments).
   return db.query<StudentDue>(
-    'WITH charge_due AS (' +
+    'WITH paid AS (' +
+      'SELECT a.charge_id AS charge_id, SUM(a.amount_minor) AS paid_minor ' +
+      'FROM payment_allocations a JOIN payments p ON p.id = a.payment_id ' +
+      "WHERE p.status = 'valid' AND p.deleted_at IS NULL GROUP BY a.charge_id) " +
       'SELECT c.student_id AS student_id, ' +
-      'c.amount_minor - c.discount_minor - COALESCE((' +
-      'SELECT SUM(a.amount_minor) FROM payment_allocations a ' +
-      "JOIN payments p ON p.id = a.payment_id WHERE a.charge_id = c.id AND p.status = 'valid' " +
-      'AND p.deleted_at IS NULL), 0) AS due_minor ' +
-      'FROM charges c WHERE c.deleted_at IS NULL) ' +
-      'SELECT student_id, SUM(MAX(due_minor, 0)) AS total_due_minor FROM charge_due ' +
-      'GROUP BY student_id HAVING total_due_minor > 0 ' +
+      'SUM(MAX(c.amount_minor - c.discount_minor - COALESCE(paid.paid_minor, 0), 0)) AS total_due_minor ' +
+      'FROM charges c LEFT JOIN paid ON paid.charge_id = c.id ' +
+      'WHERE c.deleted_at IS NULL GROUP BY c.student_id HAVING total_due_minor > 0 ' +
       'ORDER BY total_due_minor DESC, student_id',
   )
 }

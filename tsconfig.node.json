@@ -28,5 +28,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "scripts/**/*.ts"]
+  "include": ["vite.config.ts", "playwright.config.ts", "scripts/**/*.ts"],
+  "exclude": ["scripts/perf.budget.ts"]
 }
