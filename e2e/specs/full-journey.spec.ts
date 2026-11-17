@@ -39,10 +39,7 @@ test('a student is admitted, pays, gets a receipt, and is recovered from a backu
   await page.getByTestId('payment-save').click()
   await expect(page.getByTestId('payment-receipt')).toContainText('R-2026-000001')
   await expect(page.getByTestId('dues-total')).toHaveText('40')
-  const paymentId = await page
-    .getByTestId('payment-row')
-    .first()
-    .getAttribute('data-payment-id')
+  const paymentId = await page.getByTestId('payment-row').first().getAttribute('data-payment-id')
   expect(paymentId).toBeTruthy()
 
   // 3. Receipt — the A5 print route shows the receipt, the payer and the balance after payment.
@@ -70,9 +67,7 @@ test('a student is admitted, pays, gets a receipt, and is recovered from a backu
 
   // 6. Restore — the real Backups page brings the journey's data back.
   await page.goto('/data-tools')
-  await snapshot
-    .getByRole('button', { name: 'Restore' })
-    .click()
+  await snapshot.getByRole('button', { name: 'Restore' }).click()
   await expect(page.getByTestId('backup-status')).toHaveText('restored', { timeout: 15_000 })
 
   // 7. Every leg is back: the student's name, the payment and the receipt.

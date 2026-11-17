@@ -1728,11 +1728,11 @@ B1 deterministic shared generators, C1 measure-then-fix, D1 a non-zero-exit budg
 
 **Acceptance:** all three T-090 lines from `docs/TICKETS.md`.
 
-| Acceptance line                                                | Result                                                                                                              |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| The spec performs the whole journey and asserts each outcome   | met — one test: admission → partial payment → A5 receipt → snapshot → break → restore → name/payment/receipt recovered |
-| The spec runs in CI against the production build               | met — `e2e/specs/full-journey.spec.ts` runs under `pnpm e2e` (Chromium + Firefox) against `vite preview`              |
-| No file in `e2e/` exceeds 300 LOC                              | met — `full-journey.spec.ts` is 89 lines                                                                             |
+| Acceptance line                                              | Result                                                                                                                 |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| The spec performs the whole journey and asserts each outcome | met — one test: admission → partial payment → A5 receipt → snapshot → break → restore → name/payment/receipt recovered |
+| The spec runs in CI against the production build             | met — `e2e/specs/full-journey.spec.ts` runs under `pnpm e2e` (Chromium + Firefox) against `vite preview`               |
+| No file in `e2e/` exceeds 300 LOC                            | met — `full-journey.spec.ts` is 89 lines                                                                               |
 
 **What changed**
 
@@ -1748,10 +1748,10 @@ admission on the real screens, C1 break and recover the journey student's data).
 
 **Results**
 
-| Check                                                                          | Result                     |
-| ------------------------------------------------------------------------------ | -------------------------- |
-| `NODE_OPTIONS=--max-old-space-size=6144 pnpm check`                            | green; bundle 281.0 KB     |
-| `pnpm exec playwright test e2e/specs/full-journey.spec.ts --workers=1`         | 2 passed (Chromium + Firefox) |
+| Check                                                                  | Result                        |
+| ---------------------------------------------------------------------- | ----------------------------- |
+| `NODE_OPTIONS=--max-old-space-size=6144 pnpm check`                    | green; bundle 281.0 KB        |
+| `pnpm exec playwright test e2e/specs/full-journey.spec.ts --workers=1` | 2 passed (Chromium + Firefox) |
 
 **Known gaps**
 
