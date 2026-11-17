@@ -1087,6 +1087,48 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-059 — T-073 admin report (2026-11-18)
+
+- **Context:** T-073 implements PLAN.md P5-4: a monthly and per-academic-year admin report with eight
+  sections (admissions by class/batch, drop-outs, collected, dues, method split, attendance rate, top
+  performers, net), printed on A4 and exported to Excel. FRONTEND_SPEC §5.9 names the sections; T-072
+  deliberately left this report to its own ticket (D-058 A1). Totals must equal the payments and
+  students modules for the same range. No human is present, so REPO_RULES §1.1 is followed in full
+  and the leans are taken autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where the report lives.**
+    - A1 — a dedicated \`/reports/admin\` screen in the reports module with section cards, reusing the
+      existing A4 print CSS and lazy ExcelJS pattern. Cost: one new route, not a catalogue definition.
+    - A2 — squeeze eight sections into a catalogue definition's rows. Cost: loses the section
+      structure FRONTEND_SPEC §5.9 requires.
+    - **Lean: A1.**
+  - **B — Scope selectors.**
+    - B1 — monthly (\`YYYY-MM\`) or per academic year (id from \`academic_years\`), each resolved to a
+      from/to range. Cost: two selectors in one screen.
+    - B2 — a free date range only. Cost: fails the "monthly and per academic year" acceptance line.
+    - **Lean: B1.**
+  - **C — Totals consistency.**
+    - C1 — collected uses \`listRecordedPayments\`, dues uses \`duesReport\`, admissions and drop-outs
+      use \`listStudents\`/\`listActive\`; method split groups the same valid payments. Cost: several
+      public reads in one query module.
+    - C2 — independent SQL per section. Cost: totals drift from the screens they must match.
+    - **Lean: C1.**
+  - **D — Verification.**
+    - D1 — unit tests for all eight sections and totals equality against the module functions, plus
+      \`admin-report.spec.ts\` asserting collected equals the payment register's total in the real
+      screen. Cost: a fixture (reuse the dashboard fixture).
+    - D2 — E2E only. Cost: totals equality needs a fast data-layer assertion.
+    - **Lean: D1.**
+- **Autonomous decision (T-073):** A1, B1, C1, D1 — take all four leans.
+- **Why:** a dedicated screen keeps the eight sections legible; the two scopes are resolved to one
+  range so every section uses the same window; the section totals come from the modules' own read
+  functions so "totals equal the payments and students modules" is true by construction. No Locked
+  Decision, schema convention, backup/restore behaviour, test matrix or shared branch change. Version
+  impact is \`minor\` (a \`feat\`).
+- **Impact:** new \`src/modules/reports/{queries/admin,admin-export,AdminReportScreen,admin.test}.ts(x)\`,
+  an admin A4 print stylesheet, an admin i18n namespace, a \`/reports/admin\` route, \`admin-report.spec.ts\`,
+  and D-059 / PROGRESS / CHANGELOG / session-log updates. No new dependency, migration or write path.
+
 ## D-058 — T-072 report catalogue (2026-11-17)
 
 - **Context:** T-072 implements the report catalogue on the T-071 framework: student list,

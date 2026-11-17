@@ -5,6 +5,7 @@ import { examsEn } from './exams.en'
 import { leaderboardEn } from './leaderboard.en'
 import { dashboardEn } from './dashboard.en'
 import { reportsEn } from './reports.en'
+import { adminEn } from './admin.en'
 export const en = {
   translation: {
     app: {
@@ -123,6 +124,7 @@ export const en = {
     leaderboard: leaderboardEn,
     dashboard: dashboardEn,
     reports: reportsEn,
+    admin: adminEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',
