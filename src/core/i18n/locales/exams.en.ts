@@ -21,6 +21,8 @@ export const examsEn = {
   entered: 'Entered',
   noAverage: '—',
   noRoster: 'No active students are enrolled in this batch.',
+  notFound: 'Exam not found.',
+  retry: 'Try again',
   gridHelp:
     'Use arrow keys to move between students, Enter to save marks, Space to flag absence, Tab to leave the grid.',
   saveFailed: 'Could not save marks — nothing was changed.',
