@@ -1,0 +1,25 @@
+/** Bangla audit-viewer namespace (T-082). */
+export const auditViewerBn = {
+  title: 'অডিট লগ',
+  backToBackups: 'ব্যাকআপে ফিরে যান',
+  entity: 'রেকর্ডের ধরন',
+  action: 'ক্রিয়া',
+  actor: 'কর্মী',
+  when: 'কখন (UTC)',
+  from: 'শুরুর তারিখ',
+  to: 'শেষ তারিখ',
+  details: 'আগে / পরে',
+  before: 'আগে',
+  after: 'পরে',
+  all: 'সব',
+  noEntries: 'এই ফিল্টারে কোনো পরিবর্তন নেই।',
+  loadFailed: 'অডিট লগ লোড করা যায়নি।',
+  none: '—',
+  actions: {
+    create: 'তৈরি',
+    update: 'সংশোধন',
+    delete: 'মুছে ফেলা',
+    restore: 'পুনরুদ্ধার',
+    void: 'বাতিল',
+  },
+}

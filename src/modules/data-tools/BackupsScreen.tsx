@@ -87,9 +87,14 @@ export function BackupsScreen() {
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('backup.title')}</h1>
-        <Link className="text-sm underline" data-testid="import-link" to="/data-tools/import">
-          {t('import.title')}
-        </Link>
+        <div className="flex gap-3">
+          <Link className="text-sm underline" data-testid="import-link" to="/data-tools/import">
+            {t('import.title')}
+          </Link>
+          <Link className="text-sm underline" data-testid="audit-link" to="/data-tools/audit">
+            {t('auditViewer.title')}
+          </Link>
+        </div>
       </div>
       <p data-testid="backup-status" role="status" className="sr-only">
         {lastAction}

@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-18 02:20
+
+### Changes
+
+- T-082 (audit log viewer) on branch `feature/audit-viewer`; decision D-062 recorded autonomously.
+- `src/core/audit/query.ts` — additive read model with bound entity/action/date filters, parsed
+  snapshots and an Admin-gated `listAuditAs`; `parseSnapshot` exported from `undo.ts`.
+- `src/modules/data-tools/AuditViewerScreen.tsx` and the `/data-tools/audit` route; Backups screen
+  link; en/bn `audit-viewer` namespaces.
+- `src/core/audit/query.test.ts` (filters, snapshots, permission gate) and
+  `e2e/specs/audit-viewer.spec.ts` (real change via `/__undo`, then listed/expanded/filtered).
+- `docs/DECISIONS.md` D-062, `docs/PROGRESS.md`, `docs/BUGS.md` BUG-012/013, `CHANGELOG.md`.
+- Resolved a double-trigger: the 01:00 builder was asked to stand down before T-082 began.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `senior-backend`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress
+
 ## Session 2026-11-18 04:30
 
 ### Changes

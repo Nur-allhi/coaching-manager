@@ -42,6 +42,26 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-012: Inactivity-lock E2E is flaky across browsers
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-18 (during: full-suite e2e verification for T-082)
+- **Location:** `e2e/specs/auth.spec.ts:75-83`, `src/core/auth/session.ts` (`startIdleWatcher`)
+- **Description:** "locks after the inactivity timeout" intermittently reports `getByTestId('lock-title')` not found within 10 s after setting `IDLE_KEY` to `0.02`. In three local runs the failing browser varied (Chromium twice, Firefox once on clean `dev`); the other browser passed. Reproduced on unmodified `dev` in a detached worktree, so it is not a T-082 regression. T-080's CI was green with its two automatic retries.
+- **Root Cause:** unknown — timing/ordering of the idle watcher when the timeout is changed after boot.
+- **Fix Approach:** not applied; needs confirmation.
+
+## BUG-013: Import accepts invalid student statuses and has leaked English in Bangla
+
+- **Status:** open
+- **Severity:** medium
+- **Found:** 2026-11-18 (during: review of the T-081 import work)
+- **Location:** `src/modules/data-tools/import/validate.ts` (status check), `src/core/i18n/locales/import.bn.ts` (`badStudentNo`, `kind`)
+- **Description:** The validator accepts `active|inactive|left`, but the students module stores `active|dropped|passed_out` (`src/modules/students/types.ts`), so an imported `left`/`inactive` row gets a status the UI cannot render. The Bangla `badStudentNo` string contains the English word "like", and `kind` reads "ক আমদানি করবেন" instead of "কী আমদানি করবেন".
+- **Root Cause:** validator written against an assumed status vocabulary; untranslated token in one string.
+- **Fix Approach:** not applied; needs confirmation.
+
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** fixed

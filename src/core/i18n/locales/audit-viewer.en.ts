@@ -1,0 +1,25 @@
+/** English audit-viewer namespace (T-082). */
+export const auditViewerEn = {
+  title: 'Audit log',
+  backToBackups: 'Back to backups',
+  entity: 'Entity',
+  action: 'Action',
+  actor: 'Actor',
+  when: 'When (UTC)',
+  from: 'From date',
+  to: 'To date',
+  details: 'Before / after',
+  before: 'Before',
+  after: 'After',
+  all: 'All',
+  noEntries: 'No changes match these filters.',
+  loadFailed: 'The audit log could not be loaded.',
+  none: '—',
+  actions: {
+    create: 'create',
+    update: 'update',
+    delete: 'delete',
+    restore: 'restore',
+    void: 'void',
+  },
+}
