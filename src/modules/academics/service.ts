@@ -12,6 +12,7 @@ import type { Db } from '@/core/db/types'
 import type { Row } from '@/core/db/repository'
 import { parseToMinor } from '@/core/money/money'
 import * as repo from './repository'
+import type { SubjectRow } from './types'
 import {
   batchForm,
   classForm,
@@ -56,6 +57,11 @@ export function listBatches(db: Db): Promise<BatchRow[]> {
 /** Public read surface: live classes, for other modules' class filters and labels (T-053). */
 export function listClasses(db: Db): Promise<ClassRow[]> {
   return repo.classes.list(db)
+}
+
+/** Public read surface: live subjects, for other modules' subject pickers (T-061). */
+export function listSubjects(db: Db): Promise<SubjectRow[]> {
+  return repo.subjects.list(db)
 }
 
 export interface AcademicsData {
