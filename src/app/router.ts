@@ -30,6 +30,9 @@ const BackupFixture = lazy(() =>
 const AttendanceFixture = lazy(() =>
   import('./dev/AttendanceFixture').then((m) => ({ default: m.AttendanceFixture })),
 )
+const MarksFixture = lazy(() =>
+  import('./dev/MarksFixture').then((m) => ({ default: m.MarksFixture })),
+)
 const EnrollmentFixture = lazy(() =>
   import('./dev/EnrollmentFixture').then((m) => ({ default: m.EnrollmentFixture })),
 )
@@ -63,6 +66,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__payment-fixture', element: createElement(PaymentFixture) },
         { path: '/__dues-fixture', element: createElement(DuesFixture) },
         { path: '/__attendance-fixture', element: createElement(AttendanceFixture) },
+        { path: '/__marks-fixture', element: createElement(MarksFixture) },
         { path: '*', element: createElement(NotFound) },
       ],
     },

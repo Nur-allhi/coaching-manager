@@ -731,6 +731,26 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-052 — T-061 Exam and marks grid (2026-11-17)
+
+- **Context:** T-061 needs an exam per batch/subject/date, a marks grid with an absent flag, and a
+  live batch average. The shipped exams migration has no UNIQUE constraint; `exam_results` is a
+  junction with no version/deleted_at so generic versioned helpers do not apply. Grades/GPA are
+  explicitly T-062 scope.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — enforce exam uniqueness in
+  the service: SELECT then INSERT inside one `Db.tx`, throwing a domain error on duplicate; no
+  schema change. B1 — the batch average uses entered marks of non-absent students only; unmarked
+  present students and absent students are both excluded from numerator and denominator. C1 —
+  reuse the T-060 roving-tabindex ARIA grid with a number input per cell and a separate absent
+  toggle. D1 — a `/__marks-fixture` test route seeds the data and `marks.spec.ts` drives the real
+  `/exams/:id` grid. E1 — grades/GPA are deferred to T-062 and noted as a known gap.
+- **Why:** tx serialization makes the uniqueness check race-free without an append-only migration or
+  a pre-migration snapshot; excluding absent entirely honours TAD §5.7 and FRONTEND_SPEC §5.6
+  ("absent is a flag, not a zero"); reusing the T-060 grid pattern keeps behaviour and accessibility
+  consistent; the E2E spec is an explicit ticket artifact; deferring grades keeps one ticket one change.
+- **Impact:** new exams repository/service/types/screens/tests, a fixture route, an E2E spec, an
+  academics `listSubjects` public read export, en/bn i18n keys. No new dependency, no schema change.
+
 ## D-051 — T-060 Attendance session and grid (2026-11-17)
 
 - **Context:** T-060 needs an attendance session per batch+date, a one-action "mark all present",

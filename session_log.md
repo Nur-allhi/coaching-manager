@@ -24,6 +24,45 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 21:47
+
+### Changes
+
+- PR #43 (T-060 attendance session and grid) squash-merged into `dev` as commit `8577df9` after
+  both CI jobs confirmed SUCCESS and the user explicitly confirmed; branch `feature/attendance-grid`
+  deleted locally and remotely.
+- T-061 (exam + marks grid) on branch `feature/marks-grid`:
+  `src/modules/exams/{repository,service,types}.ts` — tx-held exam uniqueness guard, audited
+  junction writes, grid cells via public module surfaces, live average excluding absent/unmarked
+  per TAD §5.7.
+- `src/modules/exams/Screen.tsx` — create form + exam list; `MarksGrid.tsx` — roving-tabindex ARIA
+  grid with a number input per cell, absent toggle showing "A", no-op write guard; `/exams/:id`
+  route.
+- `src/modules/academics/index.ts` — additive `listSubjects` public read export; `/__marks-fixture`
+  test route; `e2e/specs/marks.spec.ts` (3 tests); 6 service unit tests; en/bn exams i18n
+  namespaces; D-052 decision, PROGRESS/CHANGELOG/BUGS updates.
+- `docs/BUGS.md` — BUG-010 (duplicate audit rows on attendance session creation) logged, NOT fixed
+  (fix approach awaiting human confirmation per bug protocol).
+- Note — a lint rule (setState in effect) forced a refactor to sparse draft overrides.
+- Note — a blur-triggered duplicate write caused one flaky reload E2E until a no-op write guard
+  was added.
+- Verification: `pnpm check` green (bundle 273/300 KB), 168 E2E passed (45 + 123), browser
+  verification of the real create form, uniqueness duplicate toast, 375px no-overflow, 0 console
+  errors.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`
+- `gitnexus` (reindex + impact)
+- `playwright-mcp`
+- code review of audit helper (`code-reviewer`)
+
+### Status
+
+in-progress — PR #43 (T-060) merged into `dev`; T-061 implemented on branch `feature/marks-grid`,
+not committed or merged yet. BUG-010 logged, not fixed.
+
 ## Session 2026-11-17 21:11
 
 ### Changes

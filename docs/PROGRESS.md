@@ -1230,7 +1230,7 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
 - "Prints correctly" is verified via the A5 CSS and rendered fields; actual paper output was not checked on a printer.
 - The print route is reachable by URL; no button links to it from the receipt preview yet.
 
-### T-060 / P4-1 — Attendance session and grid — **Done** (pending merge)
+### T-060 / P4-1 — Attendance session and grid — **Done** (PR #43 merged)
 
 **Acceptance:** all four T-060 lines from `docs/TICKETS.md`.
 
@@ -1262,7 +1262,39 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
 - The grid's roving focus is per-cell; there is no separate row navigation for large batches (virtualization is a P6 pass).
 - Only `present`/`absent` statuses exist; late/leave flags are out of ticket scope.
 
-**Next:** T-061, exam and marks grid.
+### T-061 / P4-2 — Exam and marks grid — **Done** (pending merge)
+
+**Acceptance:** all three T-061 lines from `docs/TICKETS.md`.
+
+| Acceptance line                          | Result                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------- |
+| Absent is a flag, not a zero             | met — `absent=1, marks=NULL`, rendered as "A"; E2E asserts the "A" cell |
+| The batch average updates live           | met — mean of entered marks of non-absent only; E2E asserts 80 → 75     |
+| An exam is unique per batch/subject/date | met — tx-held SELECT+INSERT guard; unit + browser duplicate test        |
+
+**What changed**
+
+- `src/modules/exams/repository.ts`, `service.ts`, `types.ts` — exam CRUD with tx-held uniqueness, audited junction-table result writes, grid cells from public module surfaces, and a live average that excludes absent and unmarked students (TAD §5.7, D-052 B1).
+- `src/modules/exams/Screen.tsx` (create form + exam list) and `MarksGrid.tsx` (roving-tabindex ARIA grid, number input per cell, absent toggle, no-op write guard); `/exams/:id` route registered.
+- Academics `listSubjects` public read export (TAD §2).
+- `/__marks-fixture` test route, `e2e/specs/marks.spec.ts` (3 tests), 6 service unit tests, en/bn exams i18n namespaces.
+- D-052, BUG-010 (duplicate attendance audit rows, logged not fixed), PROGRESS/CHANGELOG/session log.
+
+**Decisions:** D-052 (A1 service guard, B1 present-only average, C1 roving grid, D1 fixture E2E, E1 grades deferred).
+
+**Results**
+
+| Check        | Result                                       |
+| ------------ | -------------------------------------------- |
+| `pnpm check` | green (bundle 273/300 KB)                    |
+| `pnpm e2e`   | 168 passed (45 in first half, 123 in second) |
+
+**Known gaps**
+
+- Grade and GPA columns beside each student (FRONTEND_SPEC §5.6) are T-062 scope; not shown yet.
+- Result-sheet print (PLAN §8 exams) is a later ticket; not in T-061 scope.
+
+**Next:** T-062, grades and GPA from the settings scale.
 
 ## P4 Academics
 

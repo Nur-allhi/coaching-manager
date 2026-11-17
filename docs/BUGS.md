@@ -42,6 +42,23 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-010: Opening an attendance session writes two create audit rows
+
+- **Status:** open
+- **Severity:** medium
+- **Found:** 2026-11-17 (during: T-061 code review, while checking the shared audit helper)
+- **Location:** `src/modules/attendance/repository.ts` (`getOrCreateSession`)
+- **Description:** `repoWithin(t, ctx).insert('attendance_sessions', ...)` already writes a `create`
+  audit row through the shared `insertWithin` helper, but `getOrCreateSession` then calls
+  `writeAudit(...)` again with the same entity and action. Opening a new session therefore produces
+  two `create` rows in `audit_log` instead of one. Observed by reading both code paths; expected one
+  audit row per write (REPO_RULES §7 / TAD §5.1). Existing attendance tests only assert the audit
+  count grows for a status change, so they do not catch it.
+- **Root Cause:** the module repository duplicates the audit write that the shared insert helper
+  already performs in the same transaction.
+- **Fix Approach:** — (awaiting human confirmation; a regression test must fail before and pass after)
+- **Resolved:** —
+
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** fixed
