@@ -1614,6 +1614,36 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-066 — T-091 In-app user guide (2026-11-18)
+
+- **Context:** T-091 needs a short in-app guide reachable from the sidebar, with every string in
+  English and Bangla and reachable offline. The sidebar is built from module manifests, so a new
+  top-level module would add a twelfth nav entry and require changing the registry/shell tests.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Route ownership.** A1 — add `/guide` as a lazy route on the settings module and link to it
+    from the sidebar footer. Cost: the guide file lives beside the modules, not in a new manifest.
+    A2 — a new `guide` module with its own nav entry. Cost: changes the registry test's exact nav
+    list and the shell spec's entry count for a help link. **Lean: A1.**
+  - **B — Language selection.** B1 — two tab buttons select which bundled string set is displayed
+    without changing the app language; both sets live in the same namespace. Cost: duplicate
+    short paragraphs. B2 — switch the whole app language via i18next. Cost: a help page would
+    silently change every screen. **Lean: B1.**
+  - **C — Content.** C1 — seven short steps (admission, enrolment, fees, attendance, marks, reports,
+    backup/security), each with an EN and BN string. Cost: a small fixed list. C2 — a long manual.
+    Cost: out of scope ("a short guide") and a large bundle. **Lean: C1.**
+  - **D — Verification.** D1 — `user-guide.spec.ts` asserts both tabs, switching and zero external
+    requests (offline-safe). Cost: one small spec. D2 — no E2E. Cost: the ticket names one.
+    **Lean: D1.**
+- **Autonomous decision (T-091):** A1, B1, C1, D1 — take all four leans.
+- **Why:** the guide is reachable from the sidebar without disturbing the module registry contract,
+  both languages are guaranteed present by the typed translation bundle, and no network is needed
+  at runtime. No Locked Decision, schema convention, backup/restore behaviour, test matrix or
+  shared branch change. Version impact `minor`.
+- **Impact:** `src/modules/guide/Screen.tsx`, `/guide` route, sidebar link, guide en/bn namespaces,
+  `user-guide.spec.ts` and D-066 / PROGRESS / CHANGELOG / session-log updates. No dependency.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

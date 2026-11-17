@@ -49,6 +49,25 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 completed — T-082 merged into `dev` as PR #55.
 
+## Session 2026-11-18 03:20
+
+### Changes
+
+- T-091 (in-app user guide) on branch `feature/user-guide`; decision D-066 recorded.
+- `src/modules/guide/Screen.tsx` with EN/BN tabs, a `/guide` route and a sidebar footer link.
+- `guide.en.ts` / `guide.bn.ts` wired into both aggregates; `e2e/specs/user-guide.spec.ts`
+  (2 passed in Chromium and Firefox, zero external requests).
+- `docs/DECISIONS.md` D-066, `docs/PROGRESS.md`, `CHANGELOG.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `frontend-design`
+- `playwright-mcp`
+
+### Status
+
+in-progress
+
 ## Session 2026-11-18 02:35
 
 ### Changes
@@ -79,7 +98,7 @@ completed — T-083 merged into `dev` as PR #56.
 - T-084 (accessibility and Bangla review) on branch `feature/accessibility-review`; D-064 recorded.
 - Bound implicit labels in reports/admin/leaderboard, the import button group and profile photo input.
 - `e2e/specs/a11y.spec.ts` — tab order, focus ring, labels, computed AA contrast in both themes,
-  360px overflow; 9 passed in each browser.
+  360px overflow; 10 passed in each browser.
 - Fixed BUG-013: import status vocabulary and leaked English tokens in Bangla strings.
 - `docs/DECISIONS.md` D-064, `docs/PROGRESS.md`, `docs/BUGS.md`, `CHANGELOG.md`.
 - The human Bangla-review acceptance line was left explicitly unmet (autonomous run).
@@ -91,7 +110,7 @@ completed — T-083 merged into `dev` as PR #56.
 
 ### Status
 
-in-progress
+completed — T-084 merged into `dev` as PR #57.
 
 ## Session 2026-11-18 04:30
 
