@@ -1,0 +1,32 @@
+/** Bangla admin-report namespace (T-073). Typed against the English key set. */
+import type { adminEn } from './admin.en'
+
+export const adminBn: typeof adminEn = {
+  title: 'প্রশাসনিক রিপোর্ট',
+  scope: 'সময়',
+  month: 'মাস',
+  year: 'শিক্ষাবর্ষ',
+  range: 'সীমা',
+  from: 'শুরু',
+  to: 'শেষ',
+  admissions: 'ভর্তি',
+  byClass: 'শ্রেণি অনুযায়ী',
+  byBatch: 'ব্যাচ অনুযায়ী',
+  dropouts: 'ঝরে পড়া',
+  collected: 'সংগৃহীত',
+  dues: 'বকেয়া',
+  methodSplit: 'পদ্ধতি অনুযায়ী সংগ্রহ',
+  attendanceRate: 'উপস্থিতির হার',
+  topPerformers: 'শীর্ষ শিক্ষার্থী',
+  net: 'নিট',
+  section: 'বিভাগ',
+  detail: 'বিবরণ',
+  value: 'মান',
+  total: 'মোট',
+  className: 'শ্রেণি',
+  batchName: 'ব্যাচ',
+  print: 'প্রিন্ট',
+  exportExcel: 'Excel রপ্তানি',
+  loading: 'লোড হচ্ছে…',
+  error: 'প্রশাসনিক রিপোর্ট লোড করা যায়নি। আবার চেষ্টা করুন।',
+}

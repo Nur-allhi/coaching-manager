@@ -12,5 +12,12 @@ export const reportsModule: AppModule = {
       titleKey: 'nav.reports',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
     },
+    {
+      path: '/reports/admin',
+      titleKey: 'admin.title',
+      component: lazy(() =>
+        import('./AdminReportScreen').then((mod) => ({ default: mod.AdminReportScreen })),
+      ),
+    },
   ],
 }

@@ -24,6 +24,7 @@ human-readable subset.
 
 ### Added
 
+- An admin report at `/reports/admin`, monthly or per academic year, with admissions (by class and batch), drop-outs, collected, outstanding dues, collection by method, attendance rate, top performers and net — all totals sourced from the owning modules, printable on A4 and exportable to Excel (T-073, D-059).
 - The full report catalogue on `/reports`: student list, admissions, payment register, dues, receipts by date range, attendance and result sheets, each filterable with a displayed total that matches the owning module (T-072, D-058). The admin report follows in T-073.
 - A reports framework at `/reports`: a filter bar, a preview and CSV/Excel exports driven by the exact same filtered rows (CSV carries a UTF-8 BOM for Bangla in Excel), plus an A4 print view, with the student list as the first report (T-071, D-057).
 - A dashboard at `/`: KPI cards for collected fees, outstanding dues, admissions, active students, today's batches and low attendance (each linking to the filtered list behind it), recent toppers and a stale-backup warning (T-070, D-056).

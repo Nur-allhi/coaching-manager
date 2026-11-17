@@ -1,0 +1,22 @@
+/* Admin report A4 print layout (T-073, D-059). Loaded only by the lazy admin-report route. */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  [data-slot='sidebar-wrapper'],
+  [data-slot='sidebar-inset'] header,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  :root {
+    color: #111;
+    background: #fff;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}

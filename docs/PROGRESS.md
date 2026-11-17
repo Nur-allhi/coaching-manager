@@ -1501,6 +1501,43 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 **Next:** T-073, the admin report (the sixth and final ticket of this run).
 
+### T-073 / P5-4 — Admin report — **Done** (pending merge)
+
+**Acceptance:** all three T-073 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                                            | Result                                                                                    |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Admissions, drop-outs, collected, dues, method split, attendance rate, top performers, net | met — all eight sections present in the real `/reports/admin` screen                      |
+| Totals equal the payments and students modules                                             | met — collected/dues/admissions use the modules' public reads; unit + E2E assert equality |
+| Prints on A4 and exports to Excel                                                          | met — `@page { size: A4 }` admin stylesheet and lazy ExcelJS export of every section      |
+
+**What changed**
+
+- `src/modules/reports/queries/admin.ts` — one range (month or academic year) drives all sections;
+  collected from `listRecordedPayments`, dues from `duesReport`, admissions from `listStudents`,
+  drop-outs from closed enrollments, method split from the same valid payments.
+- `AdminReportScreen.tsx` — eight section cards, month/year scope selectors, A4 print button and
+  Excel export; `admin-export.ts` writes every section as a workbook row (pure row builder tested).
+- Admin en/bn namespace, A4 `admin.css`, `/reports/admin` route in the reports manifest,
+  `admin-report.spec.ts` (asserts collected equals the payment register's total) and 3 unit tests.
+- Decision D-059 (autonomous): dedicated screen, two scopes, module-sourced totals, unit + E2E.
+
+**Results**
+
+| Check        | Result                                              |
+| ------------ | --------------------------------------------------- |
+| `pnpm check` | green; initial JS 275.7 KB of 300 KB                |
+| unit tests   | 3 admin tests pass; full unit suite green           |
+| E2E          | admin 6 passed; full suite 198 passed in two halves |
+
+**Known gaps**
+
+- "Prints on A4" is verified by the stylesheet and a browser `window.print()` path, not paper output.
+- Net is collected minus outstanding dues over the chosen range; no other net definition is specified.
+
+The queue from T-062 through T-073 is now complete. The next ticket in `docs/TICKETS.md` order is
+T-080 (PIN lock and roles), which belongs to the next run.
+
 ## P6 Hardening
 
 _(not started)_
