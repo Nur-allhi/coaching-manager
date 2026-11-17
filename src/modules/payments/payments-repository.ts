@@ -4,6 +4,7 @@
  * gapless. SQL is bound and lives here, never in UI code.
  */
 import { writeAudit, type AuditContext } from '@/core/audit/write'
+import { repoWithin } from '@/core/db/repository'
 import type { Db } from '@/core/db/types'
 import type { Row } from '@/core/db/repository'
 
@@ -79,6 +80,56 @@ export async function insertAllocation(
     before: null,
     after: { payment_id: paymentId, charge_id: chargeId, amount_minor: amountMinor },
   })
+}
+
+/** Remove every allocation of a payment before re-allocation; each removal is audited (T-052). */
+export async function deleteAllocations(
+  t: Db,
+  ctx: AuditContext,
+  paymentId: string,
+): Promise<void> {
+  const rows = await t.query<{ charge_id: string; amount_minor: number }>(
+    'SELECT charge_id, amount_minor FROM payment_allocations WHERE payment_id = ?',
+    [paymentId],
+  )
+  await t.run('DELETE FROM payment_allocations WHERE payment_id = ?', [paymentId])
+  for (const row of rows) {
+    await writeAudit(t, ctx, {
+      entity: 'payment_allocations',
+      entityId: `${paymentId}:${row.charge_id}`,
+      action: 'delete',
+      before: { payment_id: paymentId, charge_id: row.charge_id, amount_minor: row.amount_minor },
+      after: null,
+    })
+  }
+}
+
+/** Audited payment edit inside the caller's transaction; the receipt number is never patched. */
+export async function updatePayment(
+  t: Db,
+  ctx: AuditContext,
+  paymentId: string,
+  patch: {
+    paidOn: string
+    method: string
+    amountMinor: number
+    note: string | null
+    revision: number
+  },
+  expectedVersion: number,
+): Promise<void> {
+  await repoWithin(t, ctx).update(
+    'payments',
+    paymentId,
+    {
+      paid_on: patch.paidOn,
+      method: patch.method,
+      amount_minor: patch.amountMinor,
+      note: patch.note,
+      revision: patch.revision,
+    },
+    expectedVersion,
+  )
 }
 
 export interface OpenCharge {

@@ -20,6 +20,7 @@ export const en = {
     },
     common: {
       loading: 'Loading…',
+      cancel: 'Cancel',
     },
     nav: {
       dashboard: 'Dashboard',
@@ -127,6 +128,17 @@ export const en = {
       admission: 'Admission fee',
       take: 'Take payment',
       receipt: 'Receipt',
+      recent: 'Recent payments',
+      noPayments: 'No payments recorded yet.',
+      edit: 'Edit',
+      void: 'Void',
+      voided: 'VOID',
+      revised: 'REVISED {{count}}',
+      revisionCount: 'Revision {{count}}',
+      saveEdit: 'Save changes',
+      editFailed: 'Could not save the edit — nothing was changed.',
+      voidFailed: 'Could not void this payment — nothing was changed.',
+      cannotEdit: 'A void payment cannot be edited.',
       methods: {
         cash: 'Cash',
         bank: 'Bank',

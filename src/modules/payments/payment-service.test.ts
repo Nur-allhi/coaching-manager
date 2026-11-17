@@ -1,6 +1,7 @@
 /** Unit tests for payment recording and allocation (T-051, D-047). */
 import { describe, expect, it } from 'vitest'
 import { makeAuditContext } from '@/core/audit/write'
+import { VersionConflictError } from '@/core/db/repository'
 import { migrate } from '@/core/db/migrate'
 import { migrations } from '@/core/db/migrations'
 import { createBetterSqliteDb } from '@/core/db/testing/better-sqlite3'
@@ -11,7 +12,9 @@ import { generateCharges } from './service'
 import {
   allocateAdvances,
   duesForStudent,
+  editPayment,
   recordPayment,
+  voidPayment,
   type PaymentInput,
 } from './payment-service'
 
@@ -149,5 +152,84 @@ describe('recording a payment', () => {
     const { db, payment } = await setup()
     await expect(recordPayment(db, payment({ amountMinor: 0 }))).rejects.toThrow()
     await expect(recordPayment(db, payment({ amountMinor: -1 }))).rejects.toThrow()
+  })
+})
+
+describe('editing and voiding a payment', () => {
+  const edit = (amountMinor: number) => ({
+    paidOn: '2026-02-10',
+    method: 'cash' as const,
+    amountMinor,
+    note: 'edited',
+  })
+
+  it('keeps the receipt number and increments the revision on edit', async () => {
+    const { db, payment } = await setup()
+    const recorded = await recordPayment(db, payment({ amountMinor: 2000 }))
+    const edited = await editPayment(db, recorded.id, edit(3000), 1)
+
+    expect(edited.receiptNo).toBe('R-2026-000001')
+    expect(edited.revision).toBe(1)
+    const rows = await db.query<{ receipt_no: string; revision: number; version: number; amount_minor: number }>(
+      'SELECT receipt_no, revision, version, amount_minor FROM payments WHERE id = ?',
+      [recorded.id],
+    )
+    expect(rows[0]).toMatchObject({
+      receipt_no: 'R-2026-000001',
+      revision: 1,
+      version: 2,
+      amount_minor: 3000,
+    })
+  })
+
+  it('re-runs allocation so dues reflect the edited amount', async () => {
+    const { db, payment, studentId } = await setup()
+    const recorded = await recordPayment(db, payment({ amountMinor: 2000 }))
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(4000)
+
+    const first = await editPayment(db, recorded.id, edit(3000), 1)
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(3000)
+    await editPayment(db, recorded.id, edit(1000), 2)
+    const rows = await db.query<{ revision: number }>('SELECT revision FROM payments WHERE id = ?', [recorded.id])
+    expect(rows[0]?.revision).toBe(2)
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(5000)
+    expect(first.allocatedMinor).toBe(3000)
+  })
+
+  it('keeps the row and allocations but stops them counting when voided', async () => {
+    const { db, payment, studentId } = await setup()
+    const recorded = await recordPayment(db, payment({ amountMinor: 6000 }))
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(0)
+
+    await voidPayment(db, recorded.id, 1)
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(6000)
+    const rows = await db.query<{ status: string; receipt_no: string }>(
+      'SELECT status, receipt_no FROM payments WHERE id = ?',
+      [recorded.id],
+    )
+    expect(rows[0]).toMatchObject({ status: 'void', receipt_no: 'R-2026-000001' })
+    const allocations = await db.query<{ n: number }>(
+      'SELECT COUNT(*) AS n FROM payment_allocations WHERE payment_id = ?',
+      [recorded.id],
+    )
+    expect(allocations[0]?.n).toBeGreaterThan(0)
+  })
+
+  it('refuses to edit a void payment', async () => {
+    const { db, payment } = await setup()
+    const recorded = await recordPayment(db, payment({ amountMinor: 2000 }))
+    await voidPayment(db, recorded.id, 1)
+    await expect(editPayment(db, recorded.id, edit(3000), 2)).rejects.toMatchObject({
+      key: 'payments.cannotEdit',
+    })
+  })
+
+  it('rolls back the allocation deletion and revision on a stale version', async () => {
+    const { db, payment, studentId } = await setup()
+    const recorded = await recordPayment(db, payment({ amountMinor: 2000 }))
+    await expect(editPayment(db, recorded.id, edit(3000), 99)).rejects.toBeInstanceOf(VersionConflictError)
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(4000)
+    const rows = await db.query<{ revision: number }>('SELECT revision FROM payments WHERE id = ?', [recorded.id])
+    expect(rows[0]?.revision).toBe(0)
   })
 })

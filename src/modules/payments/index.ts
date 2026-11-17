@@ -2,8 +2,14 @@ import { lazy } from 'react'
 import { Wallet } from 'lucide-react'
 import type { AppModule } from '@/app/module-contract'
 
-/** Public surface for payment recording and dues (TAD.md §2). */
-export { recordPayment, duesForStudent, listRecordedPayments } from './payment-service'
+/** Public surface for payment recording, editing, voiding and dues (TAD.md §2). */
+export {
+  recordPayment,
+  editPayment,
+  voidPayment,
+  duesForStudent,
+  listRecordedPayments,
+} from './payment-service'
 export { generateCharges, listGeneratedCharges } from './service'
 
 export const paymentsModule: AppModule = {

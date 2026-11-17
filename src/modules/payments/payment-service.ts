@@ -6,6 +6,8 @@
  */
 import { z } from 'zod'
 import { makeAuditContext } from '@/core/audit/write'
+import { assertVersion, findById } from '@/core/db/repository'
+import { voidRecord } from '@/core/db/void-restore'
 import type { Db } from '@/core/db/types'
 import type { Row } from '@/core/db/repository'
 import * as repo from './payments-repository'
@@ -30,11 +32,51 @@ export class PaymentValidationError extends Error {
   }
 }
 
+export class PaymentNotFoundError extends Error {
+  readonly key = 'payments.notFound'
+
+  constructor() {
+    super('payments.notFound')
+    this.name = 'PaymentNotFoundError'
+  }
+}
+
+export class PaymentStateError extends Error {
+  readonly key: string
+
+  constructor(key: string) {
+    super(key)
+    this.name = 'PaymentStateError'
+    this.key = key
+  }
+}
+
 export interface RecordedPayment {
   id: string
   receiptNo: string
   allocatedMinor: number
   advanceMinor: number
+}
+
+/** Allocate `amountMinor` to `chargeId` rows, oldest first; returns the unallocated remainder. */
+async function allocateToOpenCharges(
+  t: Db,
+  ctx: ReturnType<typeof makeAuditContext>,
+  paymentId: string,
+  studentId: string,
+  amountMinor: number,
+): Promise<number> {
+  let remaining = amountMinor
+  for (const charge of await repo.openCharges(t, studentId)) {
+    if (remaining === 0) break
+    const due = Math.max(0, charge.amount_minor - charge.discount_minor - charge.paid_minor)
+    const amount = Math.min(remaining, due)
+    if (amount > 0) {
+      await repo.insertAllocation(t, ctx, paymentId, charge.id, amount)
+      remaining -= amount
+    }
+  }
+  return remaining
 }
 
 /** Allocate a payment across the student's open charges, oldest first, inside one transaction. */
@@ -55,16 +97,7 @@ export async function recordPayment(db: Db, input: PaymentInput): Promise<Record
       receiptNo,
     })
 
-    let remaining = value.amountMinor
-    for (const charge of await repo.openCharges(t, value.studentId)) {
-      if (remaining === 0) break
-      const due = Math.max(0, charge.amount_minor - charge.discount_minor - charge.paid_minor)
-      const amount = Math.min(remaining, due)
-      if (amount > 0) {
-        await repo.insertAllocation(t, ctx, id, charge.id, amount)
-        remaining -= amount
-      }
-    }
+    const remaining = await allocateToOpenCharges(t, ctx, id, value.studentId, value.amountMinor)
     return {
       id,
       receiptNo,
@@ -72,6 +105,85 @@ export async function recordPayment(db: Db, input: PaymentInput): Promise<Record
       advanceMinor: remaining,
     }
   })
+}
+
+const editSchema = paymentSchema.omit({ studentId: true })
+export type EditPaymentInput = z.input<typeof editSchema>
+
+export interface EditedPayment {
+  id: string
+  receiptNo: string
+  revision: number
+  allocatedMinor: number
+  advanceMinor: number
+}
+
+interface StoredPayment {
+  id: string
+  student_id: string
+  receipt_no: string
+  status: string
+  revision: number
+  version: number
+}
+
+/**
+ * Edit a payment and re-run allocation (T-052). The receipt number is never touched; `revision`
+ * counts edits. Old allocations are removed first so dues recompute from zero for this payment.
+ */
+export async function editPayment(
+  db: Db,
+  paymentId: string,
+  input: EditPaymentInput,
+  expectedVersion: number,
+): Promise<EditedPayment> {
+  const parsed = editSchema.safeParse(input)
+  if (!parsed.success) throw new PaymentValidationError('payments.invalidPayment')
+  const value = parsed.data
+  assertVersion(expectedVersion)
+
+  return db.tx(async (t) => {
+    const ctx = makeAuditContext()
+    const existing = await findById<StoredPayment>(t, 'payments', paymentId)
+    if (!existing) throw new PaymentNotFoundError()
+    if (existing.status !== 'valid') throw new PaymentStateError('payments.cannotEdit')
+
+    await repo.deleteAllocations(t, ctx, paymentId)
+    const revision = Number(existing.revision) + 1
+    await repo.updatePayment(
+      t,
+      ctx,
+      paymentId,
+      {
+        paidOn: value.paidOn,
+        method: value.method,
+        amountMinor: value.amountMinor,
+        note: value.note.trim() === '' ? null : value.note.trim(),
+        revision,
+      },
+      expectedVersion,
+    )
+    const remaining = await allocateToOpenCharges(
+      t,
+      ctx,
+      paymentId,
+      String(existing.student_id),
+      value.amountMinor,
+    )
+    return {
+      id: paymentId,
+      receiptNo: String(existing.receipt_no),
+      revision,
+      allocatedMinor: value.amountMinor - remaining,
+      advanceMinor: remaining,
+    }
+  })
+}
+
+/** Void keeps the row and its allocations; `openCharges` already ignores void payments. */
+export function voidPayment(db: Db, paymentId: string, expectedVersion: number): Promise<void> {
+  assertVersion(expectedVersion)
+  return voidRecord(db, makeAuditContext(), 'payments', paymentId, expectedVersion)
 }
 
 /** Spare capacity on earlier valid payments is applied to charges that still have a net due. */
@@ -88,17 +200,8 @@ export async function allocateAdvances(db: Db): Promise<number> {
       )
       const studentId = String(rows[0]?.student_id ?? '')
       if (!studentId) continue
-      let spare = payment.spare_minor
-      for (const charge of await repo.openCharges(t, studentId)) {
-        if (spare === 0) break
-        const due = Math.max(0, charge.amount_minor - charge.discount_minor - charge.paid_minor)
-        const amount = Math.min(spare, due)
-        if (amount > 0) {
-          await repo.insertAllocation(t, ctx, payment.id, charge.id, amount)
-          spare -= amount
-          allocated += amount
-        }
-      }
+      const remaining = await allocateToOpenCharges(t, ctx, payment.id, studentId, payment.spare_minor)
+      allocated += payment.spare_minor - remaining
     }
     return allocated
   })
