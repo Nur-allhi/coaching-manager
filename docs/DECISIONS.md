@@ -1087,6 +1087,54 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-056 — T-070 dashboard (2026-11-17)
+
+- **Context:** T-070 builds the dashboard: collection vs due, admissions, active students, today's
+  batches, low-attendance students, recent toppers and the backup health warning. Each KPI must be
+  a link to the filtered list behind it and its number must match the owning module for the same
+  range. `dashboard` is a read-model module whose screen is a placeholder; T-053's dues report and
+  T-063's leaderboard are now merged. No human is present, so REPO_RULES §1.1 is followed in full
+  and the leans are taken autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where KPI numbers come from.**
+    - A1 — call the owning modules' public reads (`listRecordedPayments`, `duesReport`,
+      `listStudents`, `listActive`) for the numbers that must match, and use dashboard's own
+      `queries/` folder only for the cross-module read-model bits (today's batches, low attendance,
+      recent toppers) per TAD §2 rule 3. Cost: several reads in one service call.
+    - A2 — reimplement every KPI in dashboard SQL. Cost: duplicates the payments dues rule and risks
+      drifting from the module the KPI is supposed to match.
+    - **Lean: A1.**
+  - **B — Range.**
+    - B1 — all-time collection and outstanding dues (both from the payments module over the same
+      live dataset), admissions counted from `listStudents` for the current Dhaka month, active
+      students from `listActive`. Cost: no range picker, but the "same range" requirement is met
+      because each KPI uses exactly the owning module's dataset.
+    - B2 — a range picker over every KPI. Cost: the dues report has no range parameter; adding one
+      reworks T-053 and is not in this ticket.
+    - **Lean: B1.**
+  - **C — Low attendance.**
+    - C1 — students below 75% of marked sessions, computed in the dashboard queries folder from
+      `attendance_records` (present / marked), linked to the attendance screen. Cost: one threshold
+      constant.
+    - C2 — below the pass mark. Cost: mixes a marks scale into an attendance measure.
+    - **Lean: C1.**
+  - **D — Verification.**
+    - D1 — unit tests against `better-sqlite3` asserting each KPI equals the owning module's public
+      function over the same seeded data, plus `dashboard.spec.ts` asserting the rendered KPIs and
+      links against a fixture. Cost: one test-only fixture route.
+    - D2 — E2E only. Cost: "matches the payments module" needs a fast data-layer assertion.
+    - **Lean: D1.**
+- **Autonomous decision (T-070):** A1, B1, C1, D1 — take all four leans.
+- **Why:** the numbers come from the same public functions the modules expose, so the KPI-match
+  acceptance is true by construction; the read-model query folder stays inside TAD §2 rule 3; the
+  backup warning reuses the existing health helper rather than reimplementing staleness. No Locked
+  Decision, schema convention, backup/restore behaviour, test matrix or shared branch change.
+  Version impact is `minor` (a `feat`).
+- **Impact:** new `src/modules/dashboard/{queries/dashboard,service,types,Screen,dashboard.test}.ts(x)`
+  and a dashboard i18n namespace, a `/__dashboard-fixture` route and router registration,
+  `dashboard.spec.ts`, and D-056 / PROGRESS / CHANGELOG / session-log updates. No new dependency,
+  migration or write path.
+
 ## D-055 — T-063 ranking and leaderboard (2026-11-17)
 
 - **Context:** T-063 needs ranks per exam, per month and per academic year, filtered by batch or

@@ -1390,7 +1390,44 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 ## P5 Insight
 
-_(not started)_
+### T-070 / P5-1 — Dashboard — **Done** (pending merge)
+
+**Acceptance:** all three T-070 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                | Result                                                                                   |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| KPI numbers match the payments and students modules            | met — collection/dues/admissions/active use the owning modules' public reads; unit + E2E |
+| Each KPI is a link to the filtered list behind it              | met — six KPI cards + toppers link; E2E asserts every href                               |
+| The backup health banner appears when the last export is stale | met — reuses `isExportStale`/`lastFileExport`; banner + link asserted in E2E             |
+
+**What changed**
+
+- `src/modules/dashboard/queries/dashboard.ts` — read-model SQL (TAD §2 #3) for today's batches
+  (`days_mask`), low attendance (below 75% of marked sessions) and recent toppers.
+- `service.ts` — collection (`listRecordedPayments`, valid only), dues (`duesReport`), admissions
+  (`listStudents` for the Dhaka month), active students (`listActive`) and the backup warning via the
+  core health helper, so the numbers cannot drift from the modules behind the links.
+- `Screen.tsx` — KPI cards that are links, the stale-backup banner, a toppers list and four async
+  states; dashboard en/bn namespace; `/__dashboard-fixture` route; `dashboard.spec.ts`; 3 unit tests.
+- `App.test.tsx` — the shell test now mocks `getDb` and supplies a QueryClientProvider, because the
+  default route is a real data-backed screen rather than a placeholder (the heading stays visible
+  in every async state).
+
+**Results**
+
+| Check        | Result                                                                                     |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 274.9 KB of 300 KB                                                       |
+| unit tests   | 3 dashboard tests pass; all 226 unit tests green                                           |
+| E2E          | dashboard 6 passed; shell/smoke/i18n/dashboard 48 passed; full suite previously 178 passed |
+
+**Known gaps**
+
+- Collection and dues are all-time figures over the live dataset; there is no range picker (the dues
+  report has no range parameter, D-056 B1).
+- "Recent toppers" is the top three of the latest exam by date.
+
+**Next:** T-071, the reports framework.
 
 ## P6 Hardening
 

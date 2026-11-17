@@ -7,6 +7,7 @@ import { paymentsBn } from './payments.bn'
 import { attendanceBn } from './attendance.bn'
 import { examsBn } from './exams.bn'
 import { leaderboardBn } from './leaderboard.bn'
+import { dashboardBn } from './dashboard.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -124,6 +125,7 @@ export const bn: { translation: Translation } = {
     attendance: attendanceBn,
     exams: examsBn,
     leaderboard: leaderboardBn,
+    dashboard: dashboardBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',
