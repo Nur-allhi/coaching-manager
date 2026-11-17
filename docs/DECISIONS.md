@@ -731,6 +731,24 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-051 — T-060 Attendance session and grid (2026-11-17)
+
+- **Context:** T-060 needs an attendance session per batch+date, a one-action "mark all present",
+  a keyboard-navigable grid and percentages from stored records. `attendance_sessions` has
+  `UNIQUE(batch_id, held_on)`; `attendance_records` is a junction table with no version/deleted_at,
+  so the generic versioned repository helpers do not apply.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — `getOrCreateSession`
+  SELECTs then INSERTs inside `tx()`, reusing an existing session (idempotent on retry, race-free
+  via the queue). B1 — "mark all present" upserts every enrolled student in one `Db.tx` with a
+  single service-level audit entry (atomic, one round-trip). C1 — a roving-tabindex `role="grid"`
+  where arrows move focus, Enter/Space toggles status and Tab exits the grid (satisfies the
+  keyboard acceptance line and the ARIA grid pattern). D1 — a `/__attendance-fixture` test route
+  seeds a batch with enrolled students and `attendance.spec.ts` drives the real grid.
+- **Why:** idempotency and atomicity match the documented Db/tx guarantees; the roving grid is the
+  only option that meets the arrow-key acceptance; an E2E spec is an explicit ticket artifact.
+- **Impact:** new attendance repository/service/types/screens/tests, a fixture route and E2E spec,
+  en/bn i18n keys. No new dependency. Absence counts as 0 and is excluded from averages per TAD §5.7.
+
 ## D-041 — T-040 Settings module design (2026-11-17)
 
 - **Context:** T-040 is the first P2 ticket. The `settings` table (key/value/updated_at) exists

@@ -27,6 +27,9 @@ const UndoHarness = lazy(() =>
 const BackupFixture = lazy(() =>
   import('./dev/BackupFixture').then((m) => ({ default: m.BackupFixture })),
 )
+const AttendanceFixture = lazy(() =>
+  import('./dev/AttendanceFixture').then((m) => ({ default: m.AttendanceFixture })),
+)
 const EnrollmentFixture = lazy(() =>
   import('./dev/EnrollmentFixture').then((m) => ({ default: m.EnrollmentFixture })),
 )
@@ -59,6 +62,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__seed-fixture', element: createElement(SeedFixture) },
         { path: '/__payment-fixture', element: createElement(PaymentFixture) },
         { path: '/__dues-fixture', element: createElement(DuesFixture) },
+        { path: '/__attendance-fixture', element: createElement(AttendanceFixture) },
         { path: '*', element: createElement(NotFound) },
       ],
     },

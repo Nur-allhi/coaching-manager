@@ -1,5 +1,6 @@
 /** English resources for T-020. Keys are dotted paths (REPO_RULES.md §7.3). */
 import { paymentsEn } from './payments.en'
+import { attendanceEn } from './attendance.en'
 export const en = {
   translation: {
     app: {
@@ -113,6 +114,7 @@ export const en = {
       closed: 'Closed',
     },
     payments: paymentsEn,
+    attendance: attendanceEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',
