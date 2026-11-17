@@ -259,6 +259,43 @@ Format: dated entries, newest last.
 
 ---
 
+## D-050 — T-054 Receipt print route and Excel export (2026-11-17)
+
+- **Context:** T-054 adds `/print/receipt/:paymentId` (A5, Bangla, QR, balance due, VOID/DUPLICATE/
+  REVISED marks) and an Excel export of receipts. PLAN.md §3 locks ExcelJS for Excel and self-hosted
+  Bengali fonts; no QR library or print infrastructure is installed. D-048 already supplies the
+  receipt number, `status`, `revision` and an in-app preview. No human is present, so REPO_RULES.md
+  §1.1 is followed and the stated lean is taken autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Receipt data.** A1 — a payments service reads the payment, its allocation months (its own
+    tables) and student/batch names through the owning modules' public APIs (TAD.md §2). A2 — join
+    all tables directly from the print route. **Lean: A1.**
+  - **B — QR code.** B1 — add the small `qrcode` package and render a data URL from the receipt
+    number. B2 — hand-roll a QR encoder. **Lean: B1** (B2 is large, error-prone code we would own).
+  - **C — Excel export.** C1 — add `exceljs` (the PLAN §3 locked choice), lazy-imported so it stays
+    out of the initial bundle; write UTF-8 strings so Bangla opens correctly. C2 — ship CSV only.
+    **Lean: C1** (C2 fails the ticket's Excel acceptance line).
+  - **D — Print layout.** D1 — a receipt-only `@page { size: A5 }` stylesheet with absolutely
+    positioned VOID / DUPLICATE / REVISED n watermarks and a print button. D2 — reuse the app's A4
+    global styles. **Lean: D1.**
+  - **E — Balance due after payment.** E1 — the student's current dues from `duesForStudent` at print
+    time. E2 — a new historical balance column on each payment. **Lean: E1** (E2 is a schema change;
+    the printed figure matches the dues module and the ticket's E2E compares against it).
+  - **F — Verification.** F1 — unit tests for receipt fields and export rows, plus `receipt.spec.ts`
+    opening the real print route and asserting every required field and the download event. F2 — E2E
+    only. **Lean: F1.**
+- **Autonomous decision (T-054):** A1, B1, C1, D1, E1, F1 — take all six leans.
+- **Why:** the data and display stay in the owning payments module, the two new dependencies are the
+  locked ExcelJS plus a small QR renderer (both lazy/on-demand so the 300 KB budget holds), and the
+  printed balance uses the same dues rule the rest of the app uses. No Locked Decision, schema
+  convention, backup behaviour, test matrix or shared branch changes; adding a dependency is not in
+  AUTONOMY.md §3. Version impact is `minor` (a `feat`).
+- **Impact:** two prod dependencies (`exceljs`, `qrcode`) plus a lockfile update, new
+  receipt-service/export/print component and A5 stylesheet in payments, a `/print/receipt/:id` route,
+  en/bn keys, unit tests, `receipt.spec.ts`, and D-050 / PROGRESS / CHANGELOG / session log.
+
+---
+
 ## D-049 — T-053 Dues list and student Payments tab (2026-11-17)
 
 - **Context:** T-053 adds the `/payments/dues` list with batch/class/amount filters, requires its

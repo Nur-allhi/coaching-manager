@@ -1,0 +1,64 @@
+/* A5 receipt print layout (T-054, D-050 D1). Loaded only by the lazy print route. */
+@page {
+  size: A5;
+  margin: 10mm;
+}
+
+@media screen {
+  .receipt-page {
+    width: 148mm;
+    max-width: 100%;
+    margin: 1.5rem auto;
+    padding: 10mm;
+    background: #fff;
+    color: #111;
+    border: 1px solid #ddd;
+  }
+}
+
+.receipt-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.receipt-watermark {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #b91c1c;
+  opacity: 0.22;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding: 0.35rem 0;
+  font-size: 0.9rem;
+}
+
+.receipt-signature {
+  margin-top: 2.5rem;
+  border-top: 1px solid #111;
+  padding-top: 0.5rem;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+@media print {
+  .receipt-actions {
+    display: none !important;
+  }
+  .receipt-page {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
