@@ -52,7 +52,7 @@ export function Screen() {
       </div>
 
       <div data-print-hide className="flex flex-wrap items-end gap-3">
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-select">
           <span className="block">{t('reports.studentList')}</span>
           <select
             data-testid="report-select"
@@ -67,7 +67,7 @@ export function Screen() {
             ))}
           </select>
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-from">
           <span className="block">{t('reports.from')}</span>
           <input
             data-testid="report-from"
@@ -77,7 +77,7 @@ export function Screen() {
             onChange={(event) => setFilter((prev) => ({ ...prev, from: event.target.value }))}
           />
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-to">
           <span className="block">{t('reports.to')}</span>
           <input
             data-testid="report-to"
@@ -87,7 +87,7 @@ export function Screen() {
             onChange={(event) => setFilter((prev) => ({ ...prev, to: event.target.value }))}
           />
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-batch">
           <span className="block">{t('reports.batch')}</span>
           <select
             data-testid="report-batch"
@@ -103,7 +103,7 @@ export function Screen() {
             ))}
           </select>
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-class">
           <span className="block">{t('reports.class')}</span>
           <select
             data-testid="report-class"

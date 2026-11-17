@@ -92,7 +92,7 @@ export function AdminReportScreen() {
       </div>
 
       <div data-print-hide className="flex flex-wrap items-end gap-3">
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="admin-scope">
           <span className="block">{t('admin.scope')}</span>
           <select
             data-testid="admin-scope"
@@ -111,7 +111,7 @@ export function AdminReportScreen() {
           </select>
         </label>
         {scope.kind === 'month' ? (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="admin-month">
             <span className="block">{t('admin.month')}</span>
             <input
               data-testid="admin-month"
@@ -122,7 +122,7 @@ export function AdminReportScreen() {
             />
           </label>
         ) : (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="admin-year">
             <span className="block">{t('admin.year')}</span>
             <select
               data-testid="admin-year"

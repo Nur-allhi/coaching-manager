@@ -63,7 +63,7 @@ function validateValue(field: string, value: string, kind: ImportKind): string |
   if ((field === 'admitted_on' || field === 'enrolled_on') && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return 'import.badDate'
   }
-  if (field === 'status' && !['active', 'inactive', 'left'].includes(value.toLowerCase())) {
+  if (field === 'status' && !['active', 'dropped', 'passed_out'].includes(value.toLowerCase())) {
     return 'import.badStatus'
   }
   if (INTEGER_FIELDS[kind].includes(field) && !/^\d+$/.test(value)) return 'import.badInteger'

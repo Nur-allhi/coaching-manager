@@ -90,7 +90,7 @@ export function Screen() {
       </div>
 
       <div data-print-hide className="flex flex-wrap items-end gap-3">
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="leaderboard-scope">
           <span className="block">{t('leaderboard.scope')}</span>
           <select
             data-testid="leaderboard-scope"
@@ -105,7 +105,7 @@ export function Screen() {
         </label>
 
         {scope === 'exam' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-exam">
             <span className="block">{t('leaderboard.exam')}</span>
             <select
               data-testid="leaderboard-exam"
@@ -122,7 +122,7 @@ export function Screen() {
           </label>
         )}
         {scope === 'month' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-month">
             <span className="block">{t('leaderboard.month')}</span>
             <input
               data-testid="leaderboard-month"
@@ -134,7 +134,7 @@ export function Screen() {
           </label>
         )}
         {scope === 'year' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-year">
             <span className="block">{t('leaderboard.year')}</span>
             <select
               data-testid="leaderboard-year"
@@ -151,7 +151,7 @@ export function Screen() {
           </label>
         )}
 
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="leaderboard-filter">
           <span className="block">{t('leaderboard.filter')}</span>
           <select
             data-testid="leaderboard-filter"
