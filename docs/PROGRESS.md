@@ -1802,7 +1802,46 @@ themes, D1 fix the obvious Bangla defects; the human review line is explicitly n
 
 ## P7 Release
 
-_(not started)_
+### T-090 / P7-1 — End-to-end scenarios — **Done** (pending merge)
+
+**Acceptance:** all three T-090 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                              | Result                                                                                                                 |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| The spec performs the whole journey and asserts each outcome | met — one test: admission → partial payment → A5 receipt → snapshot → break → restore → name/payment/receipt recovered |
+| The spec runs in CI against the production build             | met — `e2e/specs/full-journey.spec.ts` runs under `pnpm e2e` (Chromium + Firefox) against `vite preview`               |
+| No file in `e2e/` exceeds 300 LOC                            | met — `full-journey.spec.ts` is 89 lines                                                                               |
+
+**What changed**
+
+- `e2e/specs/full-journey.spec.ts` — one test following student `2026-0001` end to end. Setup uses
+  the existing test-only payment fixture; every acceptance outcome is asserted on a real product
+  screen, and the restore leg proves the journey's own data returned (D-065 A1/B1/C1).
+- `src/app/dev/PaymentFixture.tsx` — additive `fixture-student-name` readout and `fixture-break`
+  control on the existing test-only route, so the restore can corrupt and verify the real student.
+- D-065, CHANGELOG, session log.
+
+**Decisions:** D-065 (Autonomous decision for T-090: A1 reuse the payment fixture, B1 assert
+admission on the real screens, C1 break and recover the journey student's data).
+
+**Results**
+
+| Check                                                                  | Result                        |
+| ---------------------------------------------------------------------- | ----------------------------- |
+| `NODE_OPTIONS=--max-old-space-size=6144 pnpm check`                    | green; bundle 281.0 KB        |
+| `pnpm exec playwright test e2e/specs/full-journey.spec.ts --workers=1` | 2 passed (Chromium + Firefox) |
+
+**Known gaps**
+
+- The initial admission write is fixture setup rather than the admission form (D-065 B1); the
+  admitted student, number and profile are asserted on the real screens, and the original
+  `students.spec.ts` covers the admission form itself.
+- The break leg corrupts one `students.full_name` through the test-only fixture; it does not model
+  a disk failure. The backup/restore machinery is the same one the product Backups page uses.
+- This spec is not tagged `@smoke` (the coverage matrix gives "the whole journey" no tag); the PR
+  gate runs the smoke suite, and the push-to-`dev` gate runs the full suite that includes it.
+
+**Next:** T-091, the in-app user guide.
 
 ## P8 Optional extras
 

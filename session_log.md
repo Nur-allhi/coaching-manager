@@ -1393,3 +1393,24 @@ request into `dev` is awaiting the human's merge confirmation.
 ### Status
 
 completed
+
+## Session 2026-11-18 03:05
+
+### Changes
+
+- `e2e/specs/full-journey.spec.ts` — added the single admission → payment → receipt → backup →
+  restore journey spec (T-090); follows one student and asserts each outcome on product screens.
+- `src/app/dev/PaymentFixture.tsx` — additive student-name readout and break control on the
+  existing test-only route so the restore leg can corrupt and verify the journey student.
+- `docs/DECISIONS.md` — D-065 (autonomous decision for T-090).
+- `docs/PROGRESS.md`, `CHANGELOG.md` — T-090 entry.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact + detect-changes)
+- `senior-frontend`, `e2e-tester` (Playwright specs, Chromium + Firefox)
+- `code-reviewer`, `security-auditor`
+
+### Status
+
+- completed
