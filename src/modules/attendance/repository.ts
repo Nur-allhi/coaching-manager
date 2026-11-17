@@ -3,7 +3,7 @@
  * version/deleted_at, so the generic versioned repo helpers do not apply — this module owns its
  * parameterized SQL. All writes run through the caller's transaction handle; UI never runs SQL.
  */
-import { makeAuditContext, writeAudit, type AuditContext } from '@/core/audit/write'
+import { makeAuditContext, type AuditContext } from '@/core/audit/write'
 import { repoWithin, type Row } from '@/core/db/repository'
 import type { Db } from '@/core/db/types'
 import type { AttendanceStatus } from './types'
@@ -39,13 +39,7 @@ export async function getOrCreateSession(
     batch_id: batchId,
     held_on: heldOn,
   })
-  await writeAudit(t, ctx, {
-    entity: 'attendance_sessions',
-    entityId: id,
-    action: 'create',
-    before: null,
-    after: { batch_id: batchId, held_on: heldOn },
-  })
+  // The shared insert helper already writes the single create audit row (BUG-010).
   const rows = await t.query<SessionRow>('SELECT * FROM attendance_sessions WHERE id = ?', [id])
   const created = rows[0]
   if (!created) throw new Error('failed to read created attendance session')

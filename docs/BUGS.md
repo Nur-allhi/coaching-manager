@@ -42,23 +42,6 @@ a resolved-bug history.
 
 ## Open
 
-## BUG-010: Opening an attendance session writes two create audit rows
-
-- **Status:** open
-- **Severity:** medium
-- **Found:** 2026-11-17 (during: T-061 code review, while checking the shared audit helper)
-- **Location:** `src/modules/attendance/repository.ts` (`getOrCreateSession`)
-- **Description:** `repoWithin(t, ctx).insert('attendance_sessions', ...)` already writes a `create`
-  audit row through the shared `insertWithin` helper, but `getOrCreateSession` then calls
-  `writeAudit(...)` again with the same entity and action. Opening a new session therefore produces
-  two `create` rows in `audit_log` instead of one. Observed by reading both code paths; expected one
-  audit row per write (REPO_RULES §7 / TAD §5.1). Existing attendance tests only assert the audit
-  count grows for a status change, so they do not catch it.
-- **Root Cause:** the module repository duplicates the audit write that the shared insert helper
-  already performs in the same transaction.
-- **Fix Approach:** — (awaiting human confirmation; a regression test must fail before and pass after)
-- **Resolved:** —
-
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** fixed
@@ -210,6 +193,26 @@ _None._
   document wider. A `dues.spec.ts` regression asserts zero document overflow at 375px. Verified at
   375/768/1280px: 0px overflow and 0 console errors on each (screenshots `/tmp/opencode/dues-*.png`).
 - **Resolved:** 2026-11-17 — T-053 branch `feature/dues-list`
+
+## BUG-010: Opening an attendance session writes two create audit rows
+
+- **Status:** fixed
+- **Severity:** medium
+- **Found:** 2026-11-17 (during: T-061 code review, while checking the shared audit helper)
+- **Location:** `src/modules/attendance/repository.ts` (`getOrCreateSession`)
+- **Description:** `repoWithin(t, ctx).insert('attendance_sessions', ...)` already writes a `create`
+  audit row through the shared `insertWithin` helper, but `getOrCreateSession` then called
+  `writeAudit(...)` again with the same entity and action. Opening a new session therefore produced
+  two `create` rows in `audit_log` instead of one. Expected one audit row per write (REPO_RULES §7 /
+  TAD §5.1). The pre-existing attendance tests only asserted that the audit count grows for a status
+  change, so they did not catch it.
+- **Root Cause:** the module repository duplicated the audit write the shared insert helper already
+  performs in the same transaction.
+- **Fix Approach:** removed the redundant manual `writeAudit` call and its now-unused import; the
+  shared helper's `create` row (which carries the full inserted row) is kept. A regression test
+  asserts exactly one `create` row for the session and fails before / passes after the change.
+  Confirmed by the human.
+- **Resolved:** 2026-11-17 — fix branch `fix/duplicate-session-audit`
 
 ## Won't fix
 

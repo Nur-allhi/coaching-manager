@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 22:00
+
+### Changes
+
+- PR #44 (T-061 exam + marks grid) squash-merged into `dev` as commit `c1b1a0d` after both CI
+  jobs confirmed SUCCESS and the user explicitly confirmed; branch `feature/marks-grid` deleted.
+- BUG-010 (duplicate create audit rows on attendance session open) fixed on branch
+  `fix/duplicate-session-audit` after the human confirmed the approach (remove the redundant
+  manual audit). Regression test added FIRST and confirmed failing before the fix (asserts
+  exactly one create audit row for the session); then the manual `writeAudit` call and unused
+  import removed from `src/modules/attendance/repository.ts`.
+- Docs: `docs/BUGS.md` status fixed (moved to Fixed section with approach/resolved),
+  `CHANGELOG.md` Fixed entry, `docs/PROGRESS.md` T-061 note updated.
+- Verification so far: 6 attendance unit tests pass; full `pnpm check` + E2E + GitNexus
+  detect-changes pending.
+
+### Skill(s) / Tool(s) Used
+
+- `code-reviewer` (audit helper review)
+- `gitnexus` (impact on `getOrCreateSession` LOW, 2 direct callers)
+- `playwright-mcp` (earlier)
+- bug protocol `REPO_RULES` §10
+
+### Status
+
+in-progress — BUG-010 fix implemented and unit-tested but not committed or merged yet.
+
 ## Session 2026-11-17 21:47
 
 ### Changes

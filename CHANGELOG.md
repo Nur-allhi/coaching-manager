@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Fixed
 
+- Opening an attendance session now writes one `create` audit row instead of two — the redundant manual audit was removed, with a regression test (BUG-010).
 - The dues report no longer overflows horizontally at phone and tablet widths; its grid columns shrink to the available width (BUG-009).
 - The app now loads offline after one visit: the SQLite WASM binary is precached by the service worker (BUG-004), and the Settings persistence-status element has its test id again (BUG-005).
 - Audit snapshots now store a compact `<blob:N bytes>` marker instead of per-byte JSON for binary columns, so a bounded photo cannot bloat the audit log (T-042).
