@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App } from '@/app/App'
 import { LockScreen } from '@/app/LockScreen'
 import { acquireDbOwnerLock } from '@/app/single-tab'
@@ -20,4 +21,16 @@ const ownsDb = await acquireDbOwnerLock()
 
 if (ownsDb) void requestPersistenceOnFirstRun()
 
-createRoot(container).render(<StrictMode>{ownsDb ? <App /> : <LockScreen />}</StrictMode>)
+const queryClient = new QueryClient()
+
+createRoot(container).render(
+  <StrictMode>
+    {ownsDb ? (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ) : (
+      <LockScreen />
+    )}
+  </StrictMode>,
+)

@@ -782,7 +782,39 @@ human decision (D-036 A2).
 - Future module services must call `showUndoToast` after a mutation; there is no automatic interception ("any mutation" is by convention until T-040+ wires it).
 - Full-suite single run hit memory/time limits in this environment; halves with 1 worker all pass.
 
-**Next:** T-035, the backups page + optimistic mutation helper (last P1 ticket).
+### T-035 / P1-6 — Backups page + optimistic mutation helper — **Done** (pending merge)
+
+**Acceptance:** all three T-035 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                               | Result                                                                         |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Backups page lists snapshots with reason, size and date       | met — real `/data-tools` page via TanStack Query; E2E asserts all three        |
+| Page warns when last file export older than 7 days            | met — `app_meta` timestamp + dismissible banner; E2E asserts + dismiss         |
+| Every mutation uses the shared helper and rolls back on error | met — one `useOptimisticMutation` (onMutate/onError/onSettled) for all actions |
+
+**What changed**
+
+- `src/modules/data-tools/BackupsScreen.tsx` — the real Backups page (snapshot list, restore, export, stale banner).
+- `src/core/ui/use-optimistic-mutation.ts` — shared helper; QueryClientProvider mounted in `main.tsx`.
+- `src/core/backup/health.ts` — last-export timestamp in `app_meta` + staleness check.
+- en/bn i18n keys; `/__backup-fixture` test route; `backups.spec.ts` (3 E2E tests).
+- D-040, CHANGELOG, session log.
+
+**Decisions:** D-040 (A1 TanStack Query, B1 optimistic hook, C1 `app_meta` timestamp, D1 real page E2E).
+
+**Results**
+
+| Check        | Result                                              |
+| ------------ | --------------------------------------------------- |
+| `pnpm check` | green (with larger heap)                            |
+| `pnpm e2e`   | all specs pass (halves, 1 worker); backups 3 passed |
+
+**Known gaps**
+
+- Import tools, audit log viewer and danger zone (FRONTEND_SPEC §5.10) are P6 work, not this ticket.
+- The 7-day warning uses the app clock; it is re-evaluated on page load, not live-ticking.
+
+**Next:** P2 Core records begins — T-040 Settings module, then academics and students.
 
 ## P2 Core records
 

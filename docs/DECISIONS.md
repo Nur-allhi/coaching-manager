@@ -259,6 +259,24 @@ Format: dated entries, newest last.
 
 ---
 
+## D-040 — T-035 Backups page and optimistic mutation helper (2026-11-17)
+
+- **Context:** T-035 is the last P1 ticket: a real Backups page plus one shared optimistic
+  mutation helper. TAD.md locks TanStack Query as the async/optimistic layer; `listSnapshots`
+  has 10 upstream callers (CRITICAL) and must not change its signature.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — TanStack Query
+  (QueryClientProvider + useQuery/useMutation). B1 — one `useOptimisticMutation` hook on
+  `useMutation` with `onMutate`/`onError`/`onSettled` (rollback + refetch). C1 — persist the last
+  file-export timestamp in `app_meta` (owned by data-tools per TAD) and show a dismissible
+  banner when it is older than 7 days (FRONTEND_SPEC §5.1). D1 — build the real Backups screen
+  in the data-tools module and drive it in `backups.spec.ts` with a test-only fixture route to
+  seed/break data.
+- **Why:** matches the locked architecture (no P2 rework); the timestamp is accurate because a
+  file export is not a snapshot; the E2E exercises the real product page.
+- **Impact:** QueryClientProvider in the app shell, new `useOptimisticMutation` hook, real
+  `data-tools/Screen.tsx`, `app_meta` key for last export, test-only fixture route, E2E spec,
+  i18n keys in en+bn. No new dependency — TanStack Query is already installed.
+
 ## D-039 — T-034 undo toast and History panel (2026-11-17)
 
 - **Context:** T-034 needs a 10-second Undo toast after any mutation and a reusable History tab

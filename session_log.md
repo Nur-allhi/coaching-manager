@@ -24,6 +24,35 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 13:15
+
+### Changes
+
+- `src/modules/data-tools/BackupsScreen.tsx` — real Backups page (T-035): snapshot list with
+  reason/size/date, restore, export and a 7-day stale-export banner.
+- `src/core/ui/use-optimistic-mutation.ts` — shared `useOptimisticMutation` helper on TanStack
+  Query; `QueryClientProvider` wired up in `src/main.tsx`.
+- `src/core/backup/health.ts` — backup health helper storing the last export timestamp in
+  `app_meta`.
+- `en`/`bn` i18n keys added; `/__backup-fixture` test route added for browser verification.
+- `e2e/specs/backups.spec.ts` — three specs; four health unit tests.
+- `e2e/specs/shell.spec.ts` — Data tools route heading is now 'Backups' (real page); spec uses
+  an optional `heading` field.
+- `docs/DECISIONS.md` (D-040), `docs/PROGRESS.md`, `CHANGELOG.md` — documentation updates.
+- Branch `feature/backups-page`, the last P1 ticket. All E2E green in the browser. No BUG ids
+  touched.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`, `branch-manager`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-035 implemented on branch `feature/backups-page`; not committed or merged yet.
+
 ## Session 2026-11-17 12:30
 
 ### Changes
