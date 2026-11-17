@@ -259,6 +259,64 @@ Format: dated entries, newest last.
 
 ---
 
+## D-048 — T-052 Edit and void a payment (2026-11-17)
+
+- **Context:** T-052 edits a recorded payment (re-run allocation, increment `revision`, keep the
+  receipt number) and voids one (keep the row and number, allocations stop counting). `payments`
+  already carries `status`, `revision` and a gapless `receipt_no` (T-051); `voidRecord` (T-030) and
+  the audited `repoWithin` helpers (T-015) exist. No human is present, so REPO_RULES.md §1.1 is
+  followed and the stated lean is taken autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where edit/void live.**
+    - A1 — extend the real `/payments` collect screen with a "Recent payments" section: a list of
+      recorded payments with Edit and Void actions, an inline edit form, and REVISED/VOID receipt
+      markers. Cost: one more component to keep under 300 LOC.
+    - A2 — dedicated `/payments/:id/edit` and receipt-list routes. Cost: more routes than the
+      FRONTEND_SPEC §4 map and a larger E2E surface.
+    - **Lean: A1.**
+  - **B — Re-allocation on edit.**
+    - B1 — in one `db.tx`, delete this payment's allocations (each audited), update the payment row
+      through `repoWithin.update` with `revision = revision + 1`, then re-allocate oldest-first to
+      the currently open charges. Cost: one ordered query and a bounded write loop.
+    - B2 — diff only the allocation rows that change. Cost: more bookkeeping with no requirement
+      behind it.
+    - **Lean: B1.**
+  - **C — Receipt identity and markers.**
+    - C1 — never change `receipt_no`; increment `revision`; surface `REVISED n` and `VOID` as
+      i18n-keyed markers in the real UI, plus a receipt preview on the recent-payments row that
+      shows the receipt number, revised mark and explicit `Revision n` count so the "shown on the
+      reprinted receipt" line is met here. The A5 `@page` print layout, QR, balance due and Excel
+      export consume these same fields and belong to T-054. Cost: the A5 layout itself is not
+      shipped here.
+    - C2 — a separate revisions table. Cost: new schema and reconciliation with no benefit.
+    - **Lean: C1.**
+  - **D — Void semantics.**
+    - D1 — a thin payments-service wrapper over core `voidRecord`, which sets `status = 'void'` and
+      leaves the row and allocations intact; `openCharges` already excludes void payments'
+      allocations, so they stop counting with no new query. Cost: a void payment cannot be edited.
+    - D2 — delete the allocations on void. Cost: loses the history the receipt number is meant to
+      preserve.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — unit tests (receipt unchanged, revision bump, re-allocation changes dues, void stops
+      allocations counting, rollback on failure, version conflict) plus an extended
+      `payments.spec.ts` that edits and voids through the real screen. Cost: a small fixture change.
+    - E2 — E2E only. Cost: money/allocation edge cases need fast unit coverage.
+    - **Lean: E1.**
+- **Autonomous decision (T-052):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** one transaction covers the edit, its audit rows and the re-allocation; the receipt keeps
+  its identity while the revision records how many edits happened; void reuses the existing audited
+  helper and needs no new query because the valid-payment filter already governs counting. No
+  Locked Decision, schema convention, backup/restore behaviour, test matrix or shared branch changes.
+  Version impact is `minor` (a `feat`).
+- **Impact:** additive service functions and repository helpers in `src/modules/payments/*`, a new
+  recent-payments component with a receipt preview, an extended `/payments` screen and fixture,
+  en/bn keys, unit tests and `payments.spec.ts`, D-048/PROGRESS/CHANGELOG/session log. No new
+  dependency or migration. The A5 `@page` print layout (QR, balance due, Excel) stays in T-054;
+  allocation-level undo remains out of scope (no UI path reaches it).
+
+---
+
 ## D-047 — T-051 Record payment with allocation (2026-11-17)
 
 - **Context:** T-051 records partial, advance and multi-month payments with allocation and receipt

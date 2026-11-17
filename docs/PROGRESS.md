@@ -1104,12 +1104,55 @@ C1 advance as unused capacity, D1 real collect UI, E1 unit + E2E).
 
 **Known gaps**
 
-- Voiding/editing payments (T-052) is not implemented yet; voided payments' allocations already
-  stop counting because `openCharges` sums only `status = 'valid'` rows.
+- Voiding/editing payments is implemented in T-052 below.
 - The collect screen shows dues and amounts in integer paisa; friendly Bangla formatting lands with
   the print/export tickets.
 
-_(not started)_
+### T-052 / P3-3 — Edit and void a payment — **Done** (pending merge)
+
+**Acceptance:** all three T-052 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                        | Result                                                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| An edited receipt keeps its number and shows REVISED                   | met — `receipt_no` never patched; `revision` bumped and `REVISED n` shown in UI |
+| A voided receipt is watermarked VOID and its allocations stop counting | met — core `voidRecord`; `openCharges` filters `status = 'valid'`; VOID shown   |
+| The revision count is shown on the reprinted receipt                   | met — the receipt preview shows `Revision n`; A5 print layout follows in T-054  |
+
+**What changed**
+
+- `src/modules/payments/payment-service.ts` — `editPayment` re-runs allocation in one `db.tx`:
+  delete old allocations (audited), audited `repoWithin` update with `revision = revision + 1`,
+  then oldest-first re-allocation. `voidPayment` wraps core `voidRecord`. The allocation loop was
+  extracted once into `allocateToOpenCharges` and is reused by record/edit/advance paths.
+- `src/modules/payments/payments-repository.ts` — additive `deleteAllocations` and `updatePayment`
+  helpers; no change to `insertAllocation`/`openCharges` signatures (both HIGH blast radius).
+- `src/modules/payments/RecentPayments.tsx` — real recent-payments list with Edit/Void, i18n-keyed
+  REVISED/VOID markers and a receipt preview that shows the receipt number and revision count.
+- Extended `/payments` collect screen and `/__payment-fixture` flow, en/bn keys, 7 unit tests and
+  two new `payments.spec.ts` E2E tests, D-048, CHANGELOG, session log.
+
+**Decisions:** D-048 (Autonomous decision: A1 extend the real collect screen, B1 delete-and-reallocate
+in one tx, C1 keep the receipt number + bump revision, D1 reuse core void, E1 unit + E2E).
+
+**Results**
+
+| Check        | Result                                                                         |
+| ------------ | ------------------------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 264.3 KB of 300 KB                                           |
+| `pnpm test`  | 191 passed across 33 files                                                     |
+| `pnpm e2e`   | payments 4 passed (Chromium + Firefox); full suite 133 passed, 3 known offline |
+| smoke gate   | 4 passed                                                                       |
+
+**Known gaps**
+
+- The A5 `@page` print layout (QR of the receipt number, balance due after payment, Excel export)
+  is T-054; T-052 provides the data and an in-app receipt preview.
+- The 3 full-suite failures are the pre-existing BUG-004 (WASM not precached) and BUG-005 (stale
+  `persistence-status` selector); both are deferred and unchanged by this ticket.
+- Allocation-level undo is still unavailable (no UI path reaches those audit entries); editing is
+  refused on a void payment, and no automatic undo toast is shown for edit/void yet.
+
+**Next:** T-053, dues list and defaulter filters with the student Payments tab.
 
 ## P4 Academics
 

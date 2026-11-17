@@ -25,6 +25,7 @@ export const bn: { translation: Translation } = {
     },
     common: {
       loading: 'লোড হচ্ছে…',
+      cancel: 'বাতিল',
     },
     nav: {
       dashboard: 'ড্যাশবোর্ড',
@@ -132,6 +133,17 @@ export const bn: { translation: Translation } = {
       admission: 'ভর্তি ফি',
       take: 'অর্থ গ্রহণ',
       receipt: 'রিসিট',
+      recent: 'সাম্প্রতিক অর্থ প্রদান',
+      noPayments: 'এখনো কোনো অর্থ প্রদান রেকর্ড করা হয়নি।',
+      edit: 'সম্পাদনা',
+      void: 'বাতিল',
+      voided: 'বাতিলকৃত',
+      revised: 'সংশোধিত {{count}}',
+      revisionCount: 'সংশোধন {{count}}',
+      saveEdit: 'পরিবর্তন সংরক্ষণ',
+      editFailed: 'সম্পাদনা সংরক্ষণ করা যায়নি — কিছু পরিবর্তন হয়নি।',
+      voidFailed: 'এই অর্থ প্রদান বাতিল করা যায়নি — কিছু পরিবর্তন হয়নি।',
+      cannotEdit: 'বাতিলকৃত অর্থ প্রদান সম্পাদনা করা যায় না।',
       methods: {
         cash: 'নগদ',
         bank: 'ব্যাংক',
