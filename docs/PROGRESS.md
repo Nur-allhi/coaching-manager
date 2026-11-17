@@ -1809,7 +1809,7 @@ themes, D1 fix the obvious Bangla defects; the human review line is explicitly n
 | Version in Settings matches `package.json`     | met — Vite `define` injects the manifest version; E2E asserts the row |
 | Hosting instructions are in `README.md`        | met — new "Static hosting" section                                    |
 | Security headers documented                    | met — `_headers` rationale summarised with host-specific guidance     |
-| A fresh clone builds and passes the full suite | met — clean clone ran `pnpm check` and E2E; see below                 |
+| A fresh clone builds and passes the full suite | met except the known BUG-012 idle-lock flake — see Results below      |
 
 **What changed**
 
@@ -1824,14 +1824,17 @@ D1 no release actions).
 
 **Results**
 
-| Check        | Result                                                  |
-| ------------ | ------------------------------------------------------- |
-| `pnpm check` | green; initial JS 281.9 KB of 300 KB                    |
-| version E2E  | 2 passed (Chromium + Firefox), matches `package.json`   |
-| fresh clone  | `pnpm check` green and E2E passed from a clean checkout |
+| Check        | Result                                                       |
+| ------------ | ------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 281.9 KB of 300 KB                         |
+| version E2E  | 2 passed (Chromium + Firefox), matches `package.json`        |
+| fresh clone  | `pnpm check` green; E2E 234 passed, 2 BUG-012 flake failures |
 
 **Known gaps**
 
+- The clean-clone full suite had two failures in the pre-existing BUG-012 inactivity-lock spec
+  (the failing browser varied on retry); CI's two retries mask it. Every other spec, including the
+  new guide, a11y and full-journey specs, passed.
 - Actual paper/device deployment is not performed here; hosting instructions are for static hosts.
 - Releasing, version bumps and tags remain human-only and were not touched.
 
