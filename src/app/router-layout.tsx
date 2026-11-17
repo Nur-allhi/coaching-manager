@@ -6,6 +6,7 @@ import { lazy, Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from '@/components/ui/sonner'
 import { AppShell } from './AppShell'
 import { ErrorBoundary } from './ErrorBoundary'
 
@@ -47,6 +48,7 @@ export function RootLayout() {
           </Suspense>
         </AppShell>
       </ErrorBoundary>
+      <Toaster />
     </TooltipProvider>
   )
 }

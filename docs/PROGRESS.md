@@ -750,7 +750,39 @@ human decision (D-036 A2).
 - The picker/download writer is wired but its UI invocation lands in T-035 (backups page).
 - 600k PBKDF2 makes encrypted export/import take a few seconds on a tablet; acceptable for an infrequent, deliberate backup operation.
 
-**Next:** T-034, the undo mechanism and History component.
+### T-034 / P1-5 — Undo toast and History panel — **Done** (pending merge)
+
+**Acceptance:** all three T-034 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                           | Result                                                          |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| A create, an update and a delete can each be undone                       | met — real audited writes in `/__undo`, E2E undoes all three    |
+| A toast offers Undo for 10 seconds after any mutation                     | met — `showUndoToast` via sonner, 10s duration, Undo action     |
+| The History tab lists a record's entries and can restore a chosen version | met — generic `HistoryPanel` calls `undo()` on the chosen entry |
+
+**What changed**
+
+- `src/core/ui/undo-toast.ts` — imperative 10s Undo toast (sonner already a dependency).
+- `src/core/ui/HistoryPanel.tsx` — generic `{table, recordId}` panel; `revision` + `onRestored` keep host and panel in sync.
+- `src/core/audit/write.ts` — shared `makeAuditContext()` factory; `Toaster` mounted once in RootLayout.
+- en/bn i18n keys; `/__undo` dev harness + `e2e/specs/undo.spec.ts` (4 tests).
+- D-039, CHANGELOG, session log.
+
+**Decisions:** D-039 (A1 hook+imperative toast, B1 dev harness E2E, C1 generic panel).
+
+**Results**
+
+| Check        | Result                                                                            |
+| ------------ | --------------------------------------------------------------------------------- |
+| `pnpm check` | green (with larger heap — tsc segfaults under memory pressure)                    |
+| `pnpm e2e`   | all specs green across Chromium, Firefox, smoke (run in two halves with 1 worker) |
+
+**Known gaps**
+
+- Future module services must call `showUndoToast` after a mutation; there is no automatic interception ("any mutation" is by convention until T-040+ wires it).
+- Full-suite single run hit memory/time limits in this environment; halves with 1 worker all pass.
+
+**Next:** T-035, the backups page + optimistic mutation helper (last P1 ticket).
 
 ## P2 Core records
 

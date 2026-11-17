@@ -6,12 +6,18 @@
  * transaction is the repository helper's job, not the writer's.
  */
 import type { Db, DbParam } from '../db/types'
+import { newId } from '../db/uuid'
 
 /** Who performed a write, when, and the id generator for the audit row. */
 export interface AuditContext {
   actorId: string | null
   now: number
   newId: () => string
+}
+
+/** The production audit context: current time, UUIDv7 audit ids, no authenticated actor yet (P6-1). */
+export function makeAuditContext(actorId: string | null = null): AuditContext {
+  return { actorId, now: Date.now(), newId }
 }
 
 export type AuditAction = 'create' | 'update' | 'delete' | 'restore' | 'void'

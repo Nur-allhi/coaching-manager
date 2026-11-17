@@ -21,6 +21,9 @@ const SnapshotHarness = lazy(() =>
 const FileTransferHarness = lazy(() =>
   import('./dev/FileTransferHarness').then((m) => ({ default: m.FileTransferHarness })),
 )
+const UndoHarness = lazy(() =>
+  import('./dev/UndoHarness').then((m) => ({ default: m.UndoHarness })),
+)
 
 export function routeDefinitions(): RouteObject[] {
   return [
@@ -35,6 +38,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__crash-probe', element: createElement(CrashProbe) },
         { path: '/__snapshots', element: createElement(SnapshotHarness) },
         { path: '/__file-transfer', element: createElement(FileTransferHarness) },
+        { path: '/__undo', element: createElement(UndoHarness) },
         { path: '*', element: createElement(NotFound) },
       ],
     },
