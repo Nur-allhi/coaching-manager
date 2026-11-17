@@ -994,6 +994,44 @@ public API, C1 documented discount union, D1 batch fee defaults, E1 fixture-back
 
 **Next:** T-044, the seed generator (`pnpm seed --students 5000`).
 
+### T-044 / P2-5 — Seed generator — **Done** (pending merge)
+
+**Acceptance:** all three T-044 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                         | Result                                                              |
+| ------------------------------------------------------- | ------------------------------------------------------------------- |
+| The command creates the requested number of students    | met — `pnpm seed --students N` writes N deterministic rows to JSON  |
+| Two runs with the same seed produce the same data       | met — pure mulberry32 generator, byte-identical output asserted     |
+| The generator is used by the performance and e2e suites | met — imported by `repository.test.ts` benchmark and `seed.spec.ts` |
+
+**What changed**
+
+- `scripts/seed-data.ts` — pure seeded generator (no new dependency); `scripts/seed.ts` — CLI with
+  `--students`, `--seed`, `--out`, writing under ignored `test-results/`.
+- `package.json` `seed` script; `docs/DEVELOPMENT.md` script table and §8.
+- `src/test/seed-data.test.ts` — determinism/format tests; the 5,000-row benchmark now consumes the
+  generator; `/__seed-fixture` route and `e2e/specs/seed.spec.ts` drive the real list with seeded rows.
+- D-045 decision, CHANGELOG, session log.
+
+**Decisions:** D-045 (Autonomous decision: A1 seeded PRNG, B1 pure generator, C1 ignored JSON
+output, D1 both suites consume it).
+
+**Results**
+
+| Check        | Result                                  |
+| ------------ | --------------------------------------- |
+| `pnpm check` | green                                   |
+| `pnpm test`  | 173 passed across 31 files              |
+| `pnpm e2e`   | seed spec 2 passed (Chromium + Firefox) |
+
+**Known gaps**
+
+- The CLI writes a JSON file under `test-results/`; it cannot write to the browser's OPFS directly,
+  so e2e seeding goes through the test-only `/__seed-fixture` route (same generator, same data).
+- The `/__seed-fixture` route is another instance of the documented harness-route pattern (BUG-008).
+
+**Next:** T-050, fee rules and monthly charge generation (P3 Money).
+
 ## P3 Money
 
 _(not started)_
