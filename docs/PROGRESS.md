@@ -814,11 +814,43 @@ human decision (D-036 A2).
 - Import tools, audit log viewer and danger zone (FRONTEND_SPEC §5.10) are P6 work, not this ticket.
 - The 7-day warning uses the app clock; it is re-evaluated on page load, not live-ticking.
 
-**Next:** P2 Core records begins — T-040 Settings module, then academics and students.
+### T-040 / P2-1 — Settings module — **Done** (pending merge)
+
+**Acceptance:** all three T-040 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                        | Result                                                          |
+| ------------------------------------------------------ | --------------------------------------------------------------- |
+| Every setting persists and is read back after a reload | met — typed settings repository + Query; E2E reload assertions  |
+| Grading scale editable; default matches TAD §5.7       | met — fixed 7 rows, exact defaults; E2E edit + reload           |
+| Backup and storage status shown                        | met — last export, snapshot count, persistence status on screen |
+
+**What changed**
+
+- `src/modules/settings/defaults.ts`, `repository.ts` — Zod-validated typed settings over the `settings` table; audited writes.
+- `src/modules/settings/SettingsScreen.tsx` — centre profile, currency, receipt format, grading scale, language, backup/storage status.
+- `src/app/bootstrap.ts`, `RecoveryScreen.tsx` — startup migration with a real pre-migration snapshot (skipped on first install) and a recovery screen (PLAN §7.4 gap found and closed here).
+- en/bn i18n keys; 6 repository unit tests; `e2e/specs/settings.spec.ts` (3 E2E tests).
+- D-041, CHANGELOG, session log.
+
+**Decisions:** D-041 (A1 typed repo, B1 Query+optimistic, C2 fixed 7 rows, D1 real screen E2E); startup-migration approach confirmed with the human.
+
+**Results**
+
+| Check        | Result                                         |
+| ------------ | ---------------------------------------------- |
+| `pnpm check` | green (with larger heap)                       |
+| `pnpm e2e`   | all specs pass across Chromium, Firefox, smoke |
+
+**Known gaps**
+
+- Logo is stored as a data URI string in settings; no image-picker UI yet (field present, no upload control).
+- Settings changes are audited under entity `settings`; no History tab on this screen (HistoryPanel targets business tables).
+
+**Next:** T-041, academics module (years, classes, subjects, batches).
 
 ## P2 Core records
 
-_(not started)_
+_(T-040 settings done above; next T-041 academics)_
 
 ## P3 Money
 
