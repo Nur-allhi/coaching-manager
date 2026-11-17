@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 11:15
+
+### Changes
+
+- `src/core/backup/crypto.ts`, `src/core/backup/crypto-types.ts` — self-describing AES-GCM
+  container with PBKDF2-SHA-256 600k and injected WebCrypto (T-033).
+- `src/core/backup/file-transfer.ts` — export/import reusing T-032 restore via a new
+  `importAsSnapshot` helper in `snapshots.ts`.
+- `src/app/dev/FileTransferHarness.tsx`, `/__file-transfer` route — browser verification harness.
+- `e2e/specs/file-transfer.spec.ts` — three specs; nine unit tests (crypto + file-transfer).
+- `docs/DECISIONS.md` (D-038), `docs/PROGRESS.md`, `CHANGELOG.md` — documentation updates.
+- Branch `feature/database-file-transfer`. All 3 E2E pass including a real-browser AES-GCM round
+  trip; `pnpm check` green, `pnpm e2e` 86 passed. Note: `showSaveFilePicker`/download writer
+  implemented; product UI invocation deferred to T-035.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `decision-advisor`, `branch-manager`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-033 implemented on branch `feature/database-file-transfer`; not committed or
+merged yet.
+
 ## Session 2026-11-17 00:59
 
 ### Changes

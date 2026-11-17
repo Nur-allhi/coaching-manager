@@ -18,6 +18,7 @@ human-readable subset.
 
 ### Added
 
+- Portable database file export/import: a raw `.sqlite` export, optional AES-GCM encrypted backup in a self-describing container (PBKDF2-SHA-256, 600k iterations), and import that reuses the validated restore path (T-033, D-038).
 - A single-tab lock: a second tab shows an "already open in another tab" screen before any Worker or database client is created, and the lock releases when the tab closes (T-018, D-037).
 - Safe restore from a snapshot: checksum/header/schema validation, a summary, a forced pre-restore snapshot, rollback of the live bytes if the import fails, and an end-to-end spec that breaks and restores the data.
 - OPFS snapshots with a sidecar manifest (reason, schema version, SHA-256, size and row counts), checksum dedupe and rotation to the newest 10, plus an end-to-end spec that proves the offline data can be snapshotted repeatedly.

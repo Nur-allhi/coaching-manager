@@ -259,6 +259,25 @@ Format: dated entries, newest last.
 
 ---
 
+## D-038 — T-033 portable file transfer design (2026-11-17)
+
+- **Context:** T-033 needs a portable `.sqlite` export, optionally AES-GCM encrypted, that
+  restores on a clean profile and fails on a wrong passphrase. PLAN.md §3 locks WebCrypto only;
+  TAD.md §13 requires a `format_version` separate from the database `schema_version`.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — a single self-describing
+  binary container (magic + format_version + JSON metadata {IV, salt, iterations, schemaVersion,
+  SHA-256, byteLength} + ciphertext). B1 — PBKDF2-SHA-256 with a random 16-byte salt and 600,000
+  iterations (consistent with the PIN policy), with the iteration count recorded in the header.
+  C1 — the passphrase is a parameter of a pure crypto module, never collected via `window.prompt`
+  inside it (UI prompt deferred to T-035).
+- **Why:** one file needs no zip dependency; AES-GCM's auth tag makes a wrong passphrase fail;
+  a pure module is testable with injected WebCrypto; the header records the KDF so the shipped
+  default can change without breaking old files.
+- **Impact:** new `crypto.ts`/`crypto-types.ts`/`file-transfer.ts`, a `importAsSnapshot` helper so
+  imports reuse the T-032 restore path unchanged, a dev harness + E2E spec. No new dependency.
+- **Known gap:** the showSaveFilePicker/download-writer choice is implemented in `nativeOrDownloadWriter`
+  but only exercised by unit-level structure; the product UI that invokes it is T-035.
+
 ## D-037 — T-018 single-tab lock design (2026-11-17)
 
 - **Context:** T-018 must refuse a second tab before it opens the one-connection OPFS VFS,

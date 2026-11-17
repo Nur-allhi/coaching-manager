@@ -31,8 +31,31 @@ export type SnapshotOutcome =
   | { status: 'created'; file: string; sidecar: SnapshotSidecar }
   | { status: 'skipped'; duplicateOf: string }
 
-function sidecarFor(file: string): string {
+/** Sidecar name for a snapshot file. Shared with the import path (T-033). */
+export function sidecarFor(file: string): string {
   return `${file.slice(0, -'.sqlite'.length)}.json`
+}
+
+/** Register arbitrary database bytes as a snapshot so the T-032 restore path validates them. */
+export async function importAsSnapshot(
+  storage: SnapshotStorage,
+  bytes: Uint8Array,
+  db: Db,
+  file: string,
+  now: number,
+): Promise<SnapshotFile> {
+  const sidecar: SnapshotSidecar = {
+    reason: 'pre-import',
+    schemaVersion: await schemaVersion(db),
+    sha256: await checksum(bytes),
+    size: bytes.byteLength,
+    students: await rowCount(db, 'students'),
+    payments: await rowCount(db, 'payments'),
+    at: now,
+  }
+  await storage.write(file, bytes)
+  await storage.write(sidecarFor(file), new TextEncoder().encode(JSON.stringify(sidecar)))
+  return { file, sidecar }
 }
 
 async function checksum(bytes: Uint8Array): Promise<string> {
