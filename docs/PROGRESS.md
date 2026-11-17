@@ -952,6 +952,48 @@ C1 bounded BLOB, D1 honest profile placeholders, E1 virtualized list, F1 real E2
 
 **Next:** T-043, enrollments module (enroll, transfer, discounts, leave date).
 
+### T-043 / P2-4 — Enrollments and batch transfer — **Done** (pending merge)
+
+**Acceptance:** all three T-043 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                              | Result                                                                           |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| A transfer preserves the original enrollment in history      | met — one `db.tx` closes the old row (`status`, `left_on`) and inserts a new one |
+| The capacity warning appears when a batch is over capacity   | met — own-table active count vs `batches.capacity` via academics' public API     |
+| A fixed and a percent discount are both stored and displayed | met — integer paisa/percent with the core money helper; E2E asserts net fees     |
+
+**What changed**
+
+- `src/modules/enrollments/{types,repository,service}.ts` — Zod boundaries, audited CRUD, the
+  atomic transfer, fee defaults and the non-blocking capacity warning; batches/students read only
+  through the owning modules' public `index.ts` (TAD.md §2).
+- `src/modules/enrollments/{EnrollmentsScreen,Screen}.tsx` — the real lazy `/enrollments` screen:
+  enroll, transfer, leave date, discount display and the live capacity warning.
+- Additive public exports `listBatches` (academics) and `listStudents`/`getStudent` (students);
+  `/__enrollment-fixture` test route; `e2e/specs/enrollments.spec.ts`; en/bn keys; D-044.
+
+**Decisions:** D-044 (Autonomous decision for T-043: A1 atomic close+open transfer, B1 capacity via
+public API, C1 documented discount union, D1 batch fee defaults, E1 fixture-backed real E2E).
+
+**Results**
+
+| Check        | Result                                    |
+| ------------ | ----------------------------------------- |
+| `pnpm check` | green; initial JS under 300 KB            |
+| `pnpm test`  | 168 passed across 30 files                |
+| `pnpm e2e`   | enrollments 8 passed (Chromium + Firefox) |
+
+**Known gaps**
+
+- The enrollment list shows raw student/batch ids instead of joined names; the profile's
+  Enrollments tab will show names once that module lands. No cross-module table reads were added.
+- The capacity warning uses the batch's current capacity, not a projected count for the specific
+  transfer; a transfer that vacates the source batch can still show a warning when targeting a
+  full batch (non-blocking by design).
+- The three pre-existing offline failures (BUG-004/005) and the deferred BUG-006/007 remain.
+
+**Next:** T-044, the seed generator (`pnpm seed --students 5000`).
+
 ## P3 Money
 
 _(not started)_

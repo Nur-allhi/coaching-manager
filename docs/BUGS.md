@@ -42,23 +42,15 @@ a resolved-bug history.
 
 ## Open
 
-## BUG-007: Undoing a photo update can write a redaction marker into the BLOB column
+## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** open
-- **Severity:** low
-- **Found:** 2026-11-17 (during: code review of T-042)
-- **Location:** `src/core/audit/undo.ts:58-68,89-94`; `src/core/audit/write.ts:38-40`;
-  `src/modules/students/StudentProfile.tsx`
-- **Description:** Audit snapshots now redact `Uint8Array` to `<blob:N bytes>` (so photos do not
-  expand into per-byte JSON). `undoWithin` builds its inverse patch from the stored `before_json`,
-  so undoing a photo-only update would write that literal marker string into the `photo` BLOB.
-  The previous code could not undo photo updates either (binding a per-byte object failed), so
-  this is a pre-existing limitation made safe-but-imprecise, not a new regression.
-- **Root Cause:** the undo path reconstructs values from JSON snapshots that intentionally omit
-  binary content.
-- **Fix Approach:** represent blobs by a typed marker that undo translates back to the stored
-  bytes (or exclude binary-only entries from undo), with a regression test. Needs the human's
-  confirmation under REPO_RULES.md §10 before a fix.
+- **Severity:** high
+- **Found:** 2026-11-17 (during: full-suite e2e verification after T-041)
+- **Location:** `vite.config.ts` (`workbox.globPatterns` and `runtimeCaching`); `e2e/specs/offline.spec.ts`
+- **Description:** After one online visit, going offline and reloading shows the recovery screen with `Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load '.../assets/sqlite3-*.wasm')`. Expected: the dashboard loads and the Settings route works offline. `globPatterns` is `**/*.{js,css,html,svg,png,woff2}` — no `wasm` — and every runtime URL is `NetworkOnly`, so the sqlite-wasm binary is never available without a network. Reproduces on `dev` unchanged by T-041; the config was set in T-019.
+- **Root Cause:** the Workbox precache glob omits the `.wasm` asset and no runtime cache stores it.
+- **Fix Approach:** add `wasm` to the precache glob (and consider a runtime cache for the WASM binary), then re-run `offline.spec.ts`; a fix must include a regression assertion that the WASM request succeeds while offline. Not fixed in T-041 — different ticket, and the approach follows the confirmation protocol.
 - **Resolved:** —
 
 ## BUG-006: Restoring a pre-T-042 snapshot leaves the new students schema absent
@@ -80,17 +72,6 @@ a resolved-bug history.
   which is human-only under AUTONOMY.md §3.1; a human must confirm the approach.
 - **Resolved:** —
 
-## BUG-004: The app cannot load offline — SQLite WASM is not precached
-
-- **Status:** open
-- **Severity:** high
-- **Found:** 2026-11-17 (during: full-suite e2e verification after T-041)
-- **Location:** `vite.config.ts` (`workbox.globPatterns` and `runtimeCaching`); `e2e/specs/offline.spec.ts`
-- **Description:** After one online visit, going offline and reloading shows the recovery screen with `Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load '.../assets/sqlite3-*.wasm')`. Expected: the dashboard loads and the Settings route works offline. `globPatterns` is `**/*.{js,css,html,svg,png,woff2}` — no `wasm` — and every runtime URL is `NetworkOnly`, so the sqlite-wasm binary is never available without a network. Reproduces on `dev` unchanged by T-041; the config was set in T-019.
-- **Root Cause:** the Workbox precache glob omits the `.wasm` asset and no runtime cache stores it.
-- **Fix Approach:** add `wasm` to the precache glob (and consider a runtime cache for the WASM binary), then re-run `offline.spec.ts`; a fix must include a regression assertion that the WASM request succeeds while offline. Not fixed in T-041 — different ticket, and the approach follows the confirmation protocol.
-- **Resolved:** —
-
 ## BUG-005: Offline spec asserts a test id the Settings screen no longer renders
 
 - **Status:** open
@@ -100,6 +81,43 @@ a resolved-bug history.
 - **Description:** `the Settings screen shows the storage persistence status` fails because it looks for `getByTestId('persistence-status')`, which no element renders. T-040 replaced the T-019 status row with a plain paragraph that has no test id. Expected: the spec targets the current status element. Reproduces on `dev`; `git show origin/dev:src/modules/settings/SettingsScreen.tsx` has no `persistence-status`.
 - **Root Cause:** the T-040 Settings rewrite changed the markup without updating the T-019 spec.
 - **Fix Approach:** either restore a `data-testid="persistence-status"` on the status paragraph or retarget the spec to the current accessible text; add/keep a regression assertion. Not fixed in T-041 (separate ticket).
+- **Resolved:** —
+
+## BUG-007: Undoing a photo update can write a redaction marker into the BLOB column
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-17 (during: code review of T-042)
+- **Location:** `src/core/audit/undo.ts:58-68,89-94`; `src/core/audit/write.ts:38-40`;
+  `src/modules/students/StudentProfile.tsx`
+- **Description:** Audit snapshots now redact `Uint8Array` to `<blob:N bytes>` (so photos do not
+  expand into per-byte JSON). `undoWithin` builds its inverse patch from the stored `before_json`,
+  so undoing a photo-only update would write that literal marker string into the `photo` BLOB.
+  The previous code could not undo photo updates either (binding a per-byte object failed), so
+  this is a pre-existing limitation made safe-but-imprecise, not a new regression.
+- **Root Cause:** the undo path reconstructs values from JSON snapshots that intentionally omit
+  binary content.
+- **Fix Approach:** represent blobs by a typed marker that undo translates back to the stored
+  bytes (or exclude binary-only entries from undo), with a regression test. Needs the human's
+  confirmation under REPO_RULES.md §10 before a fix.
+- **Resolved:** —
+
+## BUG-008: Dev/test harness routes are reachable in production builds
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-17 (during: security review of T-043, which adds `/__enrollment-fixture`)
+- **Location:** `src/app/router.ts` (all `/__*` routes, including the new enrollment fixture)
+- **Description:** The `/__*` harness routes are mounted unconditionally, so a production build
+  exposes buttons that write seed/fixture rows to the real OPFS database. No real data is read or
+  leaked; the risk is unwanted writes by anyone who opens the URL. The new enrollment fixture adds
+  one more instance of an existing pattern (T-025/D-025 explicitly keep harnesses built so the
+  production-preview E2E can reach them — a `import.meta.env.DEV` gate would break every E2E spec).
+- **Root Cause:** harness routes share the router with product routes and are not feature-gated;
+  gating them requires changing the verified E2E strategy for every module.
+- **Fix Approach:** decide on a single cross-cutting approach (e.g. a build flag that the E2E build
+  sets explicitly) and apply it to all harness routes with a regression test. Needs a human
+  decision because it changes the established verification strategy. Deferred from T-043.
 - **Resolved:** —
 
 ## BUG-002: Duplicate concurrent nightly autonomous-build sessions
