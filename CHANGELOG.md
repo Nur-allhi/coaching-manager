@@ -20,6 +20,7 @@ human-readable subset.
 
 ### Added
 
+- Record a payment with allocation: partial, advance and multi-month payments allocated oldest-first in one transaction, gapless `R-YYYY-000001` receipt numbers from a counter, advances reused when later charges are generated, and a real collect screen with a live dues preview (T-051, D-047).
 - Fee rules: idempotent admission and monthly charge generation per enrollment, with fixed and percent discounts correct to the paisa and a unique key (not a flag) that prevents duplicate charges (T-050, D-046).
 - A deterministic seed generator: `pnpm seed --students 5000 [--seed N] [--out FILE]` writes a reproducible student dataset to `test-results/`, shared by the performance benchmark and the e2e seed spec (T-044, D-045).
 - An Enrollments module: enroll, transfer between batches in one audited transaction (the old enrollment stays closed in history), a leave date, fixed/percent discounts shown as net fees, fee defaults from the batch and a non-blocking capacity warning (T-043, D-044).

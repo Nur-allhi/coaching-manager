@@ -1071,6 +1071,44 @@ C1 gross+discount stored, D1 month-bounded generator, E1 unit-only verification)
   start for the current month); T-051+ will wire the call into the payments flow.
 - BUG-006/007/008 remain open and deferred; no new E2E failures.
 
+### T-051 / P3-2 — Record a payment with allocation — **Done** (pending merge)
+
+**Acceptance:** all four T-051 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                           | Result                                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------------------------ |
+| The sum of allocations never exceeds the payment amount   | met — each allocation capped by remaining amount and net due, in one tx  |
+| Receipt numbers are unique and gapless                    | met — `counters` increment inside the payment tx; rollback reverts it    |
+| An advance is allocated when future charges are generated | met — `applyAdvancesAfterGeneration` reuses spare payment capacity       |
+| A partial payment leaves the correct remainder due        | met — dues query subtracts allocations of valid payments; E2E asserts it |
+
+**What changed**
+
+- `src/modules/payments/{payments-repository,payment-service}.ts` — receipt numbering via `counters`,
+  oldest-first bounded allocation, advance reuse and dues preview; all writes in one transaction.
+- T-050's charge generator now applies advances after creating charges; additive public exports in
+  `src/modules/payments/index.ts`.
+- The real `/payments` collect screen, `/__payment-fixture` test route, `e2e/specs/payments.spec.ts`,
+  `payment-service.test.ts`, en/bn keys, D-047, CHANGELOG, session log.
+
+**Decisions:** D-047 (Autonomous decision: A1 counter receipt numbers, B1 oldest-first allocation,
+C1 advance as unused capacity, D1 real collect UI, E1 unit + E2E).
+
+**Results**
+
+| Check        | Result                                 |
+| ------------ | -------------------------------------- |
+| `pnpm check` | green; initial JS under 300 KB         |
+| `pnpm test`  | 184 passed across 33 files             |
+| `pnpm e2e`   | payments 4 passed (Chromium + Firefox) |
+
+**Known gaps**
+
+- Voiding/editing payments (T-052) is not implemented yet; voided payments' allocations already
+  stop counting because `openCharges` sums only `status = 'valid'` rows.
+- The collect screen shows dues and amounts in integer paisa; friendly Bangla formatting lands with
+  the print/export tickets.
+
 _(not started)_
 
 ## P4 Academics

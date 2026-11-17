@@ -24,6 +24,30 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 18:02
+
+### Changes
+
+- `src/modules/payments/{payments-repository,payment-service}.ts` — gapless receipt numbers,
+  bounded oldest-first allocation, advance reuse and dues preview (T-051, D-047).
+- T-050's charge generator applies advances; additive public exports in payments/index.ts.
+- `src/modules/payments/PaymentsScreen.tsx`, `/__payment-fixture`, `e2e/specs/payments.spec.ts`,
+  `payment-service.test.ts`, en/bn keys, D-047, PROGRESS, CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 17:38
 
 ### Changes
