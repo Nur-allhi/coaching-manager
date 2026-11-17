@@ -36,6 +36,7 @@ The app is served at `http://localhost:5173`.
 | `pnpm e2e`                          | Playwright against `vite preview` on port 4173                                   |
 | `pnpm e2e:ui` / `pnpm e2e:report`   | Playwright UI mode / open the last report                                        |
 | `pnpm check`                        | `typecheck` + `lint` + `test` + `build`. **Run this before proposing a commit.** |
+| `pnpm seed --students 5000`         | Write a deterministic student dataset JSON to `test-results/` (T-044)            |
 
 ## 4. The task workflow
 
@@ -191,8 +192,12 @@ pnpm e2e -- --headed                        # watch it run
 
 ## 8. Seed data
 
-`pnpm seed --students 5000` lands with ticket T-044. Until then, create records through the
-UI or write a fixture by hand in `e2e/fixtures/`.
+`pnpm seed --students 5000` writes a deterministic dataset to
+`test-results/seeded-students.json` (override with `--seed` and `--out`). The generator in
+`scripts/seed-data.ts` is pure: the CLI, the performance benchmark in
+`src/modules/students/repository.test.ts` and the `seed.spec.ts` e2e spec all import the same
+function, so a given `--seed` yields byte-identical rows everywhere. The browser database is
+seeded through the test-only `/__seed-fixture` route.
 
 ## 9. Common tasks
 

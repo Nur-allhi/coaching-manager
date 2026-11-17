@@ -24,6 +24,28 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 17:18
+
+### Changes
+
+- `scripts/seed-data.ts`, `scripts/seed.ts`, `package.json` — pure deterministic generator and
+  `pnpm seed --students N [--seed S] [--out FILE]` CLI (T-044, D-045).
+- `src/test/seed-data.test.ts`, the students 5,000-row benchmark and `e2e/specs/seed.spec.ts` —
+  both suites consume the shared generator; `/__seed-fixture` seeds the browser database.
+- `docs/DEVELOPMENT.md`, `docs/DECISIONS.md` D-045, PROGRESS, CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `gitnexus`
+- `playwright-mcp` (unavailable; Playwright CLI used instead)
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 16:48
 
 ### Changes

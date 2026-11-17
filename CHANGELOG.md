@@ -20,6 +20,7 @@ human-readable subset.
 
 ### Added
 
+- A deterministic seed generator: `pnpm seed --students 5000 [--seed N] [--out FILE]` writes a reproducible student dataset to `test-results/`, shared by the performance benchmark and the e2e seed spec (T-044, D-045).
 - An Enrollments module: enroll, transfer between batches in one audited transaction (the old enrollment stays closed in history), a leave date, fixed/percent discounts shown as net fees, fee defaults from the batch and a non-blocking capacity warning (T-043, D-044).
 - A Students module: admission with per-year `YYYY-0001` numbers, edit, soft delete and restore from a trash view, status changes, a bounded optional photo, FTS5 search over name/phone/guardian/number, filters, a virtualized list and a six-tab profile shell (T-042, D-043).
 - An Academics module: academic years, classes, subjects and batches with audited CRUD, edit and soft delete, a live same-room schedule-clash warning and a non-blocking capacity warning (T-041, D-042).

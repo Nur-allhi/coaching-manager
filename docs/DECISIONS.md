@@ -259,6 +259,51 @@ Format: dated entries, newest last.
 
 ---
 
+## D-045 — T-044 Seed generator design (2026-11-17)
+
+- **Context:** T-044 needs `pnpm seed --students 5000` producing a deterministic dataset usable by
+  the performance and e2e suites. The database lives in the browser (OPFS), so a Node CLI cannot
+  write to it directly. `docs/DEVELOPMENT.md` §8 already reserves this ticket. No human is present,
+  so REPO_RULES.md §1.1 is followed and the stated lean is taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Randomness.**
+    - A1 — a small seeded PRNG (mulberry32) with a fixed default seed; every field derives from
+      `(seed, index)`, so two runs are byte-identical. Cost: ~10 lines of PRNG we own.
+    - A2 — add a faker-style dependency with a seed. Cost: a new dependency, lockfile churn and an
+      extra CI install for data a few lines of PRNG can produce.
+    - **Lean: A1.**
+  - **B — Where rows are produced.**
+    - B1 — a pure `scripts/seed-data.ts` generator imported by the CLI, Vitest benchmarks and
+      Playwright specs; no dependency on DOM or Node APIs. Cost: the CLI runs under Node's built-in
+      TypeScript type stripping (Node 24, already the repo's version).
+    - B2 — a browser-only generator injected through a dev route. Cost: the CLI could not produce
+      a dataset at all, failing the ticket's primary acceptance line.
+    - **Lean: B1.**
+  - **C — CLI output.**
+    - C1 — `pnpm seed --students N [--seed S] [--out FILE]` writes a JSON file under the ignored
+      `test-results/` by default and prints a one-line summary; no repository pollution. Cost:
+      tests that want in-memory rows import the pure generator instead of reading the file.
+    - C2 — write into a checked-in fixture file. Cost: a generated 5,000-row file in git on every
+      run.
+    - **Lean: C1.**
+  - **D — Use by the suites.**
+    - D1 — replace the hand-built benchmark rows in `students/repository.test.ts` with rows from
+      the generator, and add an e2e seed spec that injects generated rows through the existing
+      test-only fixture route, asserting the list renders them. Cost: a small fixture-route helper.
+    - D2 — leave the suites as they are and ship only the CLI. Cost: fails the "used by the
+      performance and e2e suites" acceptance line.
+    - **Lean: D1.**
+- **Autonomous decision (T-044):** A1, B1, C1, D1 — take all four leans.
+- **Why:** determinism comes from a pure function the suites can import, the CLI needs no new
+  dependency, generated files stay out of git, and both named suites actually consume the data.
+  No Locked Decision, schema convention, backup behaviour, test matrix or shared branch changes;
+  version impact is `none` (script + docs + tests only).
+- **Impact:** new `scripts/seed-data.ts`, `scripts/seed.ts`, an updated `package.json` script and
+  `docs/DEVELOPMENT.md` script table, a unit test for determinism, and small edits to the students
+  performance test and an e2e fixture/spec. No product code, schema or version bump.
+
+---
+
 ## D-044 — T-043 Enrollments and batch transfer design (2026-11-17)
 
 - **Context:** T-043 adds enrollment, transfer between batches, fixed/percent discounts and a

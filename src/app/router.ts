@@ -30,6 +30,9 @@ const BackupFixture = lazy(() =>
 const EnrollmentFixture = lazy(() =>
   import('./dev/EnrollmentFixture').then((m) => ({ default: m.EnrollmentFixture })),
 )
+const SeedFixture = lazy(() =>
+  import('./dev/SeedFixture').then((m) => ({ default: m.SeedFixture })),
+)
 
 export function routeDefinitions(): RouteObject[] {
   return [
@@ -47,6 +50,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__undo', element: createElement(UndoHarness) },
         { path: '/__backup-fixture', element: createElement(BackupFixture) },
         { path: '/__enrollment-fixture', element: createElement(EnrollmentFixture) },
+        { path: '/__seed-fixture', element: createElement(SeedFixture) },
         { path: '*', element: createElement(NotFound) },
       ],
     },

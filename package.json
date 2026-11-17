@@ -21,6 +21,7 @@
     "e2e:ui": "playwright test --ui",
     "e2e:report": "playwright show-report",
     "budget": "node scripts/check-bundle-budget.mjs",
+    "seed": "node scripts/seed.ts",
     "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm budget",
     "prepare": "husky"
   },

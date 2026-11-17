@@ -5,6 +5,7 @@ import { migrate } from '@/core/db/migrate'
 import { migrations } from '@/core/db/migrations'
 import { VersionConflictError } from '@/core/db/repository'
 import { createBetterSqliteDb } from '@/core/db/testing/better-sqlite3'
+import { generateStudents } from '../../../scripts/seed-data.ts'
 import {
   all,
   byId,
@@ -130,22 +131,16 @@ describe('FTS5 identity search', () => {
     expect(await search(db, { query: 'new' })).toHaveLength(1)
   })
 
-  it('searches 5,000 students well under the 100 ms budget', async () => {
+  it('searches 5,000 seeded students well under the 100 ms budget', async () => {
     const db = await freshDb()
-    for (let i = 0; i < 5_000; i += 1) {
-      await create(db, ctx(), {
-        student_no: `2026-${String(i + 1).padStart(4, '0')}`,
-        full_name: `Student ${String(i).padStart(4, '0')}`,
-        phone: `017${String(10000000 + i)}`,
-        guardian_name: `Guardian ${i % 100}`,
-        admitted_on: '2026-01-15',
-        status: 'active',
-      })
-    }
+    // T-044: the performance suite consumes the same generator as the CLI.
+    const seeded = generateStudents(5_000)
+    for (const row of seeded) await create(db, ctx(), { ...row })
     expect(await all(db)).toHaveLength(5_000)
 
+    const term = seeded[499]?.full_name.split(' ')[0] ?? ''
     const started = performance.now()
-    const result = await search(db, { query: 'Student 0499' })
+    const result = await search(db, { query: term })
     const elapsed = performance.now() - started
     expect(result.length).toBeGreaterThan(0)
     expect(elapsed).toBeLessThan(100)

@@ -52,6 +52,7 @@ Plan v1.0 — see [`docs/PLAN.md`](docs/PLAN.md) (source of truth).
 | `pnpm coverage`                     | Vitest with V8 coverage                                          |
 | `pnpm e2e`                          | Playwright (Chromium) against `vite preview`                     |
 | `pnpm check`                        | typecheck + lint + test + build, the gate before closing a phase |
+| `pnpm seed --students 5000`         | Write a deterministic student dataset JSON to `test-results/`    |
 
 ## Layout
 
