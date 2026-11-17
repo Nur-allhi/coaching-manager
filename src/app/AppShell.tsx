@@ -4,8 +4,9 @@
  * hand-rolling either, and only CSS-variable tokens — no hard-coded colours.
  * Every user-visible string comes from an i18next key (T-020).
  */
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { CircleHelp } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -69,6 +70,16 @@ function SidebarFooterInfo() {
   const { t } = useTranslation()
   return (
     <SidebarFooter className="text-muted-foreground border-t px-4 py-3 text-xs">
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link to="/guide" data-testid="guide-link">
+              <CircleHelp aria-hidden="true" />
+              <span>{t('guide.nav')}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
       <p>{t('app.tagline')}</p>
       <LanguageControls />
     </SidebarFooter>

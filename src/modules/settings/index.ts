@@ -16,5 +16,13 @@ export const settingsModule: AppModule = {
       titleKey: 'nav.settings',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
     },
+    {
+      // T-091: the guide is a help route owned by settings; it is linked from the sidebar.
+      path: '/guide',
+      titleKey: 'guide.title',
+      component: lazy(() =>
+        import('../guide/Screen').then((mod) => ({ default: mod.GuideScreen })),
+      ),
+    },
   ],
 }

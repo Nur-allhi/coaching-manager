@@ -13,6 +13,7 @@ import { adminBn } from './admin.bn'
 import { authBn } from './auth.bn'
 import { importBn } from './import.bn'
 import { auditViewerBn } from './audit-viewer.bn'
+import { guideBn } from './guide.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -136,6 +137,7 @@ export const bn: { translation: Translation } = {
     auth: authBn,
     import: importBn,
     auditViewer: auditViewerBn,
+    guide: guideBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

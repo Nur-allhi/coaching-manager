@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- A short in-app user guide at `/guide`, linked from the sidebar, with bundled English and Bangla
+  strings and language tabs (T-091, D-066).
 - An accessibility walkthrough spec (T-084, D-064) asserting tab order, visible focus, bound
   labels, AA contrast in light and dark themes, and no horizontal scroll at 360px.
 - A `pnpm perf` budget harness (T-083, D-063) that seeds 5,000 students, 60,000 payments and

@@ -9,6 +9,7 @@ import { adminEn } from './admin.en'
 import { authEn } from './auth.en'
 import { importEn } from './import.en'
 import { auditViewerEn } from './audit-viewer.en'
+import { guideEn } from './guide.en'
 export const en = {
   translation: {
     app: {
@@ -131,6 +132,7 @@ export const en = {
     auth: authEn,
     import: importEn,
     auditViewer: auditViewerEn,
+    guide: guideEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',

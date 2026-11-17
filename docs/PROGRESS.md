@@ -1765,6 +1765,41 @@ themes, D1 fix the obvious Bangla defects; the human review line is explicitly n
 
 **Next:** T-090, the end-to-end scenarios.
 
+### T-091 / P7-2 — In-app user guide — **Done** (pending merge)
+
+**Acceptance:** all three T-091 lines from `docs/TICKETS.md`.
+
+| Acceptance line                       | Result                                                        |
+| ------------------------------------- | ------------------------------------------------------------- |
+| Guide reachable from the sidebar      | met — a `guide-link` in the sidebar footer opens `/guide`     |
+| Every string exists in both languages | met — typed `guide` namespace in en/bn with the same key set  |
+| Guide reachable offline               | met — all strings bundled; E2E asserts zero external requests |
+
+**What changed**
+
+- `src/modules/guide/Screen.tsx` — a short seven-step guide with English/বাংলা tabs that switch the
+  render language through i18next's `lng` option without changing the rest of the app (D-066 B1).
+- A lazy `/guide` route on the settings module and a sidebar footer link (D-066 A1); the module
+  registry's exact nav list is untouched.
+- `guide.en.ts` / `guide.bn.ts` wired into both aggregates; `e2e/specs/user-guide.spec.ts` (both tabs,
+  language switch, no external requests); D-066, CHANGELOG, session log.
+
+**Decisions:** D-066 (A1 settings-owned help route, B1 per-tab `lng`, C1 seven short steps, D1 E2E).
+
+**Results**
+
+| Check        | Result                                             |
+| ------------ | -------------------------------------------------- |
+| `pnpm check` | green; bundle 281.0 KB of 300 KB                   |
+| E2E          | `user-guide.spec.ts` 2 passed (Chromium + Firefox) |
+
+**Known gaps**
+
+- The guide is a fixed short list, not context-sensitive help; each step links to a named screen
+  but does not deep-link to a filtered view.
+
+**Next:** T-092, the production build.
+
 ## P7 Release
 
 _(not started)_
