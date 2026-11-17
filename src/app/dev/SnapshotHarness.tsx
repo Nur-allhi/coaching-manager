@@ -117,7 +117,9 @@ export function SnapshotHarness() {
       <p data-testid="change-count">{changes}</p>
       <p data-testid="data-count">{dataCount}</p>
       <p data-testid="snapshot-count">{count}</p>
-      <p data-testid="last-sidecar">{lastSidecar}</p>
+      <p data-testid="last-sidecar" className="wrap-anywhere">
+        {lastSidecar}
+      </p>
       <div className="flex flex-wrap gap-2">
         <button type="button" data-testid="change-data" onClick={() => void changeData()}>
           Change data
