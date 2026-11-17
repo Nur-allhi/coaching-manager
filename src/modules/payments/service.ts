@@ -10,6 +10,7 @@ import { applyFixedDiscount, applyPercentDiscount } from '@/core/money/money'
 import { isMonth } from '@/core/dates/dates'
 import { activeById, listActive } from '@/modules/enrollments'
 import { insertChargeIfAbsent, listCharges, type NewCharge } from './repository'
+import { applyAdvancesAfterGeneration } from './payment-service'
 
 export class ChargeValidationError extends Error {
   readonly key: string
@@ -70,6 +71,7 @@ export async function generateCharges(db: Db, month: string): Promise<Generation
       else skipped += 1
     }
   }
+  if (created > 0) await applyAdvancesAfterGeneration(db)
   return { created, skipped }
 }
 
@@ -116,5 +118,6 @@ export async function generateChargesForEnrollment(
     if (await insertChargeIfAbsent(db, ctx, charge)) created += 1
     else skipped += 1
   }
+  if (created > 0) await applyAdvancesAfterGeneration(db)
   return { created, skipped }
 }

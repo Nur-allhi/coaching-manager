@@ -259,6 +259,56 @@ Format: dated entries, newest last.
 
 ---
 
+## D-047 — T-051 Record payment with allocation (2026-11-17)
+
+- **Context:** T-051 records partial, advance and multi-month payments with allocation and receipt
+  numbering, all in one transaction. `payments`, `payment_allocations` and the `counters` table
+  exist; T-050 generates charges. No human is present, so REPO_RULES.md §1.1 is followed and the
+  stated lean is taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Receipt numbers.**
+    - A1 — increment a `counters` row inside the payment's `db.tx` with
+      `UPDATE ... SET value = value + 1 ... RETURNING value`; format `R-YYYY-000001`. A rollback
+      reverts the increment, so numbers stay gapless. `counters` is owned by payments (TAD.md §7).
+    - A2 — derive from `MAX(receipt_no)`. Cost: a void or rolled-back payment leaves a gap.
+    - **Lean: A1.**
+  - **B — Allocation.**
+    - B1 — allocate to charges oldest first (admission, then months in order), each capped by the
+      charge's net due and the payment's remaining amount; the unallocated remainder is an
+      advance. One transaction with the payment row and receipt number. Cost: an explicit ordered
+      query per payment.
+    - B2 — allocate proportionally across all dues. Cost: complexity with no requirement behind it.
+    - **Lean: B1.**
+  - **C — Advance.**
+    - C1 — keep the unallocated remainder on the payment and, when T-050's generator creates new
+      charges, allocate spare capacity from earlier valid payments to the new charges in the same
+      transaction. Cost: the generator calls the payments allocator (same module, no ownership
+      issue).
+    - C2 — store a separate advance ledger table. Cost: new schema and reconciliation logic.
+    - **Lean: C1.**
+  - **D — UI.**
+    - D1 — a real `/payments` collect screen: student selector, amount, method, live dues preview
+      and the committed receipt number. Cost: one UI ticket's worth of code.
+    - D2 — a backend-only ticket with no screen. Cost: fails the ticket's E2E acceptance line.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — unit tests (allocation cap, gapless numbers, advance auto-allocation, partial remainder)
+      plus `payments.spec.ts` with a fixture route driving the real collect screen. Cost: one
+      fixture route.
+    - E2 — E2E only. Cost: money/allocation edge cases need fast unit coverage.
+    - **Lean: E1.**
+- **Autonomous decision (T-051):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** one transaction covers the number, payment and allocations; the oldest-first greedy
+  allocation is bounded by both payment and charge; advances are reused without a new table; and
+  both the unit and e2e layers verify real behaviour. No Locked Decision, schema convention,
+  backup behaviour, test matrix or shared branch changes. Version impact is `minor` (a `feat`).
+- **Impact:** `src/modules/payments/{payments-repository,payment-service}.ts`, an additive change to
+  T-050's generator to auto-allocate advances, the real `/payments` screen, a test-only fixture
+  route, `e2e/specs/payments.spec.ts`, unit tests, en/bn keys, D-047/PROGRESS/CHANGELOG/session log.
+  No new dependency or migration.
+
+---
+
 ## D-046 — T-050 Fee rules and monthly charge generation (2026-11-17)
 
 - **Context:** T-050 generates an admission charge and a monthly charge per active enrollment,
