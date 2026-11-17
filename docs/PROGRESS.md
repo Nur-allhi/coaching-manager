@@ -850,7 +850,54 @@ human decision (D-036 A2).
 
 ## P2 Core records
 
-_(T-040 settings done above; next T-041 academics)_
+_(T-040 settings is recorded above.)_
+
+### T-041 / P2-2 — Academics module — **Done** (pending merge)
+
+**Acceptance:** all three T-041 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                    | Result                                                                                                             |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Full CRUD with edit and soft delete for all four entities          | met — typed audited repo for years/classes/subjects/batches, edit + delete UI                                      |
+| Overlapping times in the same room on the same day raise a warning | met — `findBatchClashes` service query, live non-blocking warning on the form                                      |
+| Exceeding capacity raises a warning and does not block the save    | logic met — pure `capacityWarning` helper wired to the form and unit-tested; live occupancy needs T-043 (see gaps) |
+
+**What changed**
+
+- `src/modules/academics/{types,repository,service}.ts` — Zod-validated form boundaries, all
+  writes through the audited repository helpers with version checks and soft delete, the two
+  warnings as testable service/pure logic (D-042 A1/B1/C1).
+- `src/modules/academics/{AcademicsScreen,BatchSection,SimpleCrudSection}.tsx` and `Screen.tsx`
+  — the real lazy `/academics` screen replaces the placeholder: four CRUD sections, a batch
+  form with live clash/capacity warnings, four async states, i18n keys and a committed-save
+  status signal (D-042 D1).
+- `e2e/specs/academics.spec.ts` — CRUD persistence after reload, edit + soft delete, and a
+  same-room clash that warns and still saves (D-042 E1).
+- en/bn i18n keys, `docs/DECISIONS.md` D-042, `docs/BUGS.md` BUG-004/005, CHANGELOG, session log.
+
+**Decisions:** D-042 (Autonomous decision for T-041: A1 generic audited repo, B1 service-side
+clash query, C1 pure capacity helper with injected occupancy, D1 one lazy screen, E1 real E2E).
+
+**Results**
+
+| Check        | Result                                                                      |
+| ------------ | --------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 227.8 KB of 300 KB                                        |
+| `pnpm test`  | 145 passed across 26 files                                                  |
+| `pnpm e2e`   | academics 3 passed (Chromium + Firefox); 50 passed in the rest of the suite |
+
+**Known gaps**
+
+- The capacity warning is computed from an occupancy the caller supplies; the screen passes 0
+  until the enrollments module lands in T-043, so it is unit-tested but not yet reachable in
+  the browser. Academics deliberately does not read another module's table (TAD §2).
+- The Playwright MCP browser panel is not drivable in this environment; verification used the
+  committed Playwright specs (real browser, both targets) instead of an MCP walkthrough.
+- BUG-004 (WASM not precached, offline boot fails) and BUG-005 (stale `persistence-status`
+  selector in `offline.spec.ts`) are pre-existing on `dev` and were logged, not fixed here.
+  They make the full `dev` e2e job red; the PR's smoke-only e2e gate is unaffected.
+
+**Next:** T-042, students module (admission, list with FTS5 search and filters, profile shell).
 
 ## P3 Money
 

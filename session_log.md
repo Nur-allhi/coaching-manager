@@ -24,6 +24,38 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 15:27
+
+### Changes
+
+- `src/modules/academics/types.ts`, `repository.ts`, `service.ts` — forms, audited CRUD and the
+  two warning rules for academic years, classes, subjects and batches (T-041, D-042).
+- `src/modules/academics/AcademicsScreen.tsx`, `BatchSection.tsx`, `SimpleCrudSection.tsx`,
+  `Screen.tsx` — the real lazy `/academics` screen replaces the placeholder; four CRUD sections,
+  a live clash/capacity warning preview, optimistic writes and a committed-save status.
+- `e2e/specs/academics.spec.ts` — CRUD persistence, edit/soft delete and the non-blocking clash
+  warning.
+- `src/core/i18n/locales/en.ts`, `bn.ts` — academic keys in both languages.
+- `docs/DECISIONS.md` — D-042, the autonomous T-041 decision (A1/B1/C1/D1/E1).
+- `docs/BUGS.md` — BUG-004 (WASM missing from the PWA precache) and BUG-005 (stale
+  `persistence-status` test id), both pre-existing on `dev`, logged while verifying T-041.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — T-041 recorded.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+- `playwright-mcp` (unavailable; Playwright CLI used instead)
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 13:50
 
 ### Changes

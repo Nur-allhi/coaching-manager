@@ -42,6 +42,28 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-004: The app cannot load offline — SQLite WASM is not precached
+
+- **Status:** open
+- **Severity:** high
+- **Found:** 2026-11-17 (during: full-suite e2e verification after T-041)
+- **Location:** `vite.config.ts` (`workbox.globPatterns` and `runtimeCaching`); `e2e/specs/offline.spec.ts`
+- **Description:** After one online visit, going offline and reloading shows the recovery screen with `Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load '.../assets/sqlite3-*.wasm')`. Expected: the dashboard loads and the Settings route works offline. `globPatterns` is `**/*.{js,css,html,svg,png,woff2}` — no `wasm` — and every runtime URL is `NetworkOnly`, so the sqlite-wasm binary is never available without a network. Reproduces on `dev` unchanged by T-041; the config was set in T-019.
+- **Root Cause:** the Workbox precache glob omits the `.wasm` asset and no runtime cache stores it.
+- **Fix Approach:** add `wasm` to the precache glob (and consider a runtime cache for the WASM binary), then re-run `offline.spec.ts`; a fix must include a regression assertion that the WASM request succeeds while offline. Not fixed in T-041 — different ticket, and the approach follows the confirmation protocol.
+- **Resolved:** —
+
+## BUG-005: Offline spec asserts a test id the Settings screen no longer renders
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-17 (during: full-suite e2e verification after T-041)
+- **Location:** `e2e/specs/offline.spec.ts:53`; `src/modules/settings/SettingsScreen.tsx`
+- **Description:** `the Settings screen shows the storage persistence status` fails because it looks for `getByTestId('persistence-status')`, which no element renders. T-040 replaced the T-019 status row with a plain paragraph that has no test id. Expected: the spec targets the current status element. Reproduces on `dev`; `git show origin/dev:src/modules/settings/SettingsScreen.tsx` has no `persistence-status`.
+- **Root Cause:** the T-040 Settings rewrite changed the markup without updating the T-019 spec.
+- **Fix Approach:** either restore a `data-testid="persistence-status"` on the status paragraph or retarget the spec to the current accessible text; add/keep a regression assertion. Not fixed in T-041 (separate ticket).
+- **Resolved:** —
+
 ## BUG-002: Duplicate concurrent nightly autonomous-build sessions
 
 - **Status:** wontfix

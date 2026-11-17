@@ -18,6 +18,7 @@ human-readable subset.
 
 ### Added
 
+- An Academics module: academic years, classes, subjects and batches with audited CRUD, edit and soft delete, a live same-room schedule-clash warning and a non-blocking capacity warning (T-041, D-042).
 - A Settings module: centre profile, currency, receipt format, an editable seven-row grading scale (TAD §5.7 defaults), language toggle, and backup/storage status, all persisted and validated (T-040, D-041).
 - Startup migration with a pre-migration snapshot and a recovery screen (PLAN §7.4).
 - A real Backups page listing snapshots with reason/size/date, a 7-day stale-export warning, and a shared optimistic mutation helper with rollback (T-035, D-040).
