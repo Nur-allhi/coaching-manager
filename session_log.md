@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-18 04:30
+
+### Changes
+
+- T-081 (import tools with a dry run) on branch `feature/import-tools`. Decision D-061 recorded
+  autonomously: pure CSV reader + lazy ExcelJS, editable column mapping, pure pre-write validation,
+  forced pre-import snapshot then one audited transaction.
+- `src/modules/data-tools/import/*` — parser, workbook reader, templates, validator, service and
+  unit tests; `ImportScreen.tsx` and the `/data-tools/import` route.
+- en/bn import keys; `e2e/specs/import.spec.ts` (bad row + no-write dry run, idempotent second import).
+- `docs/DECISIONS.md` D-061, `docs/PROGRESS.md`, `CHANGELOG.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-18 02:10
 
 ### Changes

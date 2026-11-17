@@ -1471,6 +1471,47 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-061 — T-081 Import tools with a dry run (2026-11-18)
+
+- **Context:** T-081 adds CSV/Excel import for students, batches, enrollments and marks with a
+  template, column mapping, a row-level validation preview, a dry run, idempotency and a forced
+  pre-import snapshot before one committing transaction. PLAN §7.6 owns the flow; §3 locks ExcelJS
+  for Excel. `exceljs` is already installed (lazy, for exports); there is no CSV reader, no import
+  UI, and `createSnapshot({ reason: 'pre-import', force: true })` already supports the safety copy.
+  No human is present, so REPO_RULES §1.1 is followed and the leans are taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Parsing.** A1 — a small pure CSV reader (quoted fields, escaped quotes, CRLF) plus lazy
+    ExcelJS `xlsx.load` for workbooks; both produce one `{headers, rows}` shape. Cost: ~60 lines of
+    CSV logic we own. A2 — add a CSV library. Cost: a new dependency and lockfile churn for a
+    well-understood format. **Lean: A1.**
+  - **B — Column mapping.** B1 — headers map to template fields by name with a user-editable select
+    per field; the mapping is a `Record<field, columnIndex>` passed to the pure validator. Cost: a
+    few selects in the UI. B2 — fixed column order only. Cost: fails the "column mapping" scope line.
+    **Lean: B1.**
+  - **C — Validation and idempotency.** C1 — one pure per-kind validator returns row-level errors
+    plus a normalized value object; keys are `student_no` for students and natural keys for the
+    other kinds, checked against existing rows and de-duplicated inside the file before any write.
+    Cost: four small validators. C2 — validate inside the transaction. Cost: errors found after the
+    snapshot and mid-write, so the "preview before anything is written" line is weaker.
+    **Lean: C1.**
+  - **D — Commit.** D1 — `createSnapshot({ reason: 'pre-import', force: true })`, then one `db.tx`
+    over audited repo helpers; a failed row aborts the whole import and the snapshot stays as the
+    recovery point. Cost: none. D2 — write row by row outside a transaction. Cost: a partial import
+    on failure. **Lean: D1.**
+  - **E — Verification.** E1 — unit tests for CSV parsing, mapping, row errors, idempotency and the
+    dry-run/no-write guarantee, plus `import.spec.ts` driving the real screen with a file that has
+    one bad row. E2 — E2E only. Cost: parsing and idempotency need fast unit coverage. **Lean: E1.**
+- **Autonomous decision (T-081):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** one file shape feeds both parsers and the preview, mapping is explicit and testable, all
+  errors are visible before the safety snapshot, and the commit is atomic with a forced recovery
+  point. No Locked Decision, schema convention, backup/restore behaviour, test matrix or shared
+  branch change. Version impact is `minor` (a `feat`).
+- **Impact:** new `src/modules/data-tools/import/{csv,excel,template,validate,service}.*`, an
+  `/data-tools/import` screen and route, en/bn import keys, unit tests, `import.spec.ts`, and
+  D-061 / PROGRESS / CHANGELOG / session-log updates. No new dependency, migration or `main` change.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

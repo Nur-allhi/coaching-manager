@@ -6,6 +6,7 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { getDb } from '@/core/db/client'
 import { opfsStorage } from '@/core/backup/storage'
 import { createSnapshot, listSnapshots, schemaVersion } from '@/core/backup/snapshots'
@@ -84,7 +85,12 @@ export function BackupsScreen() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('backup.title')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">{t('backup.title')}</h1>
+        <Link className="text-sm underline" data-testid="import-link" to="/data-tools/import">
+          {t('import.title')}
+        </Link>
+      </div>
       <p data-testid="backup-status" role="status" className="sr-only">
         {lastAction}
       </p>

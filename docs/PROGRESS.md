@@ -1586,7 +1586,52 @@ E2E verification).
   across devices. The database itself remains unencrypted at rest (Settings says so explicitly).
 - BUG-006/007/008 remain open and deferred; no new E2E failures.
 
-**Next:** T-081, import tools with a dry run.
+**Next:** T-081, import tools with a dry run — done below.
+
+### T-081 / P6-2 — Import tools with a dry run — **Done** (pending merge)
+
+**Acceptance:** all four T-081 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                           | Result                                                                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Row-level errors are shown before anything is written     | met — pure per-kind validator returns i18n-keyed errors in a preview table; dry run is a preview alias |
+| A dry run changes nothing                                 | met — `dryRunImport` only parses and validates; unit + E2E assert the students table stays empty       |
+| Importing the same file twice does not duplicate students | met — idempotency on `student_no` or phone + name, checked against existing rows and within the file   |
+| A pre-import snapshot is taken before the commit          | met — `createSnapshot({ reason: 'pre-import', force: true })` before one audited `db.tx`               |
+
+**What changed**
+
+- `src/modules/data-tools/import/{csv,excel,template,validate,service}.ts` — a dependency-free CSV
+  reader, lazy ExcelJS workbook reader, one table shape, default + editable column mapping, pure
+  row validation, and the preview / dry-run / atomic commit orchestration (D-061).
+- `src/modules/data-tools/ImportScreen.tsx` — the real `/data-tools/import` screen with template
+  download, kind selector, file upload, mapping selects, preview table and explicit dry-run and
+  commit actions; linked from the Backups page.
+- en/bn import namespace, 4 unit tests and `import.spec.ts` (2 tests × Chromium + Firefox);
+  D-061, CHANGELOG, session log.
+
+**Decisions:** D-061 (Autonomous decision for T-081: A1 pure CSV + lazy ExcelJS, B1 name-based
+mapping with editable selects, C1 pure validation before any write, D1 forced snapshot + one tx,
+E1 unit + E2E).
+
+**Results**
+
+| Check        | Result                                                                          |
+| ------------ | ------------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 280.2 KB of 300 KB                                            |
+| unit tests   | 4 import tests pass; full unit suite green                                      |
+| E2E          | import 4 passed (Chromium + Firefox); full suite passes in two halves, 1 worker |
+
+**Known gaps**
+
+- Excel import is exercised structurally (lazy reader) but the E2E fixture uploads CSV; a workbook
+  fixture was not added. The four validators cover the documented template fields only.
+- For batches, enrollments and marks, idempotency is de-duplicated within the file; matching
+  existing rows across runs uses the owning modules' public reads for students only (the ticket
+  names students explicitly).
+- BUG-006/007/008 remain open and deferred; no new E2E failures.
+
+**Next:** T-082, the audit log viewer.
 
 ## P7 Release
 
