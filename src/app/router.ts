@@ -27,6 +27,9 @@ const UndoHarness = lazy(() =>
 const BackupFixture = lazy(() =>
   import('./dev/BackupFixture').then((m) => ({ default: m.BackupFixture })),
 )
+const EnrollmentFixture = lazy(() =>
+  import('./dev/EnrollmentFixture').then((m) => ({ default: m.EnrollmentFixture })),
+)
 
 export function routeDefinitions(): RouteObject[] {
   return [
@@ -43,6 +46,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__file-transfer', element: createElement(FileTransferHarness) },
         { path: '/__undo', element: createElement(UndoHarness) },
         { path: '/__backup-fixture', element: createElement(BackupFixture) },
+        { path: '/__enrollment-fixture', element: createElement(EnrollmentFixture) },
         { path: '*', element: createElement(NotFound) },
       ],
     },

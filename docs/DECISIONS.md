@@ -259,6 +259,56 @@ Format: dated entries, newest last.
 
 ---
 
+## D-044 — T-043 Enrollments and batch transfer design (2026-11-17)
+
+- **Context:** T-043 adds enrollment, transfer between batches, fixed/percent discounts and a
+  leave date. The `enrollments` table already exists with `status`, `left_on`, `discount_kind` and
+  `discount_value`. TAD.md §7 lets `enrollments` read `students` and `batches`, but TAD.md §2 says
+  it must do so through the owning module's public `index.ts`, not its tables. No human is
+  present, so REPO_RULES.md §1.1 is followed and the stated lean is taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Transfer.**
+    - A1 — in one `db.tx`, close the old enrollment (audited update: `status='closed'`, `left_on`,
+      version bump) then create the new enrollment (audited insert). The old row is never deleted,
+      so history is preserved. Cost: two audit rows per transfer.
+    - A2 — delete the old row and insert a new one. Cost: violates soft-delete and loses history.
+    - **Lean: A1.**
+  - **B — Capacity warning.**
+    - B1 — count the target batch's live active enrollments (own table) and read `capacity` via a
+      new public `listBatches()` export from the academics module's `index.ts` (TAD.md §2). The
+      warning is non-blocking. Cost: one small additive export in academics.
+    - B2 — query the `batches` table directly from enrollments. Cost: breaks module ownership.
+    - **Lean: B1.**
+  - **C — Discounts.**
+    - C1 — keep the documented `discount_kind` union (`none|fixed|percent`) and an integer
+      `discount_value` (paisa for fixed, whole percent otherwise), validated by Zod and displayed
+      with the core money helpers. Cost: the UI switches display by kind.
+    - C2 — store only a precomputed net amount. Cost: discards the discount the admin entered;
+      conflicts with the schema.
+    - **Lean: C1.**
+  - **D — Fee defaults.**
+    - D1 — prefill the monthly fee from the batch's `monthly_fee_minor` (academics public API),
+      overridable per enrollment; admission fee defaults to zero. Cost: one extra read.
+    - D2 — require manual entry of both fees. Cost: needless typing and drift from the batch.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — a real `enrollments.spec.ts` with a small test-only fixture route seeding a student and
+      two batches, then driving the real enrollment screen for enroll and transfer. Cost: one
+      fixture route.
+    - E2 — drive the students and academics UI to build prerequisites. Cost: brittle coupling to
+      two other modules' screens.
+    - **Lean: E1.**
+- **Autonomous decision (T-043):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** one transaction guarantees a transfer either closes-and-opens or does nothing; the
+  capacity warning reads only through the owning module's public surface; discounts keep their
+  documented representation; fees default sensibly without hard-coding another module's data.
+  No Locked Decision, schema convention, backup behaviour, test matrix or shared branch changes.
+- **Impact:** new `src/modules/enrollments/*` service/repository/UI files, one additive
+  `listBatches` export in `src/modules/academics/index.ts`, `e2e/specs/enrollments.spec.ts` plus a
+  fixture route, en/bn keys. No new dependency, migration or version bump.
+
+---
+
 ## D-043 — T-042 Students module design (2026-11-17)
 
 - **Context:** T-042 adds student admission, edit, soft delete/restore, status, photo, FTS5

@@ -47,6 +47,11 @@ function parsed<T>(schema: z.ZodType<T>, values: unknown): T {
   return result.data
 }
 
+/** Public read surface: live batches, for other modules' fee defaults and capacity checks. */
+export function listBatches(db: Db): Promise<BatchRow[]> {
+  return repo.batches.list(db)
+}
+
 export interface AcademicsData {
   years: Row[]
   classes: Row[]

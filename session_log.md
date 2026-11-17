@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 16:48
+
+### Changes
+
+- `src/modules/enrollments/{types,repository,service}.ts` — audited enrollment CRUD, atomic
+  transfer, discounts, leave date and capacity warning (T-043, D-044).
+- `src/modules/enrollments/{EnrollmentsScreen,Screen}.tsx` — the real lazy `/enrollments` screen.
+- `src/modules/academics/index.ts`, `src/modules/students/index.ts` — additive public read exports
+  so enrollments reads batch/student data through module boundaries (TAD.md §2).
+- `src/app/dev/EnrollmentFixture.tsx`, `src/app/router.ts` — test-only fixture route for E2E.
+- `e2e/specs/enrollments.spec.ts`, en/bn i18n, `docs/DECISIONS.md` D-044, PROGRESS, CHANGELOG.
+- `docs/BUGS.md` — BUG-008 (dev harness routes reachable in production; deferred under D-025).
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `playwright-mcp` (unavailable; Playwright CLI used instead)
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 16:12
 
 ### Changes
