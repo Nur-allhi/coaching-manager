@@ -11,6 +11,7 @@ import enrollments from '../../modules/enrollments/migrations/202611160930_enrol
 import payments from '../../modules/payments/migrations/202611160940_payments_create_tables.sql?raw'
 import attendance from '../../modules/attendance/migrations/202611160950_attendance_create_tables.sql?raw'
 import exams from '../../modules/exams/migrations/202611160960_exams_create_tables.sql?raw'
+import studentSearch from '../../modules/students/migrations/202611171000_students_search_photo.sql?raw'
 
 export const migrations: readonly Migration[] = [
   { version: 202611160900, module: 'settings', name: 'core_meta', sql: coreMeta },
@@ -35,4 +36,10 @@ export const migrations: readonly Migration[] = [
     sql: attendance,
   },
   { version: 202611160960, module: 'exams', name: 'create_tables', sql: exams },
+  {
+    version: 202611171000,
+    module: 'students',
+    name: 'search_photo',
+    sql: studentSearch,
+  },
 ]

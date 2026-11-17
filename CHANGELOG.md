@@ -14,10 +14,13 @@ human-readable subset.
 
 ### Fixed
 
+- Audit snapshots now store a compact `<blob:N bytes>` marker instead of per-byte JSON for binary columns, so a bounded photo cannot bloat the audit log (T-042).
+- The migration SQL splitter now keeps `CREATE TRIGGER ... BEGIN/END` bodies as one statement, so FTS5 sync triggers apply correctly (T-042).
 - The dev snapshot harness no longer overflows horizontally at 375px; the sidecar JSON now wraps (BUG-003).
 
 ### Added
 
+- A Students module: admission with per-year `YYYY-0001` numbers, edit, soft delete and restore from a trash view, status changes, a bounded optional photo, FTS5 search over name/phone/guardian/number, filters, a virtualized list and a six-tab profile shell (T-042, D-043).
 - An Academics module: academic years, classes, subjects and batches with audited CRUD, edit and soft delete, a live same-room schedule-clash warning and a non-blocking capacity warning (T-041, D-042).
 - A Settings module: centre profile, currency, receipt format, an editable seven-row grading scale (TAD §5.7 defaults), language toggle, and backup/storage status, all persisted and validated (T-040, D-041).
 - Startup migration with a pre-migration snapshot and a recovery screen (PLAN §7.4).

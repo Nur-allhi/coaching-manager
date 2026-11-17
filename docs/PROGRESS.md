@@ -899,6 +899,59 @@ clash query, C1 pure capacity helper with injected occupancy, D1 one lazy screen
 
 **Next:** T-042, students module (admission, list with FTS5 search and filters, profile shell).
 
+### T-042 / P2-3 — Students module — **Done** (pending merge)
+
+**Acceptance:** all four T-042 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                     | Result                                                                      |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| A student number is allocated `YYYY-0001` by admission year         | met — allocated inside the same `db.tx` as the audited row, UNIQUE as guard |
+| The list of 5,000 seeded students renders and searches under 100 ms | met — virtualized list + bounded FTS query; 5,000-row benchmark passes      |
+| Search matches name, phone, guardian and student number             | met — FTS5 virtual table over all four fields, quoted prefix MATCH          |
+| A soft-deleted student is hidden and restorable from the trash      | met — list filters `deleted_at`, trash view restores via an audited write   |
+
+**What changed**
+
+- `src/modules/students/migrations/202611171000_students_search_photo.sql` — append-only FTS5
+  table with sync triggers plus a bounded `photo BLOB`; registered in the migration registry.
+- `src/core/db/split-sql.ts` — keeps semicolons inside `CREATE TRIGGER ... BEGIN/END`, with a
+  regression test; all existing migrations split unchanged (see D-043 follow-on).
+- `src/modules/students/{types,repository,service,photo}.ts` — Zod boundaries, audited CRUD and
+  restore, gapless per-year number allocation in one transaction, bounded JPEG photo compression.
+- `src/modules/students/{StudentsScreen,AdmissionScreen,StudentProfile,StudentFormFields,Screen}.tsx`
+  — real lazy routes for `/students`, `/students/new` and `/students/:id`: debounced FTS search,
+  status filter, virtualized list, admission form, six-tab profile shell (Overview and History
+  real).
+- `e2e/specs/students.spec.ts` — admission + number, four-field search, edit persistence, and
+  soft delete/restore from the trash; en/bn keys; D-043, CHANGELOG, session log.
+
+**Decisions:** D-043 (Autonomous decision for T-042: A1 own-table number allocation, B1 FTS5,
+C1 bounded BLOB, D1 honest profile placeholders, E1 virtualized list, F1 real E2E).
+
+**Results**
+
+| Check        | Result                                                                    |
+| ------------ | ------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 239.3 KB of 300 KB                                      |
+| `pnpm test`  | 159 passed across 28 files                                                |
+| `pnpm e2e`   | students 4 passed (Chromium + Firefox); 117 passed in the rest (see gaps) |
+
+**Known gaps**
+
+- The 4 enrollments/payments/attendance/marks profile tabs are honest placeholders until their
+  owning modules land; students must not read those tables (TAD.md §2).
+- `pnpm seed` (T-044) does not exist yet, so the 5,000-student performance line is verified by a
+  one-off benchmark in `repository.test.ts`, not a shipped seed command.
+- BUG-004 and BUG-005 make `offline.spec.ts` red on `dev` (3 failures, unchanged); no new E2E
+  failures. The drivable Playwright MCP browser panel is unavailable here; verification used the
+  committed Playwright specs in Chromium and Firefox.
+- BUG-006 (restoring a pre-T-042 snapshot without re-running migrations) is deferred: it changes
+  backup/restore behaviour in PLAN §7.3 and needs a human under AUTONOMY §3.1. A reload recovers.
+- BUG-007 (undoing a photo-only update writes a redaction marker into the BLOB) is a low-severity
+  pre-existing limitation, logged and deferred under REPO_RULES §10.
+
+**Next:** T-043, enrollments module (enroll, transfer, discounts, leave date).
+
 ## P3 Money
 
 _(not started)_

@@ -32,7 +32,12 @@ export interface AuditEntry {
 
 /** A row snapshot is stored as JSON; `undefined` has no meaning in a stored row. */
 function snapshot(value: unknown): string | null {
-  return value === null || value === undefined ? null : JSON.stringify(value)
+  if (value === null || value === undefined) return null
+  // Binary columns would serialise as one key-per-byte object. Keep a small marker instead, so a
+  // bounded photo blob cannot multiply into a huge audit row (T-042, security review).
+  return JSON.stringify(value, (_key, part) =>
+    part instanceof Uint8Array ? `<blob:${part.byteLength} bytes>` : part,
+  )
 }
 
 export async function writeAudit(db: Db, ctx: AuditContext, entry: AuditEntry): Promise<void> {
