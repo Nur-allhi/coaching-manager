@@ -24,6 +24,29 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 17:38
+
+### Changes
+
+- `src/modules/payments/migrations/202611171020_payments_charge_uniqueness.sql` + registry and
+  schema-version test constants — a unique key that also covers NULL-month charges (T-050, D-046).
+- `src/modules/payments/{repository,service}.ts` — idempotent charge generation with integer-paisa
+  fixed/percent discounts; additive `listActive` export in enrollments.
+- `src/modules/payments/service.test.ts`, `docs/DECISIONS.md` D-046, PROGRESS, CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 17:18
 
 ### Changes

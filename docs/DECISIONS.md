@@ -259,6 +259,59 @@ Format: dated entries, newest last.
 
 ---
 
+## D-046 — T-050 Fee rules and monthly charge generation (2026-11-17)
+
+- **Context:** T-050 generates an admission charge and a monthly charge per active enrollment,
+  with fixed/percent discounts, idempotently. The `charges` table exists with
+  `UNIQUE(enrollment_id, month, kind)`, but SQLite treats NULLs as distinct, so two admission
+  charges (month NULL) would not conflict. There is no UI in this ticket (E2E: n/a). No human is
+  present, so REPO_RULES.md §1.1 is followed and the stated lean is taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Idempotency guard for the NULL-month admission charge.**
+    - A1 — add an **append-only** UNIQUE expression index on
+      `(enrollment_id, COALESCE(month, ''), kind)` and use `INSERT ... ON CONFLICT DO NOTHING`.
+      The unique key — not a flag — prevents duplicates, per the acceptance line. Cost: one
+      migration; the original constraint stays for non-NULL months.
+    - A2 — store the admission month as the empty-string sentinel. Cost: contradicts the
+      documented "NULL for one-off" convention for `charges.month`.
+    - **Lean: A1.**
+  - **B — Admission charge.**
+    - B1 — one `admission` charge per enrollment, `amount_minor = admission_fee_minor`, no
+      discount; generated even when zero so the key is uniform. Cost: a zero-value row for the
+      common default.
+    - B2 — skip zero admission fees. Cost: admission is absent from the charge list to which
+      T-051 allocates payments.
+    - **Lean: B1.**
+  - **C — Monthly discount.**
+    - C1 — store gross `amount_minor` and the computed `discount_minor`, using the core helpers
+      (`applyPercentDiscount` rounds once to the paisa; `netAmount` gives the net). Cost: the UI
+      must show gross, discount and net.
+    - C2 — store only the net amount with a zero discount. Cost: loses the discount the admin
+      entered and cannot reprice on edit.
+    - **Lean: C1.**
+  - **D — Generator scope.**
+    - D1 — `generateCharges(db, month)` plus a per-enrollment variant, each idempotent. Cost: two
+      entry points, both small.
+    - D2 — generate every month in one call. Cost: unbounded work and no natural batching.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — unit tests against `better-sqlite3`: run twice → no duplicates, percent discount to the
+      paisa, and a direct duplicate insert refused by the unique key (not a flag). Cost: no E2E,
+      but this ticket declares E2E n/a.
+    - E2 — a dev harness route. Cost: out of scope for a backend ticket.
+    - **Lean: E1.**
+- **Autonomous decision (T-050):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** the unique key enforces idempotency for both NULL and dated charges, money stays in
+  integer paisa with a single rounding, and the generator is bounded to one month. The migration
+  is append-only and follows the schema conventions; no Locked Decision, backup behaviour, test
+  matrix or shared branch changes. Version impact is `minor` (a `feat` commit).
+- **Impact:** one append-only migration in `src/modules/payments/migrations/`, a payments
+  repository/service and unit tests, registration in the migration registry plus the hard-coded
+  schema-version test constants, en/bn keys if any string surfaces (none in this backend ticket).
+  No new dependency.
+
+---
+
 ## D-045 — T-044 Seed generator design (2026-11-17)
 
 - **Context:** T-044 needs `pnpm seed --students 5000` producing a deterministic dataset usable by

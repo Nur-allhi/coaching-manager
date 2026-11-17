@@ -110,6 +110,10 @@ export const en = {
       active: 'Active',
       closed: 'Closed',
     },
+    payments: {
+      invalidMonth: 'Use a valid YYYY-MM month.',
+      noEnrollment: 'That enrollment is not active.',
+    },
     students: {
       admit: 'New admission',
       cancel: 'Cancel',

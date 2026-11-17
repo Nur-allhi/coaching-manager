@@ -60,7 +60,7 @@ describe('snapshots', () => {
     expect(result.file).toBe('20260102-030405_manual.sqlite')
     expect(result.sidecar).toMatchObject({
       reason: 'manual',
-      schemaVersion: 202611171000,
+      schemaVersion: 202611171020,
       students: 1,
       payments: 0,
       size: expect.any(Number),

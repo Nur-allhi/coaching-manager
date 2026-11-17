@@ -28,7 +28,7 @@ describe('migrate', () => {
     expect(names).toContain('charges')
     expect(names).toContain('attendance_sessions')
     expect(names).toContain('exam_results')
-    expect(await versionOf(db)).toBe('202611171000')
+    expect(await versionOf(db)).toBe('202611171020')
   })
 
   it('brings a v1 database to the identical schema', async () => {
@@ -109,7 +109,7 @@ describe('migrate', () => {
     const failing = [
       ...migrations,
       {
-        version: 202611171010,
+        version: 202611171030,
         module: 'test',
         name: 'bad',
         sql: 'CREATE TABLE half_done (id TEXT); THIS IS NOT SQL;',

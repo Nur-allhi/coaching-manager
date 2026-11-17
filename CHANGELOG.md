@@ -20,6 +20,7 @@ human-readable subset.
 
 ### Added
 
+- Fee rules: idempotent admission and monthly charge generation per enrollment, with fixed and percent discounts correct to the paisa and a unique key (not a flag) that prevents duplicate charges (T-050, D-046).
 - A deterministic seed generator: `pnpm seed --students 5000 [--seed N] [--out FILE]` writes a reproducible student dataset to `test-results/`, shared by the performance benchmark and the e2e seed spec (T-044, D-045).
 - An Enrollments module: enroll, transfer between batches in one audited transaction (the old enrollment stays closed in history), a leave date, fixed/percent discounts shown as net fees, fee defaults from the batch and a non-blocking capacity warning (T-043, D-044).
 - A Students module: admission with per-year `YYYY-0001` numbers, edit, soft delete and restore from a trash view, status changes, a bounded optional photo, FTS5 search over name/phone/guardian/number, filters, a virtualized list and a six-tab profile shell (T-042, D-043).
