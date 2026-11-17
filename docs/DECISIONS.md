@@ -259,6 +259,24 @@ Format: dated entries, newest last.
 
 ---
 
+## D-039 — T-034 undo toast and History panel (2026-11-17)
+
+- **Context:** T-034 needs a 10-second Undo toast after any mutation and a reusable History tab
+  that restores a chosen version. `undo()` and `listHistory()` already exist from T-030; this is
+  the UI layer. `sonner` is already a dependency but was not mounted.
+- **Decision (human, on the decision-advisor's recommendation):** A1 — an imperative
+  `showUndoToast(auditId, db, ctx)` helper wrapping sonner's `toast()` with a 10s Undo action;
+  mount `Toaster` once in RootLayout. B1 — a dev route `/__undo` that runs real create/update/
+  delete through the audited repo helpers so `undo.spec.ts` can drive the real browser flow
+  (matching the T-031/032/033 harness precedent). C1 — a single generic `HistoryPanel`
+  `{table, recordId}` that lists `listHistory()` and restores via `undo()` on the chosen entry.
+- **Why:** lowest LOC and no new dependency; the core undo logic is already tested, so the UI is
+  a thin layer; one History component avoids 9x duplication. The `onRestored`/`revision` props
+  let the panel and its host stay in sync.
+- **Impact:** new `undo-toast.ts`, `HistoryPanel.tsx`, `/__undo` harness, `undo.spec.ts`, i18n keys
+  in en+bn, `Toaster` mounted in RootLayout, and a shared `makeAuditContext()` factory in
+  `audit/write.ts` (previously callers built contexts inline). No new dependency.
+
 ## D-038 — T-033 portable file transfer design (2026-11-17)
 
 - **Context:** T-033 needs a portable `.sqlite` export, optionally AES-GCM encrypted, that

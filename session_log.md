@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 12:30
+
+### Changes
+
+- `src/core/ui/undo-toast.ts` — 10-second sonner undo toast (T-034).
+- `src/core/ui/HistoryPanel.tsx` — generic `{table, recordId}` audit-history panel.
+- `src/core/audit/write.ts` — `makeAuditContext()` factory for audit writes.
+- `RootLayout` / app shell — `Toaster` mounted; `en`/`bn` i18n keys added.
+- `/__undo` dev harness — browser verification of the toast and history UI.
+- `e2e/specs/undo.spec.ts` — four specs (create/update/delete/history-restore).
+- `docs/DECISIONS.md` (D-039), `docs/PROGRESS.md`, `CHANGELOG.md` — documentation updates.
+- Branch `feature/undo-history`. Core `undo()`/`listHistory()` already existed from T-030. All E2E
+  green in chromium and firefox; a single full run hit time/memory limits, so the suite was split
+  into two halves with 1 worker — all passed.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`, `branch-manager`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-034 implemented on branch `feature/undo-history`; not committed or merged yet. `tsc`
+intermittently segfaults under memory pressure; worked around with `NODE_OPTIONS` max-old-space-size.
+
 ## Session 2026-11-17 11:15
 
 ### Changes

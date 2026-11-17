@@ -44,6 +44,21 @@ export const en = {
       title: 'Page not found',
       description: 'That screen does not exist.',
     },
+    undo: {
+      done: 'Done',
+      undo: 'Undo',
+      failed: 'Could not undo that change.',
+      history: 'History',
+      empty: 'No changes recorded yet.',
+      restore: 'Restore this version',
+      action: {
+        create: 'Created',
+        update: 'Updated',
+        delete: 'Deleted',
+        void: 'Voided',
+        restore: 'Restored',
+      },
+    },
     settings: {
       storage: 'Storage',
       persistence: 'Persistent storage',
