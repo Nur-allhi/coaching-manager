@@ -2,6 +2,7 @@
 import { paymentsEn } from './payments.en'
 import { attendanceEn } from './attendance.en'
 import { examsEn } from './exams.en'
+import { leaderboardEn } from './leaderboard.en'
 export const en = {
   translation: {
     app: {
@@ -117,6 +118,7 @@ export const en = {
     payments: paymentsEn,
     attendance: attendanceEn,
     exams: examsEn,
+    leaderboard: leaderboardEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',

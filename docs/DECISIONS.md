@@ -1087,6 +1087,56 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-055 — T-063 ranking and leaderboard (2026-11-17)
+
+- **Context:** T-063 needs ranks per exam, per month and per academic year, filtered by batch or
+  class, printable, with competition ranking (1, 2, 2, 4) and absent counted as zero in totals but
+  excluded from averages (TAD §5.7, FRONTEND_SPEC §5.7). `leaderboard` is a read-model module whose
+  screen is still a placeholder; `exam_results` is an owned junction with no version/deleted_at.
+  No human is present, so REPO_RULES §1.1 is followed in full and the leans are taken autonomously
+  under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where the SQL lives.**
+    - A1 — in `src/modules/leaderboard/queries/`, the read-model exception in TAD §2 rule 3 (read any
+      table from files in that folder, never write). Cost: leaderboard names other modules' tables,
+      but that is the documented exception and keeps the rule in the owning ticket's module.
+    - A2 — add ranking services to exams/students/enrollments and orchestrate their public APIs.
+      Cost: ranking rules leak into three owning modules and the ticket spans four modules.
+    - **Lean: A1.**
+  - **B — Rank computation.**
+    - B1 — SQL `RANK() OVER (ORDER BY total DESC)` — competition ranking, ties share and the next
+      rank skips. Cost: none; sqlite-wasm and better-sqlite3 both support window functions.
+    - B2 — compute ranks in JavaScript after fetching totals. Cost: duplicates SQL ordering and is
+      slower at scale.
+    - **Lean: B1.**
+  - **C — Absent and unmarked.**
+    - C1 — contribute 0 to totals; exclude from the average (TAD §5.7, absent is a flag not a zero).
+      Cost: none.
+    - C2 — count absent as full marks. Cost: contradicts the locked absent rule.
+    - **Lean: C1.**
+  - **D — Scope and filter semantics.**
+    - D1 — one parameterized query with a scope discriminator: exam (`exam_id`), month
+      (`substr(held_on,1,7)`), academic year (the exam's batch's `academic_year_id`); batch/class
+      filters constrain the exams considered. Cost: three branches in one query builder.
+    - D2 — per exam only. Cost: fails the "each scope filter returns the right set" acceptance.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — unit tests against `better-sqlite3` asserting 1,2,2,4, absent-as-zero, and each scope and
+      filter; `leaderboard.spec.ts` with a small fixture seeding a tie and asserting the real screen.
+      Cost: one test-only fixture route.
+    - E2 — E2E only. Cost: ranking edge cases need fast unit coverage.
+    - **Lean: E1.**
+- **Autonomous decision (T-063):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** the read-model query folder is the architecture's own exception for cross-table reads;
+  SQL window ranking gives the exact competition ranks the ticket names; absent handling reuses the
+  rule already locked for exams; one parameterized query serves all three scopes without duplicating
+  logic. No Locked Decision, schema convention, backup/restore behaviour, test matrix or shared
+  branch change. Version impact is `minor` (a `feat`).
+- **Impact:** new `src/modules/leaderboard/{queries/rankings,service,types,Screen,rankings.test}.ts(x)`,
+  a print stylesheet, a `/__leaderboard-fixture` test route and router registration,
+  `leaderboard.spec.ts`, en/bn leaderboard keys, and D-055 / PROGRESS / CHANGELOG / session-log
+  updates. No new dependency, migration or write path.
+
 ## D-054 — T-062 grades and GPA (2026-11-17)
 
 - **Context:** T-062 implements grades and GPA from the settings scale. Acceptance: 80 is A+, 79 is

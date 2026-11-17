@@ -24,6 +24,32 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 23:15
+
+### Changes
+
+- PR #47 (T-062 grades and GPA) squash-merged into `dev` as commit `66b7d21`; branch left in place
+  per AUTONOMY.md §3.3.
+- T-063 (ranking and leaderboard) on branch `feature/leaderboard`. Decision D-055 recorded
+  autonomously: SQL lives in the read-model `queries/` folder per TAD §2 #3, RANK() gives 1,2,2,4,
+  absent is zero in totals and excluded from averages, three scopes with batch/class filters.
+- New `src/modules/leaderboard/{queries/rankings,service,types,Screen,rankings.test}.ts`, A4
+  `leaderboard.css`, `/__leaderboard-fixture` route + router registration, `leaderboard.spec.ts`,
+  en/bn leaderboard namespace. Read-only module — no write path.
+- Verification: 5 ranking unit tests; `pnpm check` green (274.5 KB); full E2E suite 178 passed in
+  two halves with 1 worker (leaderboard 6 passed), 0 console errors and 0 horizontal overflow at
+  375px on the new screen. Docs: D-055 / PROGRESS / CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on `routeDefinitions` LOW, leaderboard Screen via lazy route)
+- `senior-frontend` / `senior-backend` (screen + ranking query)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — T-063 implemented, tested and ready to commit and open a PR.
+
 ## Session 2026-11-17 22:55
 
 ### Changes

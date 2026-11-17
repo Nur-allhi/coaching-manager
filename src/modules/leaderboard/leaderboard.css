@@ -1,0 +1,18 @@
+/* Leaderboard print layout (T-063, D-055). Loaded only by the lazy leaderboard route. */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  [data-slot='sidebar-wrapper'],
+  [data-slot='sidebar-inset'] header,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  :root {
+    color: #111;
+    background: #fff;
+  }
+}
