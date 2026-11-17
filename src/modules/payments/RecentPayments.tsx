@@ -115,7 +115,12 @@ export function RecentPayments() {
         const revision = Number(row.revision ?? 0)
         const id = String(row.id)
         return (
-          <div key={id} data-testid="payment-row" className="space-y-2 border-t pt-2 text-sm">
+          <div
+            key={id}
+            data-testid="payment-row"
+            data-payment-id={id}
+            className="space-y-2 border-t pt-2 text-sm"
+          >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span data-testid="row-receipt" className="font-medium">
                 {String(row.receipt_no)}

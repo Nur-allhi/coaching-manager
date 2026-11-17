@@ -1198,7 +1198,39 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
   in this branch with shrinkable grid columns and a 375px regression assertion.
 - The 3 full-suite failures remain the pre-existing BUG-004 / BUG-005, unchanged by this ticket.
 
-**Next:** T-054, the receipt print route and exports.
+### T-054 / P3-5 — Receipt print route and exports — **Done** (pending merge)
+
+**Acceptance:** all three T-054 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                          | Result                                                                   |
+| -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| A5 receipt prints with correct Bangla conjuncts          | met — `@page size A5`, self-hosted Bengali font, `lang="bn"` centre line |
+| Receipt shows balance due and a QR of the receipt number | met — `data-testid` fields + QR of receipt number; E2E asserts both      |
+| Excel export opens with correct Bangla text              | met — `exportReceiptsExcel` via ExcelJS, UTF-8/BOM-aware                 |
+
+**What changed**
+
+- `src/modules/payments/ReceiptPrint.tsx` + `receipt.css` — A5 print route registered via the module manifest at `/print/receipt/:paymentId`; renders every required field, watermark, QR and signature.
+- `src/modules/payments/receipt.ts` (4 unit tests), `receipt-export.ts` — print data and Excel export, reusing public module surfaces.
+- `src/modules/settings/index.ts` — exports the `getSetting` read surface for the centre profile (TAD §2).
+- `e2e/specs/receipt.spec.ts` (2 E2E tests) — drives the real print route; en/bn i18n keys.
+- D-050, CHANGELOG, session log.
+
+**Decisions:** D-050 (autonomous decision, recorded by the nightly session).
+
+**Results**
+
+| Check        | Result                                    |
+| ------------ | ----------------------------------------- |
+| `pnpm check` | green; bundle 269 KB of 300 KB            |
+| `pnpm e2e`   | receipt 2 passed; payments/dues 10 passed |
+
+**Known gaps**
+
+- "Prints correctly" is verified via the A5 CSS and rendered fields; actual paper output was not checked on a printer.
+- The print route is reachable by URL; no button links to it from the receipt preview yet.
+
+**Next:** P4 Academics — T-060 attendance sessions and grid.
 
 ## P4 Academics
 

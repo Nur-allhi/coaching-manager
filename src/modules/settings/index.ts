@@ -2,6 +2,9 @@ import { lazy } from 'react'
 import { Settings } from 'lucide-react'
 import type { AppModule } from '@/app/module-contract'
 
+/** Public read surface for the centre profile (TAD.md §2), used by receipts and reports. */
+export { getSetting } from './repository'
+
 export const settingsModule: AppModule = {
   id: 'settings',
   nav: { labelKey: 'nav.settings', icon: Settings, order: 11, path: '/settings' },

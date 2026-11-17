@@ -209,3 +209,27 @@ export function listPaymentsForStudent(db: Db, studentId: string): Promise<Row[]
     [studentId],
   )
 }
+
+/** One live payment for the print route (T-054). */
+export async function paymentById(db: Db, paymentId: string): Promise<Row | undefined> {
+  const rows = await db.query<Row>('SELECT * FROM payments WHERE id = ? AND deleted_at IS NULL', [
+    paymentId,
+  ])
+  return rows[0]
+}
+
+export interface AllocationMonth {
+  month: string | null
+  kind: string
+  amount_minor: number
+}
+
+/** Months a receipt covered, from its allocations back to charges (T-054 E1). */
+export function allocationMonths(db: Db, paymentId: string): Promise<AllocationMonth[]> {
+  return db.query<AllocationMonth>(
+    'SELECT c.month, c.kind, a.amount_minor FROM payment_allocations a ' +
+      'JOIN charges c ON c.id = a.charge_id WHERE a.payment_id = ? ' +
+      "ORDER BY (c.kind = 'admission') DESC, c.month",
+    [paymentId],
+  )
+}

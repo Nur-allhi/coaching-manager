@@ -12,6 +12,7 @@ export {
 } from './payment-service'
 export { generateCharges, listGeneratedCharges } from './service'
 export { duesReport, studentPaymentHistory } from './dues-service'
+export { receiptForPrint, receiptsForExport } from './receipt'
 export { StudentPaymentsTab } from './StudentPaymentsTab'
 
 export const paymentsModule: AppModule = {
@@ -28,6 +29,13 @@ export const paymentsModule: AppModule = {
       path: '/payments/dues',
       titleKey: 'payments.dues',
       component: lazy(() => import('./DuesScreen').then((mod) => ({ default: mod.DuesScreen }))),
+    },
+    {
+      path: '/print/receipt/:paymentId',
+      titleKey: 'payments.printTitle',
+      component: lazy(() =>
+        import('./ReceiptPrint').then((mod) => ({ default: mod.ReceiptPrint })),
+      ),
     },
   ],
 }

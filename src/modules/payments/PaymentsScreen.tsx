@@ -17,6 +17,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { duesForStudent, recordPayment, type PaymentInput } from './payment-service'
 import { RecentPayments } from './RecentPayments'
+import { receiptsForExport } from './receipt'
+import { exportReceiptsExcel } from './receipt-export'
 
 const PAYMENT_METHODS = ['cash', 'bank', 'mobile'] as const
 const formSchema = z.object({
@@ -33,6 +35,7 @@ export function PaymentsScreen() {
   const qc = useQueryClient()
   const [receipt, setReceipt] = useState('')
   const [error, setError] = useState('')
+  const [exporting, setExporting] = useState(false)
   const [amountText, setAmountText] = useState('')
   const form = useForm<PaymentInput>({
     resolver: zodResolver(formSchema),
@@ -64,9 +67,32 @@ export function PaymentsScreen() {
     }
   }
 
+  async function exportReceipts() {
+    setExporting(true)
+    setError('')
+    try {
+      await exportReceiptsExcel(await receiptsForExport(db))
+    } catch {
+      setError(t('payments.exportFailed'))
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('nav.payments')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">{t('nav.payments')}</h1>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="receipt-export"
+          disabled={exporting}
+          onClick={() => void exportReceipts()}
+        >
+          {t('payments.exportExcel')}
+        </Button>
+      </div>
       {receipt && (
         <p data-testid="payment-receipt" role="status" className="font-medium">
           {t('payments.receipt')}: {receipt}
