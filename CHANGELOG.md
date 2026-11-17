@@ -24,6 +24,7 @@ human-readable subset.
 
 ### Added
 
+- Grades and GPA in the marks grid: each student's grade letter and grade points come from the live Settings grading scale, a batch GPA summarises the entered marks, and both update as marks change (T-062, D-054).
 - Exams and a marks grid: create one exam per batch/subject/date, enter marks per student in a keyboard-navigable grid, flag absences with "A" instead of a zero, and see a live batch average that excludes absent students (T-061, D-052).
 - Attendance sessions and a keyboard-navigable grid: open a session per batch/date, mark the whole roster present in one action, toggle individuals, and see live percentages (T-060, D-051).
 - A dues and defaulters report at `/payments/dues`: batch, class and amount-range filters with a total over exactly the rows shown, only students who still owe money, and a real Payments tab on the student profile with payment history and outstanding dues (T-053, D-049).

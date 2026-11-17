@@ -1,7 +1,8 @@
 /**
- * Marks grid (T-061, D-052 C1/B1). Roving-tabindex ARIA grid: arrows move between students,
- * Enter saves marks, Space flags absence, Tab exits. Absent is a flag shown as "A", never as a
- * zero; the batch average covers entered marks of non-absent students only.
+ * Marks grid (T-061/T-062). Roving-tabindex ARIA grid: arrows move between students, Enter saves
+ * marks, Space flags absence, Tab exits. Absent is a flag shown as "A", never as a zero; the batch
+ * average covers entered marks of non-absent students only. Grade and points (T-062) come from the
+ * live Settings scale and update with the current marks.
  */
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +12,8 @@ import { toast } from 'sonner'
 import { getDb } from '@/core/db/client'
 import { useOptimisticMutation } from '@/core/ui/use-optimistic-mutation'
 import { Button } from '@/components/ui/button'
+import { getSetting } from '@/modules/settings'
+import { gpaFor, gradeFor } from './grades'
 import { cellsFor, ExamNotFoundError, loadExam, saveResult, summaryFor } from './service'
 import type { ExamCell } from './types'
 
@@ -41,10 +44,22 @@ export function MarksGrid() {
     queryFn: () => summaryFor(db, id),
     enabled: batchId !== undefined,
   })
+  const scale = useQuery({
+    queryKey: ['settings', 'gradingScale'],
+    queryFn: () => getSetting(db, 'gradingScale'),
+    enabled: batchId !== undefined,
+  })
 
   /** Sparse overrides only; the stored value is the fallback, so no effect is needed. */
   function draftFor(cell: ExamCell): string {
     return drafts[cell.studentId] ?? (cell.marks === null ? '' : String(cell.marks))
+  }
+
+  /** The current mark of a cell, honouring local drafts; absent and empty are ungraded. */
+  function scoreFor(cell: ExamCell): number | null {
+    if (cell.absent) return null
+    const raw = draftFor(cell).trim()
+    return raw === '' ? null : Number(raw)
   }
 
   const save = useOptimisticMutation<
@@ -147,6 +162,12 @@ export function MarksGrid() {
 
   const list = cells.data ?? []
   const average = summary.data?.average
+  const gpa = scale.data
+    ? gpaFor(
+        list.map((cell) => scoreFor(cell)),
+        scale.data,
+      )
+    : null
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-4 px-4 py-8 sm:px-6">
@@ -166,6 +187,9 @@ export function MarksGrid() {
           <span data-testid="entered-count">{summary.data?.entered ?? 0}</span>
           {' · '}
           {t('exams.absent')}: <span data-testid="absent-count">{summary.data?.absent ?? 0}</span>
+          {' · '}
+          {t('exams.gpa')}:{' '}
+          <span data-testid="exam-gpa">{gpa === null ? t('exams.noAverage') : gpa}</span>
         </p>
         <span data-testid="save-state" className="sr-only">
           {saveState}
@@ -180,6 +204,8 @@ export function MarksGrid() {
             <span role="columnheader">{t('exams.student')}</span>
             <span role="columnheader">{t('exams.marks')}</span>
             <span role="columnheader">{t('exams.absent')}</span>
+            <span role="columnheader">{t('exams.grade')}</span>
+            <span role="columnheader">{t('exams.points')}</span>
           </div>
           {list.map((cell, index) => (
             <div
@@ -231,6 +257,20 @@ export function MarksGrid() {
                   {cell.absent ? t('exams.present') : t('exams.absent')}
                 </button>
               </div>
+              <span
+                role="gridcell"
+                data-testid="exam-grade"
+                className="w-12 text-center font-medium"
+              >
+                {scale.data
+                  ? (gradeFor(scoreFor(cell), scale.data)?.label ?? t('exams.noAverage'))
+                  : '—'}
+              </span>
+              <span role="gridcell" data-testid="exam-points" className="w-10 text-center">
+                {scale.data
+                  ? (gradeFor(scoreFor(cell), scale.data)?.points ?? t('exams.noAverage'))
+                  : '—'}
+              </span>
             </div>
           ))}
         </div>

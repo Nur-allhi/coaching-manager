@@ -2,8 +2,9 @@ import { lazy } from 'react'
 import { Settings } from 'lucide-react'
 import type { AppModule } from '@/app/module-contract'
 
-/** Public read surface for the centre profile (TAD.md §2), used by receipts and reports. */
+/** Public read surface for settings (TAD.md §2), used by receipts, reports and grade conversion. */
 export { getSetting } from './repository'
+export type { Grade, GradingScale } from './defaults'
 
 export const settingsModule: AppModule = {
   id: 'settings',

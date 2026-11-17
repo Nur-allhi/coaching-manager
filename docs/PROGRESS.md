@@ -1312,7 +1312,44 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 ## P4 Academics
 
-_(not started)_
+### T-062 / P4-3 — Grades and GPA — **Done** (pending merge)
+
+**Acceptance:** all three T-062 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                  | Result                                                                                                  |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| A score of exactly 80 is A+; 79 is A             | met — inclusive `min <= score <= max` bands from the live Settings scale; unit + E2E                    |
+| A score below 33 is an F worth 0                 | met — 32 and 0 map to F/0; unit + E2E                                                                   |
+| Changing the scale in Settings changes the grade | met — `getSetting(db, 'gradingScale')` is read at render time; a persisted edit changes 80 from A+ to A |
+
+**What changed**
+
+- `src/modules/exams/grades.ts` — pure `gradeFor` (inclusive band match) and `gpaFor` (mean of grade
+  points, ungraded scores excluded), reusable by T-063's leaderboard.
+- `MarksGrid.tsx` — the live Settings scale is read through the settings public surface; each row
+  shows the grade letter and points beside the student, and the summary shows the batch GPA. Both
+  update with in-progress marks through the grid's optimistic model.
+- `settings/index.ts` — additive `GradingScale`/`Grade` type re-export; en/bn `exams.grade`,
+  `exams.points`, `exams.gpa` keys; 5 grade unit tests and an extended `marks.spec.ts`.
+- Decision D-054 (autonomous): display included per PLAN §8 / FRONTEND_SPEC §5.6 despite the ticket's
+  "E2E: n/a" line; no new E2E spec was created, the existing marks spec was extended.
+
+**Results**
+
+| Check        | Result                                                                         |
+| ------------ | ------------------------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 273.4 KB of 300 KB                                           |
+| unit tests   | 14 exams tests pass (5 new grade tests)                                        |
+| E2E          | `marks.spec.ts` 10 passed (Chromium + Firefox); 0 horizontal overflow at 375px |
+
+**Known gaps**
+
+- "GPA" in a single-exam grid is the mean of that exam's grade points (0–5), not a cumulative
+  cross-exam GPA; `gpaFor` is the shared pure function for a later cumulative view (T-063).
+- A human-edited grading scale with uncovered score gaps yields no grade (`—`) for those scores by
+  design (D-054 B1); the fixed seven-row Settings form cannot create gaps today.
+
+**Next:** T-063, ranking and the leaderboard.
 
 ## P5 Insight
 

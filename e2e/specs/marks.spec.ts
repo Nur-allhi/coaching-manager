@@ -80,3 +80,30 @@ test('a missing exam shows a not-found state instead of a blank grid', async ({ 
     [],
   )
 })
+
+// T-062 — grade and points beside each student, derived from the Settings scale.
+test('grade and GPA come from the grading scale and update with the marks', async ({ page }) => {
+  await expect(page.getByTestId('exam-grade')).toHaveText(['—', '—', '—'])
+
+  await page.getByTestId('marks-input').nth(0).fill('80')
+  await page.keyboard.press('Enter')
+  await expect(page.getByTestId('exam-grade').nth(0)).toHaveText('A+')
+  await expect(page.getByTestId('exam-points').nth(0)).toHaveText('5')
+
+  await page.getByTestId('marks-input').nth(1).fill('79')
+  await page.keyboard.press('Enter')
+  await expect(page.getByTestId('exam-grade').nth(1)).toHaveText('A')
+  await expect(page.getByTestId('exam-points').nth(1)).toHaveText('4')
+  await expect(page.getByTestId('exam-gpa')).toHaveText('4.5')
+
+  await page.getByTestId('marks-input').nth(1).fill('32')
+  await page.keyboard.press('Enter')
+  await expect(page.getByTestId('exam-grade').nth(1)).toHaveText('F')
+  await expect(page.getByTestId('exam-points').nth(1)).toHaveText('0')
+  await expect(page.getByTestId('exam-gpa')).toHaveText('2.5')
+
+  await page.setViewportSize({ width: 375, height: 800 })
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth),
+  ).toBeLessThanOrEqual(0)
+})
