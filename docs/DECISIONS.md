@@ -1632,3 +1632,34 @@ These use the plan's defaults. They become implemented in the phase noted.
 | Edit policy        | Admin may edit anything; every edit audited; REVISED mark on receipts | P1-1 / P3-3    |
 | Backups            | Newest 10 kept, checksum dedupe, snapshots at the five listed points  | P1-2 / P1-3    |
 | Auth               | Single admin PIN of 6+ digits, enabled in P6                          | P6-1           |
+
+---
+
+## D-065 — T-090 full-journey E2E spec
+
+- **Autonomous decision (T-090):** A1, B1, C1 (all leans below).
+- **Context:** PLAN P7-1 asks for one committed spec covering admission → payment → receipt →
+  backup → restore, running in CI against the production build, with no `e2e/` file over 300 LOC.
+  The repo's established pattern is fixture-only setup plus assertions on real product screens.
+- **Options considered:**
+  - **A — Journey setup.** A1 — reuse `/__payment-fixture` for the academic/enrollment/charge
+    preconditions and add only an additive name readout + break control to that existing test-only
+    route. Cost: a small change to a shared harness (additive only). A2 — add a new
+    `/__journey-fixture` route. Cost: a second harness plus a router change and duplicate seeding
+    logic. **Lean: A1.** A text search confirms the fixture has only three E2E consumers; additive
+    testids cannot break them.
+  - **B — Admission step.** B1 — assert the fixture-admitted student on the real Students list and
+    profile screens (student number + name), keeping one coherent subject through the journey.
+    Cost: the admission write itself is fixture setup, not the admission form. B2 — drive the real
+    admission form for a second student while a different student pays. Cost: two subjects, so the
+    journey is not one record and the receipt does not belong to the admitted student.
+    **Lean: B1.**
+  - **C — Restore proof.** C1 — break the journey student's name, prove the real profile shows
+    BROKEN, restore from the real Backups page, then prove the original name and the payment and
+    receipt are back. Cost: one UPDATE in the fixture. C2 — assert only that the snapshot list
+    grows. Cost: proves a file exists, not that data was recovered. **Lean: C1.**
+- **Why:** one spec that follows one student end to end, with every acceptance outcome asserted on
+  a product screen and the minimum possible harness change. No Locked Decision, schema convention,
+  backup/restore behaviour, test matrix, secret or shared branch is touched. Version impact: none.
+- **Impact:** additive controls in `src/app/dev/PaymentFixture.tsx`, a new
+  `e2e/specs/full-journey.spec.ts`, and PROGRESS / CHANGELOG / session-log lines. No new dependency.
