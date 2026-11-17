@@ -1633,6 +1633,52 @@ E1 unit + E2E).
 
 **Next:** T-082, the audit log viewer.
 
+### T-082 / P6-3 — Audit log viewer — **Done** (pending merge)
+
+**Acceptance:** all three T-082 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                    | Result                                                                       |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Every change listed with entity, action, timestamp | met — one query over `audit_log`, newest first, UTC timestamp column         |
+| Filters narrow by entity, action and date range    | met — bound SQL predicates; entity options from `SELECT DISTINCT entity`     |
+| Before and after snapshots are viewable            | met — expandable `<details>` per row with pretty-printed parsed before/after |
+
+**What changed**
+
+- `src/core/audit/query.ts` — additive read model: `AUDIT_ACTIONS`, `AuditFilter`, `AuditEntry`,
+  `listAudit`, `listAuditEntities` and the Admin-gated `listAuditAs` (SECURITY §4). Dates use the
+  Dhaka-day convention (`dhakaDayStart`); all predicates are bound parameters. `parseSnapshot` was
+  exported from `undo.ts` so the viewer and History share one parser.
+- `src/modules/data-tools/AuditViewerScreen.tsx` — real `/data-tools/audit` screen with four
+  states, filter bar, contained table and per-row expandable before/after; linked from Backups.
+  The screen calls `listAuditAs(session, …)` so a denied role is refused in the service too.
+- en/bn `audit-viewer` namespaces wired into both aggregates; `query.test.ts` (filters, parsed
+  snapshots, Admin/Teacher gate) and `e2e/specs/audit-viewer.spec.ts` (a real change made through
+  `/__undo`, then listed, expanded and filtered in both browsers); D-062, CHANGELOG, session log.
+
+**Decisions:** D-062 (Autonomous decision for T-082: A1 single read model, B1 data-derived entity
+options, C1 `<details>` snapshots, D1 all rows in a contained table, E1 unit + E2E). An additive
+service-side `audit.read` gate was taken as the default required by SECURITY §4.
+
+**Results**
+
+| Check        | Result                                                                      |
+| ------------ | --------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 281.0 KB of 300 KB                                        |
+| unit tests   | 3 audit-query tests pass; full unit suite green                             |
+| E2E          | audit-viewer 4 passed (Chromium + Firefox); first full-suite half 94 passed |
+
+**Known gaps**
+
+- A pre-existing flaky auth inactivity-lock spec (BUG-012) failed once in each browser across the
+  full-suite halves; it reproduces on unmodified `dev` and is not a T-082 regression. CI's two
+  retries cover it.
+- BUG-013 (T-081 status vocabulary and Bangla string leaks) was found during this work, logged and
+  left for a confirmed fix; it does not affect the viewer.
+- BUG-006/007/008 remain open and deferred.
+
+**Next:** T-083, the performance pass.
+
 ## P7 Release
 
 _(not started)_

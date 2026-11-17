@@ -8,6 +8,7 @@ import { reportsEn } from './reports.en'
 import { adminEn } from './admin.en'
 import { authEn } from './auth.en'
 import { importEn } from './import.en'
+import { auditViewerEn } from './audit-viewer.en'
 export const en = {
   translation: {
     app: {
@@ -129,6 +130,7 @@ export const en = {
     admin: adminEn,
     auth: authEn,
     import: importEn,
+    auditViewer: auditViewerEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',

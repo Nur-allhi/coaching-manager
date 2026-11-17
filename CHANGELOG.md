@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- A filterable audit log viewer at `/data-tools/audit` (T-082, D-062): every recorded change with
+  its entity, action and timestamp, entity/action/date-range filters, and expandable before/after
+  snapshots. Reads are gated by the Admin-only `audit.read` permission in the service.
 - CSV and Excel import tools at `/data-tools/import` (T-081, D-061): a downloadable template,
   editable column mapping, a row-level validation preview and dry run that writes nothing,
   idempotent students (number or phone + name), and a forced pre-import snapshot before one

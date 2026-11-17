@@ -19,5 +19,12 @@ export const dataToolsModule: AppModule = {
         import('./ImportScreen').then((mod) => ({ default: mod.ImportScreen })),
       ),
     },
+    {
+      path: '/data-tools/audit',
+      titleKey: 'auditViewer.title',
+      component: lazy(() =>
+        import('./AuditViewerScreen').then((mod) => ({ default: mod.AuditViewerScreen })),
+      ),
+    },
   ],
 }

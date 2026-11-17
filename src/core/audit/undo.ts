@@ -46,7 +46,7 @@ export class InvalidAuditEntryError extends Error {
   }
 }
 
-function parseSnapshot(value: string | null): Row | undefined {
+export function parseSnapshot(value: string | null): Row | undefined {
   if (value === null) return undefined
   const parsed: unknown = JSON.parse(value)
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {

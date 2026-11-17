@@ -1512,6 +1512,40 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-062 — T-082 Audit log viewer (2026-11-18)
+
+- **Context:** T-082 adds a filterable table of every `audit_log` change with entity/action/date
+  filters and viewable before/after snapshots. `listHistory(db, table, id)` already parses snapshots
+  but is scoped to one record. FRONTEND_SPEC §5.10 puts the viewer in Data tools; the commit scope is
+  `audit`. `audit_log` has `entity`, `action`, `at` (epoch ms) and JSON snapshots; there is no audit
+  UI. No human is present, so REPO_RULES §1.1 is followed and the leans are taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Read model.** A1 — an additive `listAudit(db, filter)` in `src/core/audit/query.ts`, with
+    entity/action/date predicates bound in one parameterized query and parsed before/after rows.
+    Cost: one small read module. A2 — reuse `listHistory` per table. Cost: it needs a record id and
+    cannot answer "every change". **Lean: A1.**
+  - **B — Entity options.** B1 — derive the entity filter's options from `SELECT DISTINCT entity`
+    so new modules appear without editing UI. Cost: one small query. B2 — hard-code the table
+    allowlist. Cost: drifts as modules land. **Lean: B1.**
+  - **C — Detail display.** C1 — an expandable `<details>` row with pretty-printed before/after
+    JSON. Cost: long snapshots make the table tall; the block scrolls within a max height. C2 — a
+    dialog per row. Cost: more state and a new component for the same information. **Lean: C1.**
+  - **D — Volume.** D1 — return all matching rows and render them inside a scrollable, horizontally
+    contained table; filters narrow the set. Cost: the DOM grows with the log. D2 — paginate.
+    Cost: a page control and a count query with no acceptance behind it. **Lean: D1.**
+  - **E — Verification.** E1 — unit tests for filters and parsed snapshots plus `audit-viewer.spec.ts`
+    driving a real change from `/__undo` and asserting it appears with its before/after. E2 — E2E
+    only. Cost: filter correctness needs a fast data-layer assertion. **Lean: E1.**
+- **Autonomous decision (T-082):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** one query owns the read model, filter options stay current by construction, and the
+  detail view is the smallest surface that shows both snapshots. No Locked Decision, schema
+  convention, backup/restore behaviour, test matrix or shared branch change. Version impact `minor`.
+- **Impact:** new `src/core/audit/query.ts` + test, `src/modules/data-tools/AuditViewerScreen.tsx`
+  and `/data-tools/audit` route, en/bn audit-viewer keys, `audit-viewer.spec.ts`, and D-062 /
+  PROGRESS / CHANGELOG / session-log updates. No new dependency, migration or `main` change.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.
