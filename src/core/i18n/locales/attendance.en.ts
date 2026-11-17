@@ -1,0 +1,21 @@
+/** English attendance namespace (T-060). Split out to keep the locale files under 300 LOC. */
+export const attendanceEn = {
+  picker: 'Select a batch and date to open the attendance session.',
+  batch: 'Batch',
+  date: 'Date',
+  open: 'Open session',
+  markAllPresent: 'Mark all present',
+  student: 'Student',
+  status: 'Status',
+  present: 'Present',
+  absent: 'Absent',
+  percentage: 'Present',
+  presentCount: 'Present',
+  absentCount: 'Absent',
+  totalCount: 'Total',
+  noRoster: 'No active students are enrolled in this batch.',
+  loading: 'Loading…',
+  saveFailed: 'Could not save attendance — nothing was changed.',
+  gridHelp: 'Use arrow keys to move, Enter or Space to toggle, Tab to leave the grid.',
+  sessionTitle: 'Attendance',
+}

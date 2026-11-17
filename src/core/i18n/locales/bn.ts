@@ -4,6 +4,7 @@
  */
 import type { Translation } from './en'
 import { paymentsBn } from './payments.bn'
+import { attendanceBn } from './attendance.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -118,6 +119,7 @@ export const bn: { translation: Translation } = {
       closed: 'বন্ধ',
     },
     payments: paymentsBn,
+    attendance: attendanceBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

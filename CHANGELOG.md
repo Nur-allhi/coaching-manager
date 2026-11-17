@@ -22,6 +22,7 @@ human-readable subset.
 
 ### Added
 
+- Attendance sessions and a keyboard-navigable grid: open a session per batch/date, mark the whole roster present in one action, toggle individuals, and see live percentages (T-060, D-051).
 - A dues and defaulters report at `/payments/dues`: batch, class and amount-range filters with a total over exactly the rows shown, only students who still owe money, and a real Payments tab on the student profile with payment history and outstanding dues (T-053, D-049).
 - Edit and void a payment: editing re-runs allocation in one transaction, keeps the receipt number and increments `revision` (shown as REVISED n on the receipt), while voiding keeps the row and receipt but stops its allocations counting. The real `/payments` screen lists recent payments with Edit/Void and a receipt preview (T-052, D-048).
 - Record a payment with allocation: partial, advance and multi-month payments allocated oldest-first in one transaction, gapless `R-YYYY-000001` receipt numbers from a counter, advances reused when later charges are generated, and a real collect screen with a live dues preview (T-051, D-047).

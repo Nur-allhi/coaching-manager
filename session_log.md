@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 21:11
+
+### Changes
+
+- `src/modules/attendance/{repository,service,types}.ts` — session/record SQL, `getOrCreateSession` via UNIQUE, one-action mark-all in one audited tx, roster from public module surfaces, percentage summary with absent=0 (T-060, first P4 ticket).
+- `src/modules/attendance/Screen.tsx` — session picker.
+- `src/modules/attendance/AttendanceGrid.tsx` — roving-tabindex ARIA grid with a save-state indicator.
+- Route registered in the module manifest; `/__attendance-fixture` test route added.
+- `e2e/specs/attendance.spec.ts` (4 tests), 5 service unit tests, en/bn attendance i18n namespace files.
+- `docs/DECISIONS.md` (D-051), `docs/PROGRESS.md`, `CHANGELOG.md` updated. Branch `feature/attendance-grid`; all E2E pass (123 in second half).
+- Note — nested-tx guard caught a real bug: `insert()` opens its own tx, so `repoWithin` must be used inside an outer tx.
+- Note — a stale preview build caused one false E2E failure until rebuilt.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `decision-advisor`
+- `branch-manager`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+in-progress — T-060 implemented on branch `feature/attendance-grid`; not committed or merged yet.
+
 ## Session 2026-11-17 19:49
 
 ### Changes

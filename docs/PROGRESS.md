@@ -1230,7 +1230,39 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
 - "Prints correctly" is verified via the A5 CSS and rendered fields; actual paper output was not checked on a printer.
 - The print route is reachable by URL; no button links to it from the receipt preview yet.
 
-**Next:** P4 Academics — T-060 attendance sessions and grid.
+### T-060 / P4-1 — Attendance session and grid — **Done** (pending merge)
+
+**Acceptance:** all four T-060 lines from `docs/TICKETS.md`.
+
+| Acceptance line                              | Result                                                         |
+| -------------------------------------------- | -------------------------------------------------------------- |
+| One action marks the whole batch present     | met — one audited tx upserts the full roster; E2E asserts 100% |
+| Arrow keys, Enter and Tab move between cells | met — roving-tabindex ARIA grid; E2E asserts arrow + Enter     |
+| A session is unique per batch and date       | met — `getOrCreateSession` reuses via UNIQUE; E2E reload test  |
+| Percentages match the stored records         | met — summary from `attendance_records`; E2E asserts 67%       |
+
+**What changed**
+
+- `src/modules/attendance/repository.ts`, `service.ts`, `types.ts` — session/record SQL, roster from public module surfaces, one-action mark-all and audited status writes, percentage summary (absent = 0, excluded from averages per TAD §5.7).
+- `src/modules/attendance/Screen.tsx` (session picker), `AttendanceGrid.tsx` (roving grid + save-state indicator), route registered in the module manifest.
+- `/__attendance-fixture` test route, `e2e/specs/attendance.spec.ts` (4 tests), 5 service unit tests, en/bn i18n namespace files.
+- D-051, CHANGELOG, session log.
+
+**Decisions:** D-051 (A1 get-or-create, B1 batched write, C1 roving grid, D1 fixture E2E).
+
+**Results**
+
+| Check        | Result                              |
+| ------------ | ----------------------------------- |
+| `pnpm check` | green                               |
+| `pnpm e2e`   | all specs pass (123 in second half) |
+
+**Known gaps**
+
+- The grid's roving focus is per-cell; there is no separate row navigation for large batches (virtualization is a P6 pass).
+- Only `present`/`absent` statuses exist; late/leave flags are out of ticket scope.
+
+**Next:** T-061, exam and marks grid.
 
 ## P4 Academics
 
