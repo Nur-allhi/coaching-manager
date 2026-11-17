@@ -164,7 +164,7 @@ export function RecentPayments() {
             </div>
 
             {viewingId === id && (
-              <div data-testid="receipt-preview" className="rounded border bg-card p-3">
+              <div data-testid="receipt-preview" className="bg-card rounded border p-3">
                 <p data-testid="receipt-number" className="font-medium">
                   {String(row.receipt_no)}
                 </p>
@@ -196,7 +196,10 @@ export function RecentPayments() {
             )}
 
             {editingId === id && (
-              <div data-testid="payment-edit-form" className="grid gap-3 rounded border p-3 sm:grid-cols-2">
+              <div
+                data-testid="payment-edit-form"
+                className="grid gap-3 rounded border p-3 sm:grid-cols-2"
+              >
                 <div className="space-y-1">
                   <Label htmlFor="edit-amount">{t('payments.amount')}</Label>
                   <Input
@@ -217,7 +220,12 @@ export function RecentPayments() {
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="edit-date">{t('payments.paidOn')}</Label>
-                  <Input id="edit-date" data-testid="edit-date" type="date" {...form.register('paidOn')} />
+                  <Input
+                    id="edit-date"
+                    data-testid="edit-date"
+                    type="date"
+                    {...form.register('paidOn')}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="edit-method">{t('payments.method')}</Label>
@@ -246,7 +254,12 @@ export function RecentPayments() {
                   >
                     {t('payments.saveEdit')}
                   </Button>
-                  <Button type="button" variant="outline" data-testid="edit-cancel" onClick={cancelEdit}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    data-testid="edit-cancel"
+                    onClick={cancelEdit}
+                  >
                     {t('common.cancel')}
                   </Button>
                 </div>

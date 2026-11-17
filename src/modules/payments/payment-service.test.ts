@@ -170,10 +170,14 @@ describe('editing and voiding a payment', () => {
 
     expect(edited.receiptNo).toBe('R-2026-000001')
     expect(edited.revision).toBe(1)
-    const rows = await db.query<{ receipt_no: string; revision: number; version: number; amount_minor: number }>(
-      'SELECT receipt_no, revision, version, amount_minor FROM payments WHERE id = ?',
-      [recorded.id],
-    )
+    const rows = await db.query<{
+      receipt_no: string
+      revision: number
+      version: number
+      amount_minor: number
+    }>('SELECT receipt_no, revision, version, amount_minor FROM payments WHERE id = ?', [
+      recorded.id,
+    ])
     expect(rows[0]).toMatchObject({
       receipt_no: 'R-2026-000001',
       revision: 1,
@@ -190,7 +194,10 @@ describe('editing and voiding a payment', () => {
     const first = await editPayment(db, recorded.id, edit(3000), 1)
     expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(3000)
     await editPayment(db, recorded.id, edit(1000), 2)
-    const rows = await db.query<{ revision: number }>('SELECT revision FROM payments WHERE id = ?', [recorded.id])
+    const rows = await db.query<{ revision: number }>(
+      'SELECT revision FROM payments WHERE id = ?',
+      [recorded.id],
+    )
     expect(rows[0]?.revision).toBe(2)
     expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(5000)
     expect(first.allocatedMinor).toBe(3000)
@@ -227,9 +234,14 @@ describe('editing and voiding a payment', () => {
   it('rolls back the allocation deletion and revision on a stale version', async () => {
     const { db, payment, studentId } = await setup()
     const recorded = await recordPayment(db, payment({ amountMinor: 2000 }))
-    await expect(editPayment(db, recorded.id, edit(3000), 99)).rejects.toBeInstanceOf(VersionConflictError)
+    await expect(editPayment(db, recorded.id, edit(3000), 99)).rejects.toBeInstanceOf(
+      VersionConflictError,
+    )
     expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(4000)
-    const rows = await db.query<{ revision: number }>('SELECT revision FROM payments WHERE id = ?', [recorded.id])
+    const rows = await db.query<{ revision: number }>(
+      'SELECT revision FROM payments WHERE id = ?',
+      [recorded.id],
+    )
     expect(rows[0]?.revision).toBe(0)
   })
 })

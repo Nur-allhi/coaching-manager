@@ -55,7 +55,10 @@ export function PaymentsScreen() {
       setReceipt(result.receiptNo)
       setAmountText('')
       form.setValue('amountMinor', 0)
-      await Promise.all([dues.refetch(), qc.invalidateQueries({ queryKey: ['payments', 'recorded'] })])
+      await Promise.all([
+        dues.refetch(),
+        qc.invalidateQueries({ queryKey: ['payments', 'recorded'] }),
+      ])
     } catch {
       setError(t('payments.saveFailed'))
     }

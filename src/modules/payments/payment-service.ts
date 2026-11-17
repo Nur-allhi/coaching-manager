@@ -200,7 +200,13 @@ export async function allocateAdvances(db: Db): Promise<number> {
       )
       const studentId = String(rows[0]?.student_id ?? '')
       if (!studentId) continue
-      const remaining = await allocateToOpenCharges(t, ctx, payment.id, studentId, payment.spare_minor)
+      const remaining = await allocateToOpenCharges(
+        t,
+        ctx,
+        payment.id,
+        studentId,
+        payment.spare_minor,
+      )
       allocated += payment.spare_minor - remaining
     }
     return allocated

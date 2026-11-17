@@ -1112,11 +1112,11 @@ C1 advance as unused capacity, D1 real collect UI, E1 unit + E2E).
 
 **Acceptance:** all three T-052 lines from `docs/TICKETS.md`.
 
-| Acceptance line                                                       | Result                                                                          |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| An edited receipt keeps its number and shows REVISED                  | met — `receipt_no` never patched; `revision` bumped and `REVISED n` shown in UI  |
-| A voided receipt is watermarked VOID and its allocations stop counting | met — core `voidRecord`; `openCharges` filters `status = 'valid'`; VOID shown    |
-| The revision count is shown on the reprinted receipt                  | met — the receipt preview shows `Revision n`; A5 print layout follows in T-054  |
+| Acceptance line                                                        | Result                                                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| An edited receipt keeps its number and shows REVISED                   | met — `receipt_no` never patched; `revision` bumped and `REVISED n` shown in UI |
+| A voided receipt is watermarked VOID and its allocations stop counting | met — core `voidRecord`; `openCharges` filters `status = 'valid'`; VOID shown   |
+| The revision count is shown on the reprinted receipt                   | met — the receipt preview shows `Revision n`; A5 print layout follows in T-054  |
 
 **What changed**
 
@@ -1136,12 +1136,12 @@ in one tx, C1 keep the receipt number + bump revision, D1 reuse core void, E1 un
 
 **Results**
 
-| Check        | Result                                                                       |
-| ------------ | ---------------------------------------------------------------------------- |
-| `pnpm check` | green; initial JS 264.3 KB of 300 KB                                         |
-| `pnpm test`  | 191 passed across 33 files                                                   |
+| Check        | Result                                                                         |
+| ------------ | ------------------------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 264.3 KB of 300 KB                                           |
+| `pnpm test`  | 191 passed across 33 files                                                     |
 | `pnpm e2e`   | payments 4 passed (Chromium + Firefox); full suite 133 passed, 3 known offline |
-| smoke gate   | 4 passed                                                                     |
+| smoke gate   | 4 passed                                                                       |
 
 **Known gaps**
 
