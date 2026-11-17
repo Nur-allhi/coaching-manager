@@ -24,6 +24,7 @@ human-readable subset.
 
 ### Added
 
+- A leaderboard at `/leaderboard`: competition ranks (ties share a rank and the next rank skips), per-exam / per-month / per-academic-year scopes, batch and class filters, absent counted as zero but excluded from averages, and an A4 print view (T-063, D-055).
 - Grades and GPA in the marks grid: each student's grade letter and grade points come from the live Settings grading scale, a batch GPA summarises the entered marks, and both update as marks change (T-062, D-054).
 - Exams and a marks grid: create one exam per batch/subject/date, enter marks per student in a keyboard-navigable grid, flag absences with "A" instead of a zero, and see a live batch average that excludes absent students (T-061, D-052).
 - Attendance sessions and a keyboard-navigable grid: open a session per batch/date, mark the whole roster present in one action, toggle individuals, and see live percentages (T-060, D-051).

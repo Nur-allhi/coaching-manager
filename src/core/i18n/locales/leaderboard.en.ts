@@ -1,0 +1,23 @@
+/** English leaderboard namespace (T-063). */
+export const leaderboardEn = {
+  title: 'Leaderboard',
+  scope: 'Rank by',
+  exam: 'Exam',
+  month: 'Month',
+  year: 'Academic year',
+  filter: 'Filter',
+  all: 'All batches',
+  batch: 'Batch',
+  class: 'Class',
+  rank: 'Rank',
+  student: 'Student',
+  total: 'Total marks',
+  average: 'Average',
+  absent: 'Absent',
+  print: 'Print',
+  loading: 'Loading…',
+  empty: 'No results for this scope yet.',
+  error: 'The leaderboard could not be loaded. Try again.',
+  selectExam: 'Choose an exam to see its ranking.',
+  selectYear: 'Choose an academic year to see its ranking.',
+}

@@ -6,6 +6,7 @@ import type { Translation } from './en'
 import { paymentsBn } from './payments.bn'
 import { attendanceBn } from './attendance.bn'
 import { examsBn } from './exams.bn'
+import { leaderboardBn } from './leaderboard.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -122,6 +123,7 @@ export const bn: { translation: Translation } = {
     payments: paymentsBn,
     attendance: attendanceBn,
     exams: examsBn,
+    leaderboard: leaderboardBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

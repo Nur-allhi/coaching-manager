@@ -1351,6 +1351,43 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 **Next:** T-063, ranking and the leaderboard.
 
+### T-063 / P4-4 — Ranking and leaderboard — **Done** (pending merge)
+
+**Acceptance:** all three T-063 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                      | Result                                                                             |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Ties share a rank and the next rank skips (1,2,2,4)  | met — SQL `RANK() OVER (ORDER BY total DESC)`; unit + E2E assert 1,2,2,4           |
+| Absent counts as 0 in totals, excluded from averages | met — absent/unmarked = 0 in totals; `AVG` over marked non-absent rows only        |
+| Each scope filter returns the right set              | met — exam / `YYYY-MM` / academic-year scopes, batch and class filters; unit + E2E |
+
+**What changed**
+
+- `src/modules/leaderboard/queries/rankings.ts` — read-only SQL in the read-model `queries/` folder
+  (TAD §2 #3): one parameterized query with a scope discriminator and batch/class filters, plus an
+  academic-year options read.
+- `service.ts` — validates that each scope has its selector (`LeaderboardValidationError`); the
+  module never writes. `Screen.tsx` — real `/leaderboard` screen with scope + filter selectors, a
+  ranked table, four async states and a print view (`leaderboard.css`, A4).
+- `/__leaderboard-fixture` test route, `leaderboard.spec.ts` (3 tests), 5 ranking unit tests, en/bn
+  leaderboard namespace, D-055. Decision A1/B1/C1/D1/E1 taken autonomously.
+
+**Results**
+
+| Check        | Result                                                                                   |
+| ------------ | ---------------------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 274.5 KB of 300 KB                                                     |
+| unit tests   | 5 ranking tests pass                                                                     |
+| E2E          | leaderboard 6 passed (Chromium + Firefox); full suite 178 passed in two halves, 1 worker |
+
+**Known gaps**
+
+- "Print view" is an A4 stylesheet plus `window.print()`; actual paper output was not checked.
+- Ranking totals are a sum of marks for the selected scope; there is no weighted per-exam GPA
+  ranking (the ticket asks for ranks, not a GPA formula).
+
+**Next:** T-070, the dashboard (depends on T-063 and T-053, both now merged).
+
 ## P5 Insight
 
 _(not started)_
