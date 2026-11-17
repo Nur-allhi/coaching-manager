@@ -252,7 +252,7 @@ export function SettingsScreen() {
         <p className="text-muted-foreground text-sm">
           {t('settings.snapshotCount')}: {snapshotCount}
         </p>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm" data-testid="persistence-status">
           {t('settings.persistence')}: {t(statusKey)}
         </p>
       </section>

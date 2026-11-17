@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 19:49
+
+### Changes
+
+- `vite.config.ts` — added `wasm` to the Workbox precache glob so the SQLite WASM binary is
+  available offline; startup migration runs before render, so without it the app showed the
+  recovery screen offline (BUG-004).
+- `src/modules/settings/SettingsScreen.tsx` — restored `data-testid="persistence-status"` on the
+  persistence paragraph that T-040 removed (BUG-005).
+- `e2e/specs/offline.spec.ts` — both offline tests now pass; `pnpm check` green; 16 E2E pass
+  across the offline/settings/payments specs.
+- `docs/BUGS.md` — BUG-004 and BUG-005 marked fixed; `CHANGELOG.md` updated.
+- Branch `fix/offline-specs`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-frontend`
+- `playwright-mcp`
+- `gitnexus`
+
+### Status
+
+in-progress — BUG-004 and BUG-005 fixed and verified on branch `fix/offline-specs`; not committed
+or merged yet.
+
+---
+
 ## Session 2026-11-17 19:17
 
 ### Changes

@@ -46,7 +46,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Include the sqlite-wasm binary: startup migration runs before render, so without it
+        // the app cannot boot offline (BUG-004).
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2,wasm}'],
         cleanupOutdatedCaches: true,
         // Claim the page as soon as the worker installs, so the first visit is already offline-ready.
         skipWaiting: true,
