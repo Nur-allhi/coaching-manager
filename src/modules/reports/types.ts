@@ -24,4 +24,6 @@ export interface ReportDefinition {
   titleKey: string
   columns: ReportColumn[]
   load(db: Db, filter: ReportFilter): Promise<ReportRow[]>
+  /** Optional display total over the same rows the preview and exports use. */
+  total?: (rows: ReportRow[]) => string | null
 }

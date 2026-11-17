@@ -1087,6 +1087,50 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-058 — T-072 report catalogue (2026-11-17)
+
+- **Context:** T-072 implements the report catalogue on the T-071 framework: student list,
+  admissions, payment register, dues, receipts by date range, attendance and result sheets. Its scope
+  line also names the admin report, but T-073 is a dedicated ticket for that report with its own
+  acceptance lines. Report totals must equal the sums shown in the payments and students modules for
+  the same range. No human is present, so REPO_RULES §1.1 is followed in full and the leans are taken
+  autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — The admin-report overlap.**
+    - A1 — T-072 supplies the seven catalogue reports; T-073 owns the admin report. Cost: T-072's
+      scope line literally mentions the admin report, but a dedicated ticket with an explicit
+      acceptance set is the stronger one-behavior-per-ticket rule.
+    - A2 — implement the admin report here and leave T-073 with nothing to do. Cost: breaks T-073's
+      acceptance line and bundles two changes.
+    - **Lean: A1.**
+  - **B — Totals consistency.**
+    - B1 — loaders for payment/dues/admissions reports call the same public module reads the screens
+      use (`listRecordedPayments`, `duesReport`, `listStudents`), with a unit test asserting the report
+      total equals the module total. Cost: loaders live in the read-model `queries/` folder but import
+      module public APIs, which TAD §2 rule 3 permits alongside direct reads.
+    - B2 — independent SQL per report. Cost: totals drift from the modules they are meant to match.
+    - **Lean: B1.**
+  - **C — Framework changes.**
+    - C1 — add report definitions plus an optional total accessor to the existing registry; the
+      from/to/batch/class filter bar already covers the catalogue. Cost: one additive field and one
+      total line in the framework, no new filter kinds.
+    - C2 — add a new filter kind per report. Cost: a larger framework change with no acceptance behind it.
+    - **Lean: C1.**
+  - **D — Verification.**
+    - D1 — unit tests for each report's rows and totals against a seeded DB and the module functions,
+      plus `reports.spec.ts` switching reports and asserting totals in the real screen. Cost: several
+      small tests.
+    - D2 — E2E only. Cost: totals equality needs a fast data-layer assertion.
+    - **Lean: D1.**
+- **Autonomous decision (T-072):** A1, B1, C1, D1 — take all four leans.
+- **Why:** the dedicated admin-report ticket keeps one change per ticket; using the modules' own read
+  functions makes "report totals equal module sums" true by construction; the framework needs no
+  change to host more definitions. No Locked Decision, schema convention, backup/restore behaviour,
+  test matrix or shared branch change. Version impact is `minor` (a `feat`).
+- **Impact:** additive report definitions and loaders in `src/modules/reports/{queries,registry}.ts`,
+  i18n keys for each report and its columns, unit tests and an extended `reports.spec.ts`, and
+  D-058 / PROGRESS / CHANGELOG / session-log updates. No new dependency, migration or write path.
+
 ## D-057 — T-071 reports framework (2026-11-17)
 
 - **Context:** T-071 builds the reports framework on `/reports`: a filter bar, a preview, a print

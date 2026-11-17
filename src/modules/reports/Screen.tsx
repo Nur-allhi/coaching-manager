@@ -142,6 +142,9 @@ export function Screen() {
 
       <p className="text-muted-foreground text-sm">
         {t('reports.rows')}: <span data-testid="report-row-count">{data.length}</span>
+        {' · '}
+        {t('reports.total')}:{' '}
+        <span data-testid="report-total">{report?.total ? (report.total(data) ?? '—') : '—'}</span>
       </p>
 
       {options.isPending || rows.isPending ? (

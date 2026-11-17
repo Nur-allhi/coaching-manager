@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-18 00:18
+
+### Changes
+
+- PR #50 (T-071 reports framework) squash-merged into `dev` as commit `21b940b`; branch left in place
+  per AUTONOMY.md §3.3.
+- T-072 (report catalogue) on branch `feature/report-catalogue`. Decision D-058 recorded autonomously:
+  the seven catalogue reports ship here, the admin report stays with its dedicated T-073; totals come
+  from the owning modules' public reads. An optional total accessor was added to the framework.
+- New `queries/catalogue.ts` loaders, registry definitions for all seven reports, en/bn keys, 4 new
+  unit tests and an extended `reports.spec.ts`.
+- Verification: `pnpm check` green (275.3 KB); reports E2E 8 passed; full suite 192 passed in two
+  halves, 0 console errors. Fixed a TS error in `batchNameByStudent` types found on rebuild.
+  Docs: D-058 / PROGRESS / CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (detect-changes)
+- `senior-backend` (report loaders and totals)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — T-072 implemented, tested and ready to commit and open a PR.
+
 ## Session 2026-11-17 23:54
 
 ### Changes

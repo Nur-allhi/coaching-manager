@@ -1465,6 +1465,42 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 **Next:** T-072, the report catalogue.
 
+### T-072 / P5-3 — Report catalogue — **Done** (pending merge)
+
+**Acceptance:** both T-072 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                        | Result                                                                                      |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Every report in the catalogue exists and is filterable | met — student list, admissions, payment register, dues, receipts, attendance, result sheets |
+| Report totals equal the payments/students module sums  | met — payment/dues/admission loaders use the owning modules' public reads; unit + E2E       |
+
+**What changed**
+
+- `src/modules/reports/queries/catalogue.ts` — loaders for six more reports, parameterized by the
+  existing from/to/batch/class filter; totals come from `duesReport`, `listRecordedPayments` and
+  `listStudents` so they cannot drift from the screens behind them.
+- `registry.ts` — all seven catalogue definitions with columns and optional display totals;
+  `Screen.tsx` shows the total from the exact rows feeding the preview and exports. An optional total
+  accessor is the only additive framework change (D-058 C1).
+- en/bn report/column keys, 4 catalogue unit tests (7 in the file) and a `reports.spec.ts` test that
+  switches every report and asserts its total against seeded module data.
+- Decision D-058 (autonomous): the admin report is left to its dedicated ticket T-073 (D-058 A1).
+
+**Results**
+
+| Check        | Result                                                |
+| ------------ | ----------------------------------------------------- |
+| `pnpm check` | green; initial JS 275.3 KB of 300 KB                  |
+| unit tests   | 7 reports tests pass; full unit suite green           |
+| E2E          | reports 8 passed; full suite 192 passed in two halves |
+
+**Known gaps**
+
+- The admin report is not in this catalogue — T-073 implements it (D-058 A1).
+- Totals are displayed from the filtered rows; there is no separate chart or cross-report comparison.
+
+**Next:** T-073, the admin report (the sixth and final ticket of this run).
+
 ## P6 Hardening
 
 _(not started)_
