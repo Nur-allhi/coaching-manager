@@ -14,6 +14,8 @@ human-readable subset.
 
 ### Added
 
+- An accessibility walkthrough spec (T-084, D-064) asserting tab order, visible focus, bound
+  labels, AA contrast in light and dark themes, and no horizontal scroll at 360px.
 - A `pnpm perf` budget harness (T-083, D-063) that seeds 5,000 students, 60,000 payments and
   200,000 marks into a real SQLite database and fails when a read budget is missed.
 - A filterable audit log viewer at `/data-tools/audit` (T-082, D-062): every recorded change with
@@ -32,6 +34,10 @@ human-readable subset.
 
 ### Fixed
 
+- Imported student statuses now use the same `active|dropped|passed_out` vocabulary as the rest of
+  the app, and the Bangla import strings no longer contain leaked English words (BUG-013, D-064).
+- Form controls in reports, leaderboard, import and the student profile now have explicitly bound
+  labels (T-084, D-064).
 - The dues report no longer re-scans every payment allocation for every charge: it now aggregates
   once and joins, cutting the measured 60,000-payment run from 46 s to 57 ms (T-083).
 - Opening `/exams/:id` for a missing or deleted exam now shows an honest "Exam not found" state with a retry action instead of a blank grid, and no longer logs TanStack Query's "Query data cannot be undefined" console error (BUG-011, D-053).

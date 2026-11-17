@@ -23,7 +23,7 @@ export const importEn = {
   required: '{{field}} is required',
   badStudentNo: 'Student number must look like 2026-0001',
   badDate: 'Date must be YYYY-MM-DD',
-  badStatus: 'Status must be active, inactive or left',
+  badStatus: 'Status must be active, dropped or passed_out',
   badInteger: 'Must be a whole number',
   badMarks: 'Marks must be zero or more',
   duplicate: 'Duplicate row — this record already exists',

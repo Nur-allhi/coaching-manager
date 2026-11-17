@@ -52,9 +52,10 @@ export function Screen() {
       </div>
 
       <div data-print-hide className="flex flex-wrap items-end gap-3">
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-select">
           <span className="block">{t('reports.studentList')}</span>
           <select
+            id="report-select"
             data-testid="report-select"
             className="border-input bg-background rounded border px-2 py-1"
             value={reportId}
@@ -67,9 +68,10 @@ export function Screen() {
             ))}
           </select>
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-from">
           <span className="block">{t('reports.from')}</span>
           <input
+            id="report-from"
             data-testid="report-from"
             type="date"
             className="border-input bg-background rounded border px-2 py-1"
@@ -77,9 +79,10 @@ export function Screen() {
             onChange={(event) => setFilter((prev) => ({ ...prev, from: event.target.value }))}
           />
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-to">
           <span className="block">{t('reports.to')}</span>
           <input
+            id="report-to"
             data-testid="report-to"
             type="date"
             className="border-input bg-background rounded border px-2 py-1"
@@ -87,9 +90,10 @@ export function Screen() {
             onChange={(event) => setFilter((prev) => ({ ...prev, to: event.target.value }))}
           />
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-batch">
           <span className="block">{t('reports.batch')}</span>
           <select
+            id="report-batch"
             data-testid="report-batch"
             className="border-input bg-background rounded border px-2 py-1"
             value={filter.batchId}
@@ -103,9 +107,10 @@ export function Screen() {
             ))}
           </select>
         </label>
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="report-class">
           <span className="block">{t('reports.class')}</span>
           <select
+            id="report-class"
             data-testid="report-class"
             className="border-input bg-background rounded border px-2 py-1"
             value={filter.classId}

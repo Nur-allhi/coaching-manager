@@ -52,16 +52,6 @@ a resolved-bug history.
 - **Root Cause:** unknown — timing/ordering of the idle watcher when the timeout is changed after boot.
 - **Fix Approach:** not applied; needs confirmation.
 
-## BUG-013: Import accepts invalid student statuses and has leaked English in Bangla
-
-- **Status:** open
-- **Severity:** medium
-- **Found:** 2026-11-18 (during: review of the T-081 import work)
-- **Location:** `src/modules/data-tools/import/validate.ts` (status check), `src/core/i18n/locales/import.bn.ts` (`badStudentNo`, `kind`)
-- **Description:** The validator accepts `active|inactive|left`, but the students module stores `active|dropped|passed_out` (`src/modules/students/types.ts`), so an imported `left`/`inactive` row gets a status the UI cannot render. The Bangla `badStudentNo` string contains the English word "like", and `kind` reads "ক আমদানি করবেন" instead of "কী আমদানি করবেন".
-- **Root Cause:** validator written against an assumed status vocabulary; untranslated token in one string.
-- **Fix Approach:** not applied; needs confirmation.
-
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** fixed
@@ -259,6 +249,22 @@ _None._
   after, a service unit test for the typed error, and an `marks.spec.ts` browser assertion of the
   not-found state with zero undefined-data console errors.
 - **Resolved:** 2026-11-17 — fix branch `fix/missing-exam-not-found`
+
+## BUG-013: Import accepts invalid student statuses and has leaked English in Bangla
+
+- **Status:** fixed
+- **Severity:** medium
+- **Found:** 2026-11-18 (during: review of the T-081 import work)
+- **Location:** `src/modules/data-tools/import/validate.ts`, `src/core/i18n/locales/import.{en,bn}.ts`
+- **Description:** The validator accepted `active|inactive|left`, but students stores
+  `active|dropped|passed_out`, so an imported `left` row got an unrenderable status. The Bangla
+  `badStudentNo` contained the English word "like", `kind` read "ক আমদানি করবেন", and `badStatus`
+  named the wrong vocabulary.
+- **Root Cause:** validator written against an assumed status vocabulary; untranslated tokens.
+- **Fix Approach:** aligned the validator and both status messages with the students enum and
+  corrected the Bangla tokens; decided under D-064 D1 as part of T-084. `pnpm check` and the
+  import/a11y E2E specs cover it.
+- **Resolved:** 2026-11-18 — `feature/accessibility-review`
 
 ## Won't fix
 
