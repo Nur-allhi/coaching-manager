@@ -2,7 +2,7 @@
  * Test-only route (`/__payment-fixture`) for T-051: seeds one student with an enrollment and two
  * generated charges so `payments.spec.ts` can drive the real collect screen. Not product UI.
  */
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { makeAuditContext } from '@/core/audit/write'
 import { getDb } from '@/core/db/client'
 import { years, classes, batches } from '@/modules/academics/repository'
@@ -13,6 +13,17 @@ import { generateCharges } from '@/modules/payments/service'
 export function PaymentFixture() {
   const db = getDb()
   const [status, setStatus] = useState('idle')
+  const [studentName, setStudentName] = useState('none')
+
+  // T-090 reads the journey student back through this harness only to break it; every
+  // assertion is made on the real product screens.
+  const refreshName = useCallback(async () => {
+    const rows = await db.query<{ full_name: string }>(
+      'SELECT full_name FROM students WHERE student_no = ?',
+      ['2026-0001'],
+    )
+    setStudentName(rows[0]?.full_name ?? 'none')
+  }, [db])
 
   async function seed() {
     setStatus('seeding')
@@ -54,16 +65,29 @@ export function PaymentFixture() {
       status: 'active',
     })
     await generateCharges(db, '2026-02')
+    await refreshName()
     setStatus('ready')
+  }
+
+  async function breakStudent() {
+    await db.run("UPDATE students SET full_name = 'BROKEN' WHERE student_no = '2026-0001'")
+    await refreshName()
+    setStatus('broken')
   }
 
   return (
     <main className="space-y-3 p-6">
       <h1 className="text-xl font-semibold">Payment fixture</h1>
       <p data-testid="fixture-status">{status}</p>
-      <button type="button" data-testid="fixture-seed" onClick={() => void seed()}>
-        Seed
-      </button>
+      <p data-testid="fixture-student-name">{studentName}</p>
+      <div className="flex gap-2">
+        <button type="button" data-testid="fixture-seed" onClick={() => void seed()}>
+          Seed
+        </button>
+        <button type="button" data-testid="fixture-break" onClick={() => void breakStudent()}>
+          Break student
+        </button>
+      </div>
     </main>
   )
 }

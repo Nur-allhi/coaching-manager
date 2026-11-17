@@ -14,6 +14,12 @@ human-readable subset.
 
 ### Added
 
+- A single end-to-end journey spec covering admission → payment → receipt → backup → restore
+  (T-090, D-065). It follows one student through the real Students, Payments, receipt-print and
+  Backups screens, breaks the student's data, restores it, and proves the name, payment and
+  receipt all came back. An additive break/readout control on the test-only payment fixture drives
+  the corruption; no new dependency or product screen was added.
+
 - A filterable audit log viewer at `/data-tools/audit` (T-082, D-062): every recorded change with
   its entity, action and timestamp, entity/action/date-range filters, and expandable before/after
   snapshots. Reads are gated by the Admin-only `audit.read` permission in the service.
