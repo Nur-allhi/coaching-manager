@@ -1,5 +1,5 @@
-import { ModulePlaceholder } from '@/app/ModulePlaceholder'
+import { BackupsScreen } from './BackupsScreen'
 
 export function Screen() {
-  return <ModulePlaceholder titleKey="nav.dataTools" />
+  return <BackupsScreen />
 }

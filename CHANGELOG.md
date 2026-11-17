@@ -18,6 +18,7 @@ human-readable subset.
 
 ### Added
 
+- A real Backups page listing snapshots with reason/size/date, a 7-day stale-export warning, and a shared optimistic mutation helper with rollback (T-035, D-040).
 - A 10-second Undo toast after mutations and a generic History panel that lists a record's audit entries and restores any version (T-034, D-039).
 - Portable database file export/import: a raw `.sqlite` export, optional AES-GCM encrypted backup in a self-describing container (PBKDF2-SHA-256, 600k iterations), and import that reuses the validated restore path (T-033, D-038).
 - A single-tab lock: a second tab shows an "already open in another tab" screen before any Worker or database client is created, and the lock releases when the tab closes (T-018, D-037).
