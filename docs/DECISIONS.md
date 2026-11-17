@@ -1546,6 +1546,41 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-063 — T-083 Performance pass (2026-11-18)
+
+- **Context:** T-083 must prove the PLAN §10 budgets at 5,000 students, 60,000 payments and
+  200,000 marks: list/search under 100 ms, every report under 2 s, initial JS under 300 KB. The
+  bundle budget is already gated by `pnpm budget`. `pnpm seed` generates students only; there is no
+  benchmark for payments or marks. No human is present, so REPO_RULES §1.1 is followed and the
+  leans are taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Harness.** A1 — a standalone `pnpm perf` command that builds a better-sqlite3 DB,
+    migrates it, bulk-loads deterministic data inside one transaction and times the _real_ module
+    read functions. It is a dedicated file run by Vitest only for `@/` alias resolution, and is
+    deliberately **not** part of `pnpm check`. Cost: schema-aware seed SQL we own. A2 — a Vitest
+    performance suite inside `pnpm check`. Cost: timing assertions on CI are slow and flaky.
+    **Lean: A1.**
+  - **B — Data generation.** B1 — pure deterministic generators in `scripts/seed-data.ts` for the
+    payment and mark rows, alongside `generateStudents`. Cost: more pure code. B2 — random data
+    generated inline in the benchmark. Cost: results vary run to run and cannot be compared.
+    **Lean: B1.**
+  - **C — Fixes.** C1 — measure first, then add only the indexes/queries the numbers justify, as an
+    append-only migration. Cost: one more migration to test. C2 — rewrite every report query up
+    front. Cost: broad risk with no evidence of which query is slow. **Lean: C1.**
+  - **D — Gate.** D1 — a `pnpm perf` command that exits non-zero when a budget is missed, with the
+    numbers documented in DEVELOPMENT.md and PROGRESS.md. Cost: a new script entry. D2 — a
+    report-only script nobody gates on. Cost: regressions would not be caught. **Lean: D1.**
+- **Autonomous decision (T-083):** A1, B1, C1, D1 — take all four leans.
+- **Why:** a deterministic, standalone script measures the shipped code paths without slowing or
+  destabilising CI, and fixes follow measured evidence rather than speculation. No Locked Decision,
+  schema convention, backup/restore behaviour, test matrix or shared branch change; any index is
+  additive and append-only. Version impact `patch` (recorded, not applied — releases are human-only).
+- **Impact:** new deterministic generators, `scripts/perf-budget.ts`, a `pnpm perf` script, possibly
+  one additive index migration if a measurement misses, plus D-063 / PROGRESS / CHANGELOG /
+  session-log updates. No dependency, `main`, release or tag change.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

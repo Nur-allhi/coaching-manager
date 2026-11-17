@@ -47,6 +47,29 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ### Status
 
+completed — T-082 merged into `dev` as PR #55.
+
+## Session 2026-11-18 02:35
+
+### Changes
+
+- T-083 (performance pass) on branch `feature/performance-pass`; decision D-063 recorded
+  autonomously (standalone `pnpm perf`, deterministic generators, measure-then-fix, budget gate).
+- `scripts/seed-data.ts` — deterministic `generatePayments` / `generateMarks`.
+- `scripts/perf.budget.ts` + `vitest.perf.config.ts` + `pnpm perf` — 5,000 students, 60,000
+  payments, 200,000 marks, 40 exams; times real read functions and exits non-zero on a miss.
+- `src/modules/payments/payments-repository.ts` — set-based `duesByStudent` (46,396 ms → 57.2 ms).
+- `tsconfig.node.json` excludes the harness; `docs/DECISIONS.md` D-063, `docs/PROGRESS.md`,
+  `CHANGELOG.md`, `docs/DEVELOPMENT.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
 in-progress
 
 ## Session 2026-11-18 04:30
