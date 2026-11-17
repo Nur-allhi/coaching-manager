@@ -1087,6 +1087,47 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-057 — T-071 reports framework (2026-11-17)
+
+- **Context:** T-071 builds the reports framework on `/reports`: a filter bar, a preview, a print
+  view, and Excel and CSV exports that use the filters currently shown. `reports` is a read-model
+  module whose screen is a placeholder; PLAN §3 locks ExcelJS for Excel and self-hosted Bengali
+  fonts; T-054's receipt export already establishes lazy ExcelJS + UTF-8 strings. The full catalogue
+  is T-072 (admin report is T-073). No human is present, so REPO_RULES §1.1 is followed in full and
+  the leans are taken autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Framework shape.**
+    - A1 — a registry of report definitions (`id`, `titleKey`, `columns`, `load(db, filter)`), with
+      one worked report (student list) in T-071; T-072 adds the rest by supplying definitions.
+      Cost: the catalogue is incomplete until T-072, which is that ticket's job.
+    - A2 — build every report now. Cost: absorbs T-072 and breaks one-ticket-one-change.
+    - **Lean: A1.**
+  - **B — Where report data is read.**
+    - B1 — parameterized read-model SQL in `reports/queries/` (TAD §2 rule 3), one loader per
+      definition. Cost: reports names read-only tables, which the read-model exception allows.
+    - B2 — call each owning module's service. Cost: a framework needs one generic loader shape and
+      several modules have no report-shaped public read.
+    - **Lean: B1** — T-072 asserts each total against the owning module for cross-checking.
+  - **C — Exports.**
+    - C1 — feed the exact same filtered `rows` to the preview and both exports; CSV as UTF-8 with a
+      BOM (Excel/Bangla), Excel via lazily imported ExcelJS (PLAN §3 lock). Cost: two small functions.
+    - C2 — CSV without a BOM. Cost: Bangla opens garbled in Excel, failing the acceptance line.
+    - **Lean: C1.**
+  - **D — Verification.**
+    - D1 — unit tests for CSV BOM/content and workbook rows; `reports.spec.ts` filters a report and
+      asserts the downloaded CSV is exactly the preview rows, plus the A4 print view. Cost: a
+      fixture (reuse the dashboard fixture's seeded students).
+    - D2 — E2E only. Cost: "export equals preview" needs a fast content-level assertion.
+    - **Lean: D1.**
+- **Autonomous decision (T-071):** A1, B1, C1, D1 — take all four leans.
+- **Why:** one registry and one row set make preview and exports agree by construction; the BOM and
+  lazy ExcelJS meet the locked Excel/Bangla requirements; reporting stays a read model inside TAD
+  §2 rule 3. No Locked Decision, schema convention, backup/restore behaviour, test matrix or shared
+  branch change. Version impact is `minor` (a `feat`).
+- **Impact:** new `src/modules/reports/{queries/students,registry,export,types,Screen,reports.test}.ts(x)`
+  and A4 `reports.css`, a reports i18n namespace, `reports.spec.ts`, and D-057 / PROGRESS / CHANGELOG
+  / session-log updates. No new dependency (ExcelJS already installed), migration or write path.
+
 ## D-056 — T-070 dashboard (2026-11-17)
 
 - **Context:** T-070 builds the dashboard: collection vs due, admissions, active students, today's

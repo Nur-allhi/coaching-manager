@@ -24,6 +24,31 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 23:54
+
+### Changes
+
+- PR #49 (T-070 dashboard) squash-merged into `dev` as commit `a3307b0`; branch left in place per
+  AUTONOMY.md §3.3.
+- T-071 (reports framework) on branch `feature/reports-framework`. Decision D-057 recorded
+  autonomously: a registry of report definitions with one worked report (student list), read-model
+  SQL in `queries/`, and the same filtered rows feeding preview, CSV (UTF-8 BOM) and lazy ExcelJS.
+- New `src/modules/reports/{queries/students,registry,export,types,Screen,reports.test}.ts(x)`, A4
+  `reports.css`, reports en/bn namespace, `reports.spec.ts` (reuses the dashboard fixture).
+- Verification: `pnpm check` green (276.1 KB); reports E2E 6 passed (download content asserted); full
+  suite 190 passed in two halves, 0 console errors and 0 horizontal overflow at 375px. Docs:
+  D-057 / PROGRESS / CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on `routeDefinitions` LOW)
+- `senior-frontend` (filter bar, preview, exports, print view)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — T-071 implemented, tested and ready to commit and open a PR.
+
 ## Session 2026-11-17 23:34
 
 ### Changes

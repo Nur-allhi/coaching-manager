@@ -1429,6 +1429,42 @@ and rendered a blank grid. Fixed with an additive typed-loader in the exams serv
 
 **Next:** T-071, the reports framework.
 
+### T-071 / P5-2 — Reports framework — **Done** (pending merge)
+
+**Acceptance:** all three T-071 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                     | Result                                                                         |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| The export contains exactly the rows in the preview | met — one filtered `rows` array feeds preview, CSV and Excel; unit + E2E       |
+| The CSV opens in Excel with correct Bangla text     | met — UTF-8 BOM and quoted cells; unit test with a Bengali name; E2E BOM check |
+| The print view uses the A4 `@page` layout           | met — `reports.css` with `@page { size: A4 }` and shell chrome hidden in print |
+
+**What changed**
+
+- `src/modules/reports/` — a registry of report definitions with one worked report (student list),
+  read-model SQL in `queries/` (TAD §2 #3) with date/batch/class filters, and a `Screen.tsx` providing
+  the filter bar, preview, print button and CSV/Excel exports from the same rows.
+- `export.ts` — pure `reportCsv` (UTF-8 BOM, quoted cells) and `keyedRows`, plus lazy ExcelJS export
+  (PLAN §3 lock); reports en/bn namespace, A4 print CSS, `reports.spec.ts`, 3 export/report unit tests.
+- Decision D-057 (autonomous): the full catalogue is T-072's job; this ticket owns the framework and
+  one demonstrating report.
+
+**Results**
+
+| Check        | Result                                                                  |
+| ------------ | ----------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 276.1 KB of 300 KB                                    |
+| unit tests   | reports tests pass; full unit suite green                               |
+| E2E          | reports 6 passed; full suite 190 passed in two halves; 0 console errors |
+
+**Known gaps**
+
+- Only the student-list report ships here; admissions, payment register, dues, receipts, attendance
+  and result sheets arrive in T-072 (admin report in T-073).
+- The print view is verified by the A4 stylesheet and a browser `window.print()` path, not paper output.
+
+**Next:** T-072, the report catalogue.
+
 ## P6 Hardening
 
 _(not started)_

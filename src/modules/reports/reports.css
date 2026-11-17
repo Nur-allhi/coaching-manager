@@ -1,0 +1,23 @@
+/* Reports print layout (T-071, D-057). Loaded only by the lazy reports route. */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  [data-slot='sidebar-wrapper'],
+  [data-slot='sidebar-inset'] header,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  :root {
+    color: #111;
+    background: #fff;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+}
