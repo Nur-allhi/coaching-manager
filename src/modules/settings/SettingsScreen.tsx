@@ -258,6 +258,9 @@ export function SettingsScreen() {
         <p className="text-muted-foreground text-sm" data-testid="persistence-status">
           {t('settings.persistence')}: {t(statusKey)}
         </p>
+        <p className="text-muted-foreground text-sm" data-testid="app-version">
+          {t('settings.version')}: {__APP_VERSION__}
+        </p>
       </section>
 
       <Button type="button" data-testid="settings-save" onClick={() => void onSave()}>

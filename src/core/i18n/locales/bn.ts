@@ -270,6 +270,7 @@ export const bn: { translation: Translation } = {
       persistenceUnsupported: 'এই ব্রাউজারে স্থায়ী সংরক্ষণ সমর্থিত নয়।',
       persistenceEnabled: 'স্থায়ী সংরক্ষণ সক্রিয় আছে।',
       persistenceDisabled: 'স্থায়ী সংরক্ষণ সক্রিয় নেই।',
+      version: 'সংস্করণ',
     },
     i18n: {
       language: 'ভাষা',

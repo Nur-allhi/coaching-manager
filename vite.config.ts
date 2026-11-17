@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 import tailwindcss from '@tailwindcss/vite'
@@ -5,8 +6,12 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 const srcDir = fileURLToPath(new URL('./src', import.meta.url))
+// T-092: the Settings stamp can never drift from the manifest that CI publishes.
+const version = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
+  .version as string
 
 export default defineConfig({
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     react(),
     tailwindcss(),

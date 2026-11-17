@@ -265,6 +265,7 @@ export const en = {
       persistenceUnsupported: 'Persistent storage is not supported by this browser.',
       persistenceEnabled: 'Persistent storage is enabled.',
       persistenceDisabled: 'Persistent storage is not enabled.',
+      version: 'Version',
     },
     i18n: {
       language: 'Language',

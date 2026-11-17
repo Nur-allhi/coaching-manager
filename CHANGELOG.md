@@ -14,6 +14,9 @@ human-readable subset.
 
 ### Added
 
+- Static hosting instructions and security-header documentation in `README.md`, and a Settings
+  version stamp injected from `package.json` at build time (T-092, D-067).
+
 - A short in-app user guide at `/guide`, linked from the sidebar, with bundled English and Bangla
   strings and language tabs (T-091, D-066).
 - An accessibility walkthrough spec (T-084, D-064) asserting tab order, visible focus, bound

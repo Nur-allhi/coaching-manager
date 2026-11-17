@@ -66,6 +66,25 @@ completed — T-082 merged into `dev` as PR #55.
 
 ### Status
 
+in-progress — T-091 is PR #59, awaiting CI and merge into `dev`.
+
+## Session 2026-11-18 03:40
+
+### Changes
+
+- T-092 (production build) on branch `chore/release-preparation`; decision D-067 recorded.
+- `vite.config.ts` injects the package version; Settings shows `app-version`; en/bn `settings.version`.
+- README "Static hosting" section and `public/_headers` rationale.
+- Version stamp verified in both browsers; clean-clone build and suite verification.
+- D-067, `docs/PROGRESS.md`, `CHANGELOG.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `playwright-mcp`
+
+### Status
+
 in-progress
 
 ## Session 2026-11-18 02:35

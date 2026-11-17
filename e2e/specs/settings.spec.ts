@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { useEnglish } from '../helpers/locale'
 
@@ -43,4 +44,11 @@ test('the screen shows backup and storage status', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Backup status' })).toBeVisible()
   await expect(page.getByText(/Snapshots:/)).toBeVisible()
   await expect(page.getByText(/Persistent storage:/)).toBeVisible()
+})
+
+test('shows the version stamped from package.json', async ({ page }) => {
+  const version = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'))
+    .version as string
+  await page.goto(SETTINGS)
+  await expect(page.getByTestId('app-version')).toHaveText(`Version: ${version}`)
 })
