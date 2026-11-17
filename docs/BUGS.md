@@ -177,7 +177,22 @@ _None._
 
 ## Fixed
 
-_None._
+## BUG-009: Dues report overflows horizontally at phone and tablet widths
+
+- **Status:** fixed
+- **Severity:** medium
+- **Found:** 2026-11-17 (during: T-053 browser verification at 375px and 768px)
+- **Location:** `src/modules/payments/DuesScreen.tsx` (the dues report grid)
+- **Description:** At a 375px viewport the `/payments/dues` report made `document.scrollWidth`
+  exceed `innerWidth` by 167px (82px at 768px after the first attempt); at 1280px overflow was 0.
+  Expected: no horizontal document scroll at phone width (FRONTEND_SPEC §8 / REPO_RULES §7.6).
+- **Root Cause:** five fixed rem columns could not shrink; at 768px an added `min-w-[34rem]` also
+  forced the sidebar's flex content column wider than the remaining viewport.
+- **Fix Approach:** replace the fixed columns with `grid-cols-[5rem_minmax(0,1fr)_4rem_4rem_4rem]`
+  and `truncate` the text cells, so the grid shrinks to the available width instead of pushing the
+  document wider. A `dues.spec.ts` regression asserts zero document overflow at 375px. Verified at
+  375/768/1280px: 0px overflow and 0 console errors on each (screenshots `/tmp/opencode/dues-*.png`).
+- **Resolved:** 2026-11-17 — T-053 branch `feature/dues-list`
 
 ## Won't fix
 

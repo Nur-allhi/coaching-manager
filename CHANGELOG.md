@@ -14,12 +14,14 @@ human-readable subset.
 
 ### Fixed
 
+- The dues report no longer overflows horizontally at phone and tablet widths; its grid columns shrink to the available width (BUG-009).
 - Audit snapshots now store a compact `<blob:N bytes>` marker instead of per-byte JSON for binary columns, so a bounded photo cannot bloat the audit log (T-042).
 - The migration SQL splitter now keeps `CREATE TRIGGER ... BEGIN/END` bodies as one statement, so FTS5 sync triggers apply correctly (T-042).
 - The dev snapshot harness no longer overflows horizontally at 375px; the sidecar JSON now wraps (BUG-003).
 
 ### Added
 
+- A dues and defaulters report at `/payments/dues`: batch, class and amount-range filters with a total over exactly the rows shown, only students who still owe money, and a real Payments tab on the student profile with payment history and outstanding dues (T-053, D-049).
 - Edit and void a payment: editing re-runs allocation in one transaction, keeps the receipt number and increments `revision` (shown as REVISED n on the receipt), while voiding keeps the row and receipt but stops its allocations counting. The real `/payments` screen lists recent payments with Edit/Void and a receipt preview (T-052, D-048).
 - Record a payment with allocation: partial, advance and multi-month payments allocated oldest-first in one transaction, gapless `R-YYYY-000001` receipt numbers from a counter, advances reused when later charges are generated, and a real collect screen with a live dues preview (T-051, D-047).
 - Fee rules: idempotent admission and monthly charge generation per enrollment, with fixed and percent discounts correct to the paisa and a unique key (not a flag) that prevents duplicate charges (T-050, D-046).

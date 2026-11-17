@@ -3,6 +3,7 @@
  * drift; conjunct shaping comes from the self-hosted Noto Sans Bengali font with `lang="bn"`.
  */
 import type { Translation } from './en'
+import { paymentsBn } from './payments.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -116,40 +117,7 @@ export const bn: { translation: Translation } = {
       active: 'সক্রিয়',
       closed: 'বন্ধ',
     },
-    payments: {
-      invalidMonth: 'একটি বৈধ YYYY-MM মাস দিন।',
-      noEnrollment: 'সেই ভর্তিটি সক্রিয় নেই।',
-      invalidPayment: 'অর্থ প্রদানের বিবরণ পরীক্ষা করুন।',
-      saveFailed: 'এই অর্থ প্রদান রেকর্ড করা যায়নি — কিছু সংরক্ষিত হয়নি।',
-      loadFailed: 'বাকি পাওনা লোড করা যায়নি। কোনো চার্জ করা হয়নি।',
-      noDues: 'এই শিক্ষার্থীর কোনো বাকি পাওনা নেই।',
-      student: 'শিক্ষার্থী',
-      paidOn: 'প্রদানের তারিখ',
-      method: 'পদ্ধতি',
-      amount: 'অর্থ (টাকা)',
-      note: 'মন্তব্য',
-      dues: 'বাকি পাওনা',
-      totalDue: 'মোট পাওনা',
-      admission: 'ভর্তি ফি',
-      take: 'অর্থ গ্রহণ',
-      receipt: 'রিসিট',
-      recent: 'সাম্প্রতিক অর্থ প্রদান',
-      noPayments: 'এখনো কোনো অর্থ প্রদান রেকর্ড করা হয়নি।',
-      edit: 'সম্পাদনা',
-      void: 'বাতিল',
-      voided: 'বাতিলকৃত',
-      revised: 'সংশোধিত {{count}}',
-      revisionCount: 'সংশোধন {{count}}',
-      saveEdit: 'পরিবর্তন সংরক্ষণ',
-      editFailed: 'সম্পাদনা সংরক্ষণ করা যায়নি — কিছু পরিবর্তন হয়নি।',
-      voidFailed: 'এই অর্থ প্রদান বাতিল করা যায়নি — কিছু পরিবর্তন হয়নি।',
-      cannotEdit: 'বাতিলকৃত অর্থ প্রদান সম্পাদনা করা যায় না।',
-      methods: {
-        cash: 'নগদ',
-        bank: 'ব্যাংক',
-        mobile: 'মোবাইল',
-      },
-    },
+    payments: paymentsBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

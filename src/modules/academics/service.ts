@@ -25,6 +25,7 @@ import {
   type BatchForm,
   type BatchRow,
   type ClassForm,
+  type ClassRow,
   type Kind,
   type SubjectForm,
   type YearForm,
@@ -50,6 +51,11 @@ function parsed<T>(schema: z.ZodType<T>, values: unknown): T {
 /** Public read surface: live batches, for other modules' fee defaults and capacity checks. */
 export function listBatches(db: Db): Promise<BatchRow[]> {
   return repo.batches.list(db)
+}
+
+/** Public read surface: live classes, for other modules' class filters and labels (T-053). */
+export function listClasses(db: Db): Promise<ClassRow[]> {
+  return repo.classes.list(db)
 }
 
 export interface AcademicsData {

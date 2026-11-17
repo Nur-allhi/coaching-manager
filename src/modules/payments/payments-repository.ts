@@ -154,6 +154,31 @@ export async function openCharges(t: Db, studentId: string): Promise<OpenCharge[
   )
 }
 
+export interface StudentDue {
+  student_id: string
+  total_due_minor: number
+}
+
+/**
+ * One aggregation for the whole dues report (T-053, D-049 D1). A charge's due is its net amount
+ * minus allocations of valid payments — the same rule `openCharges` applies per student — and only
+ * students who still owe something are returned. Reads payments' own tables only (TAD.md §2).
+ */
+export function duesByStudent(db: Db): Promise<StudentDue[]> {
+  return db.query<StudentDue>(
+    'WITH charge_due AS (' +
+      'SELECT c.student_id AS student_id, ' +
+      'c.amount_minor - c.discount_minor - COALESCE((' +
+      'SELECT SUM(a.amount_minor) FROM payment_allocations a ' +
+      "JOIN payments p ON p.id = a.payment_id WHERE a.charge_id = c.id AND p.status = 'valid' " +
+      'AND p.deleted_at IS NULL), 0) AS due_minor ' +
+      'FROM charges c WHERE c.deleted_at IS NULL) ' +
+      'SELECT student_id, SUM(MAX(due_minor, 0)) AS total_due_minor FROM charge_due ' +
+      'GROUP BY student_id HAVING total_due_minor > 0 ' +
+      'ORDER BY total_due_minor DESC, student_id',
+  )
+}
+
 export interface AdvancePayment {
   id: string
   paid_on: string
@@ -173,5 +198,14 @@ export function advancePayments(t: Db): Promise<AdvancePayment[]> {
 export function listPayments(db: Db): Promise<Row[]> {
   return db.query<Row>(
     'SELECT * FROM payments WHERE deleted_at IS NULL ORDER BY paid_on DESC, receipt_no DESC',
+  )
+}
+
+/** Payment history for one student, newest first (T-053 student Payments tab). */
+export function listPaymentsForStudent(db: Db, studentId: string): Promise<Row[]> {
+  return db.query<Row>(
+    'SELECT * FROM payments WHERE student_id = ? AND deleted_at IS NULL ' +
+      'ORDER BY paid_on DESC, receipt_no DESC',
+    [studentId],
   )
 }

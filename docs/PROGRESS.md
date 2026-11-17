@@ -1152,7 +1152,53 @@ in one tx, C1 keep the receipt number + bump revision, D1 reuse core void, E1 un
 - Allocation-level undo is still unavailable (no UI path reaches those audit entries); editing is
   refused on a void payment, and no automatic undo toast is shown for edit/void yet.
 
-**Next:** T-053, dues list and defaulter filters with the student Payments tab.
+### T-053 / P3-4 — Dues list and student Payments tab — **Done** (pending merge)
+
+**Acceptance:** all three T-053 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                               | Result                                                                           |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Dues list totals match the payments module for the same range | met — one SQL aggregation; a unit test equals the sum of `duesForStudent`        |
+| Filters by batch, class and amount range work                 | met — `/payments/dues` filter bar; E2E asserts each filter and its total         |
+| A student with no dues is not listed                          | met — `HAVING total_due_minor > 0`; E2E asserts the fully paid student is absent |
+
+**What changed**
+
+- `src/modules/payments/payments-repository.ts` — `duesByStudent` (one charge-minus-valid-allocations
+  aggregation) and `listPaymentsForStudent`; no change to existing write paths.
+- `src/modules/payments/dues-service.ts` — `duesReport` enriches the totals with student/batch/class
+  names through the owning modules' public APIs (TAD.md §2), and `studentPaymentHistory` supplies
+  the profile tab. Additive `listClasses` export in academics.
+- `src/modules/payments/DuesScreen.tsx` — real `/payments/dues` screen with batch/class/amount
+  filters, a total over exactly the filtered rows and a virtualized row list.
+- `src/modules/payments/StudentPaymentsTab.tsx` — exported from the payments public `index.ts` and
+  rendered by `StudentProfile` for the `payments` tab (history + outstanding dues).
+- `/__dues-fixture` test route, en/bn keys, 3 unit tests, 4 `dues.spec.ts` E2E tests, D-049,
+  CHANGELOG, session log.
+
+**Decisions:** D-049 (Autonomous decision: A1 payments-owned aggregation via public APIs, B1 client
+filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1 unit + E2E).
+
+**Results**
+
+| Check        | Result                                                                     |
+| ------------ | -------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 267.2 KB of 300 KB                                       |
+| `pnpm test`  | 194 passed across 34 files                                                 |
+| `pnpm e2e`   | dues 8 passed (Chromium + Firefox); full suite 141 passed, 3 known offline |
+| smoke gate   | 4 passed                                                                   |
+
+**Known gaps**
+
+- The dues report aggregates live charges once and filters in the screen; at very large scale the
+  server-side filter option (D-049 B2) remains available.
+- A student's batch/class comes from their active enrollment; a student with only closed
+  enrollments appears with blank batch/class labels but is still listed when they owe money.
+- BUG-009 (dues grid horizontal overflow at 375/768px) was found in browser verification and fixed
+  in this branch with shrinkable grid columns and a 375px regression assertion.
+- The 3 full-suite failures remain the pre-existing BUG-004 / BUG-005, unchanged by this ticket.
+
+**Next:** T-054, the receipt print route and exports.
 
 ## P4 Academics
 

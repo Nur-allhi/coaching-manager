@@ -2,8 +2,8 @@ import { lazy } from 'react'
 import { CalendarRange } from 'lucide-react'
 import type { AppModule } from '@/app/module-contract'
 
-/** Public read surface for modules that need batch metadata (TAD.md §2). */
-export { listBatches } from './service'
+/** Public read surface for modules that need batch and class metadata (TAD.md §2). */
+export { listBatches, listClasses } from './service'
 
 export const academicsModule: AppModule = {
   id: 'academics',

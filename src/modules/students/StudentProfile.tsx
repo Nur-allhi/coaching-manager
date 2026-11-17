@@ -10,6 +10,7 @@ import { getDb } from '@/core/db/client'
 import { VersionConflictError } from '@/core/db/repository'
 import { Button } from '@/components/ui/button'
 import { HistoryPanel } from '@/core/ui/HistoryPanel'
+import { StudentPaymentsTab } from '@/modules/payments'
 import { compressPhoto, photoDataUrl } from './photo'
 import { getStudent, savePhoto, saveStudent, setStatus } from './service'
 import { StudentFormFields } from './StudentFormFields'
@@ -216,17 +217,24 @@ export function StudentProfile() {
         </section>
       )}
 
-      {PROFILE_TABS.filter((key) => !['overview', 'history'].includes(key)).map((key) =>
-        tab === key ? (
-          <section
-            key={key}
-            data-testid={`profile-${key}`}
-            role="tabpanel"
-            className="text-muted-foreground text-sm"
-          >
-            {t('students.tabPlaceholder')}
-          </section>
-        ) : null,
+      {tab === 'payments' && (
+        <section data-testid="profile-payments" role="tabpanel">
+          <StudentPaymentsTab studentId={String(student.id)} />
+        </section>
+      )}
+
+      {PROFILE_TABS.filter((key) => !['overview', 'history', 'payments'].includes(key)).map(
+        (key) =>
+          tab === key ? (
+            <section
+              key={key}
+              data-testid={`profile-${key}`}
+              role="tabpanel"
+              className="text-muted-foreground text-sm"
+            >
+              {t('students.tabPlaceholder')}
+            </section>
+          ) : null,
       )}
     </div>
   )
