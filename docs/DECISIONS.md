@@ -308,7 +308,7 @@ Format: dated entries, newest last.
   in academics, a `/payments/dues` screen and route, a `StudentPaymentsTab` component rendered by
   the student profile, a test-only fixture, en/bn keys, unit tests, two E2E specs, and D-049 /
   PROGRESS / CHANGELOG / session log. No new dependency or migration.
-- **Size note:** the branch carries roughly 1,000 changed lines, past BRANCHING.md §3.4's *rough*
+- **Size note:** the branch carries roughly 1,000 changed lines, past BRANCHING.md §3.4's _rough_
   800-line split hint. The excess is almost entirely new files the single atomic ticket requires —
   two E2E/fixture files, three report/tab source files, unit tests and the two split locale-namespace
   files needed for the 300-LOC rule. Splitting would break the stronger one-ticket-one-branch-one-PR
