@@ -115,6 +115,10 @@ export const bn: { translation: Translation } = {
       active: 'সক্রিয়',
       closed: 'বন্ধ',
     },
+    payments: {
+      invalidMonth: 'একটি বৈধ YYYY-MM মাস দিন।',
+      noEnrollment: 'সেই ভর্তিটি সক্রিয় নেই।',
+    },
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

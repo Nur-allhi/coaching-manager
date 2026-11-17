@@ -8,7 +8,7 @@ import { createSnapshot, listSnapshots, type SnapshotOutcome } from './snapshots
 import { restoreFromSnapshot, SnapshotValidationError, type SnapshotInspector } from './restore'
 import type { SnapshotStorage } from './storage'
 
-const APP_SCHEMA = 202611171000
+const APP_SCHEMA = 202611171020
 const BASE = Date.UTC(2026, 0, 2, 3, 4, 5)
 
 beforeAll(() => {

@@ -1034,6 +1034,43 @@ output, D1 both suites consume it).
 
 ## P3 Money
 
+### T-050 / P3-1 — Fee rules and monthly charge generation — **Done** (pending merge)
+
+**Acceptance:** all three T-050 lines from `docs/TICKETS.md` (E2E: n/a — backend only).
+
+| Acceptance line                                   | Result                                                                  |
+| ------------------------------------------------- | ----------------------------------------------------------------------- |
+| Running the generator twice creates no duplicates | met — `INSERT ... ON CONFLICT DO NOTHING`; second run returns 0 created |
+| A percent discount is correct to the paisa        | met — `applyPercentDiscount(3333, 15)` = 500 stored as `discount_minor` |
+| The unique key, not a flag, prevents duplicates   | met — new COALESCE unique index; a direct duplicate insert is refused   |
+
+**What changed**
+
+- `src/modules/payments/migrations/202611171020_payments_charge_uniqueness.sql` — append-only
+  unique expression index covering NULL-month admission charges; registered in the registry with
+  the hard-coded schema-version test constants updated.
+- `src/modules/payments/{repository,service}.ts` — idempotent per-month and per-enrollment charge
+  generation, admission + monthly charges, fixed/percent discounts via the core money helpers.
+- Additive `listActive` export in the enrollments module's public index; `service.test.ts` with
+  idempotency, paisa rounding and unique-key tests; D-046 decision, CHANGELOG, session log.
+
+**Decisions:** D-046 (Autonomous decision: A1 expression index, B1 uniform admission charge,
+C1 gross+discount stored, D1 month-bounded generator, E1 unit-only verification).
+
+**Results**
+
+| Check        | Result                                  |
+| ------------ | --------------------------------------- |
+| `pnpm check` | green; initial JS 249.4 KB of 300 KB    |
+| `pnpm test`  | 178 passed across 32 files              |
+| `pnpm e2e`   | smoke + students green (migration safe) |
+
+**Known gaps**
+
+- The generator is not wired to app startup yet (PLAN §6 says monthly charges are generated at app
+  start for the current month); T-051+ will wire the call into the payments flow.
+- BUG-006/007/008 remain open and deferred; no new E2E failures.
+
 _(not started)_
 
 ## P4 Academics

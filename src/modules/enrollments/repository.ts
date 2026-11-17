@@ -55,6 +55,22 @@ export function all(db: Db): Promise<EnrollmentRow[]> {
   return list<EnrollmentRow>(db, 'enrollments')
 }
 
+/** Active enrollments, for fee generation in the payments module via the public index.ts. */
+export function listActive(db: Db): Promise<EnrollmentRow[]> {
+  return db.query<EnrollmentRow>(
+    "SELECT * FROM enrollments WHERE status = 'active' AND deleted_at IS NULL ORDER BY id",
+  )
+}
+
+/** One active enrollment by id, for per-enrollment charge generation. */
+export async function activeById(db: Db, id: string): Promise<EnrollmentRow | undefined> {
+  const rows = await db.query<EnrollmentRow>(
+    "SELECT * FROM enrollments WHERE id = ? AND status = 'active' AND deleted_at IS NULL",
+    [id],
+  )
+  return rows[0]
+}
+
 export function forStudent(db: Db, studentId: string): Promise<EnrollmentRow[]> {
   return db.query<EnrollmentRow>(
     'SELECT * FROM enrollments WHERE student_id = ? AND deleted_at IS NULL ORDER BY enrolled_on DESC',
