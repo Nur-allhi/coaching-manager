@@ -1,4 +1,5 @@
 /** English resources for T-020. Keys are dotted paths (REPO_RULES.md §7.3). */
+import { paymentsEn } from './payments.en'
 export const en = {
   translation: {
     app: {
@@ -111,40 +112,7 @@ export const en = {
       active: 'Active',
       closed: 'Closed',
     },
-    payments: {
-      invalidMonth: 'Use a valid YYYY-MM month.',
-      noEnrollment: 'That enrollment is not active.',
-      invalidPayment: 'Please check the payment details.',
-      saveFailed: 'Could not record that payment — nothing was saved.',
-      loadFailed: 'Could not load the outstanding dues. Nothing has been charged.',
-      noDues: 'No outstanding dues for this student.',
-      student: 'Student',
-      paidOn: 'Paid on',
-      method: 'Method',
-      amount: 'Amount (taka)',
-      note: 'Note',
-      dues: 'Outstanding dues',
-      totalDue: 'Total due',
-      admission: 'Admission fee',
-      take: 'Take payment',
-      receipt: 'Receipt',
-      recent: 'Recent payments',
-      noPayments: 'No payments recorded yet.',
-      edit: 'Edit',
-      void: 'Void',
-      voided: 'VOID',
-      revised: 'REVISED {{count}}',
-      revisionCount: 'Revision {{count}}',
-      saveEdit: 'Save changes',
-      editFailed: 'Could not save the edit — nothing was changed.',
-      voidFailed: 'Could not void this payment — nothing was changed.',
-      cannotEdit: 'A void payment cannot be edited.',
-      methods: {
-        cash: 'Cash',
-        bank: 'Bank',
-        mobile: 'Mobile',
-      },
-    },
+    payments: paymentsEn,
     students: {
       admit: 'New admission',
       cancel: 'Cancel',

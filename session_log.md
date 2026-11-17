@@ -49,7 +49,34 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 in-progress — BUG-004 and BUG-005 fixed and verified on branch `fix/offline-specs`; not committed
 or merged yet.
 
----
+## Session 2026-11-17 19:45
+
+### Changes
+
+- `src/modules/payments/payments-repository.ts` — one `duesByStudent` aggregation (charge net minus valid allocations, `HAVING > 0`) and `listPaymentsForStudent` (T-053, D-049).
+- `src/modules/payments/dues-service.ts` — `duesReport` enriches totals through the students/academics/enrollments public APIs and `studentPaymentHistory` feeds the profile tab; additive `listClasses` export in academics.
+- `src/modules/payments/DuesScreen.tsx` — real `/payments/dues` screen with batch/class/amount filters, filtered total and virtualized rows.
+- `src/modules/payments/StudentPaymentsTab.tsx` — exported from payments and rendered by `StudentProfile` for the Payments tab; no cross-module table reads.
+- `/__dues-fixture` test route, en/bn keys, 3 unit tests, 4 E2E tests, D-049, PROGRESS and CHANGELOG updated.
+- Browser verification: `/payments/dues` checked at 375x812, 768x1024 and 1280x800 — 0px horizontal
+  document overflow and 0 console errors at each; screenshots `/tmp/opencode/dues-375.png`,
+  `/tmp/opencode/dues-768.png`, `/tmp/opencode/dues-1280.png`.
+- BUG-009 (dues grid overflow at 375/768px) was found during that verification, logged first, then
+  fixed with shrinkable grid columns and a 375px regression assertion in `dues.spec.ts`.
+- Worked in an isolated worktree because the main checkout is shared with a busy interactive session.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+- `playwright-mcp`
+
+### Status
+
+- completed
 
 ## Session 2026-11-17 19:17
 

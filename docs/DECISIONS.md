@@ -259,6 +259,63 @@ Format: dated entries, newest last.
 
 ---
 
+## D-049 — T-053 Dues list and student Payments tab (2026-11-17)
+
+- **Context:** T-053 adds the `/payments/dues` list with batch/class/amount filters, requires its
+  totals to match the payments module for the same range, excludes students with no dues, and makes
+  the Payments tab on the student profile real. `duesForStudent` already defines net due from valid
+  payments; `listStudents`, `listBatches` and (new) `listClasses` are public module reads. No human
+  is present, so REPO_RULES.md §1.1 is followed and the stated lean is taken autonomously.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Dues data source.**
+    - A1 — a payments-owned `duesReport` service aggregating charges minus valid-payment allocations
+      over payments' own tables, enriched with student/batch/class names through the owning modules'
+      public `index.ts` (TAD.md §2). Cost: one additive `listClasses` export in academics.
+    - A2 — a read-model query in the reports module. Cost: reports is read-only over all tables but
+      does not own dues, so the rule would live in the wrong module.
+    - **Lean: A1.**
+  - **B — Filters.**
+    - B1 — batch, class and min/max amount filters applied to the service result in the screen,
+      rendered with the established TanStack Virtual row pattern (REPO_RULES §7.6 #19). Cost: the
+      aggregation reads all live dues once per query; bounded by live students with dues.
+    - B2 — server-side parameterised filters. Cost: four SQL variants and no need behind them at
+      this data size.
+    - **Lean: B1.**
+  - **C — Student Payments tab.**
+    - C1 — export a `StudentPaymentsTab` component from the payments public `index.ts` and render it
+      from `StudentProfile` for the `payments` tab. The data access and receipt display stay in the
+      owning module (TAD.md §2); the student profile only supplies the student id.
+    - C2 — let the students module query payments data and render the table itself. Cost: payments
+      display logic (receipt, status, revision) duplicated outside the owning module.
+    - **Lean: C1.**
+  - **D — Totals consistency.**
+    - D1 — one SQL aggregation for the report and a unit test asserting its total equals the sum of
+      `duesForStudent` for every student in the fixture. Cost: one subquery.
+    - D2 — reuse the per-student function in a loop. Cost: N queries for 5,000 students.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — unit tests (totals match, batch/class/amount filters, no-dues excluded) plus a
+      `dues.spec.ts` with a fixture seeding students across two batches and classes, and an E2E
+      assertion on the student Payments tab. Cost: one test-only fixture route.
+    - E2 — E2E only. Cost: the totals-consistency rule needs fast unit coverage.
+    - **Lean: E1.**
+- **Autonomous decision (T-053):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** dues stay owned by payments, names arrive through public module surfaces, one aggregation
+  keeps the report total identical to the per-student rule, and the profile tab reuses the owning
+  module's component. No Locked Decision, schema convention, backup/restore behaviour, test matrix
+  or shared branch changes. Version impact is `minor` (a `feat`).
+- **Impact:** additive `duesReport` service/repository functions in payments, a `listClasses` export
+  in academics, a `/payments/dues` screen and route, a `StudentPaymentsTab` component rendered by
+  the student profile, a test-only fixture, en/bn keys, unit tests, two E2E specs, and D-049 /
+  PROGRESS / CHANGELOG / session log. No new dependency or migration.
+- **Size note:** the branch carries roughly 1,000 changed lines, past BRANCHING.md §3.4's _rough_
+  800-line split hint. The excess is almost entirely new files the single atomic ticket requires —
+  two E2E/fixture files, three report/tab source files, unit tests and the two split locale-namespace
+  files needed for the 300-LOC rule. Splitting would break the stronger one-ticket-one-branch-one-PR
+  rule in TICKETS.md, so this autonomous run keeps one PR and records the judgement here.
+
+---
+
 ## D-048 — T-052 Edit and void a payment (2026-11-17)
 
 - **Context:** T-052 edits a recorded payment (re-run allocation, increment `revision`, keep the

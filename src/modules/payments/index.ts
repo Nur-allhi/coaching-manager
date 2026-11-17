@@ -11,6 +11,8 @@ export {
   listRecordedPayments,
 } from './payment-service'
 export { generateCharges, listGeneratedCharges } from './service'
+export { duesReport, studentPaymentHistory } from './dues-service'
+export { StudentPaymentsTab } from './StudentPaymentsTab'
 
 export const paymentsModule: AppModule = {
   id: 'payments',
@@ -21,6 +23,11 @@ export const paymentsModule: AppModule = {
       path: '/payments',
       titleKey: 'nav.payments',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
+    },
+    {
+      path: '/payments/dues',
+      titleKey: 'payments.dues',
+      component: lazy(() => import('./DuesScreen').then((mod) => ({ default: mod.DuesScreen }))),
     },
   ],
 }
