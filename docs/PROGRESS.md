@@ -1540,7 +1540,53 @@ T-080 (PIN lock and roles), which belongs to the next run.
 
 ## P6 Hardening
 
-_(not started)_
+### T-080 / P6-1 — PIN lock and roles — **Done** (pending merge)
+
+**Acceptance:** all four T-080 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                  | Result                                                                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| The PIN is a PBKDF2 hash with a per-user salt, never plain text  | met — WebCrypto PBKDF2-SHA-256, 600k iterations, fresh 16-byte salt; stored only in localStorage, never in DB, audit or backups |
+| The lock screen appears after the inactivity timeout             | met — 10-minute default, configurable in Settings; the watcher locks on idle and `auth.spec.ts` unlocks with the PIN            |
+| A Teacher cannot write a payment, proved by a service-level test | met — `recordPaymentAs` checks `payments.write` before delegating; unit test asserts refusal and no inserted row                |
+| A permission denied by the UI is also refused by the service     | met — the collect button is disabled for a Teacher session and the guarded service throws `PermissionDeniedError`               |
+
+**What changed**
+
+- `src/core/auth/{roles,errors,pin,pin-store,session,authorize,index}.ts` — the permission matrix,
+  typed errors, PBKDF2 hash/verify, localStorage PIN record, sessionStorage session with idle
+  timeout, and the service-side `assertPermission` gate (D-060 A3/B2/C1).
+- `src/app/auth/{AuthGate,PinLockScreen,SecurityPanel,useAuth}.tsx` — the app locks only once a PIN
+  is configured; Settings exposes PIN setup, idle minutes, manual lock and the at-rest caveat.
+- `src/modules/payments/payment-service.ts` — additive `recordPaymentAs(session, ...)` guard; the
+  session actor now reaches the audit row; the real collect screen uses the guarded entry point.
+- en/bn auth namespace, `auth.spec.ts` (3 tests × Chromium + Firefox), unit tests for the matrix,
+  PBKDF2, PIN store, idle lock and the Teacher refusal; D-060, CHANGELOG, session log.
+
+**Decisions:** D-060 (Autonomous decision for T-080: A3 localStorage PIN record, B2 opt-in lock,
+C1 sessionStorage session with services trusting the session, D1 additive guarded write, E1 unit +
+E2E verification).
+
+**Results**
+
+| Check        | Result                                                                        |
+| ------------ | ----------------------------------------------------------------------------- |
+| `pnpm check` | green; initial JS 279.0 KB of 300 KB                                          |
+| unit tests   | auth/payment-guard tests pass; 252 tests across 47 files                      |
+| E2E          | auth 6 passed (Chromium + Firefox); full suite passes in two halves, 1 worker |
+
+**Known gaps**
+
+- With no PIN configured the app stays unlocked as Admin — the PIN is opt-in from Settings (D-060 B2),
+  which keeps the existing E2E suite green; there is no forced first-run setup screen.
+- Roles are enforced in services but there is no product role-switcher: v1 is a single-admin app and
+  only the test fixture injects a non-Admin session. The session source is still a per-tab browser
+  state, not a multi-user account system.
+- The PIN hash is per-device in localStorage; clearing site data removes it, and it does not sync
+  across devices. The database itself remains unencrypted at rest (Settings says so explicitly).
+- BUG-006/007/008 remain open and deferred; no new E2E failures.
+
+**Next:** T-081, import tools with a dry run.
 
 ## P7 Release
 

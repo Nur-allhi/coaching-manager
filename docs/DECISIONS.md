@@ -1415,6 +1415,62 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   a component regression test plus a service unit test, and D-053 / BUGS / PROGRESS / CHANGELOG /
   session-log updates. No new dependency, migration or schema change.
 
+## D-060 — T-080 PIN lock and roles (2026-11-18)
+
+- **Context:** T-080 adds a PBKDF2 admin PIN, an inactivity lock and the three roles enforced in
+  services. PLAN §3/§7.7 locks PBKDF2-SHA-256 at 600,000 iterations with a 16-byte per-user salt,
+  a 10-minute default idle timeout, and service-side (not only UI) permission checks. SECURITY
+  §3/§4 fixes the permission matrix and forbids the PIN in logs, backups or audit payloads. There is
+  no auth code yet: `makeAuditContext()` carries a null actor with a P6-1 note. The 11 screens and
+  their 25 E2E specs start unlocked, so a forced first-run PIN gate would break the whole suite.
+  No human is present, so REPO_RULES §1.1 is followed in full and the leans are taken autonomously
+  under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where the PIN hash lives.**
+    - A1 — a dedicated `users` table via an append-only migration (three seeded role accounts).
+      Cost: a schema-version change, three hard-coded default PINs (credentials) and migration-test
+      churn; the hash would travel in every backup.
+    - A2 — the existing `settings` key/value table. Cost: audited writes would put the hash in
+      `audit_log` before/after JSON, which SECURITY §3.3 forbids in spirit, and the storage would
+      travel in backups.
+    - A3 — the WebCrypto PBKDF2 record (salt, hash, iterations) in `localStorage`, never in the
+      database. Cost: the PIN is per-device, which matches the offline single-device, single-tab
+      product; no migration and no audit/backup exposure.
+    - **Lean: A3.**
+  - **B — Default lock state.**
+    - B1 — force a PIN on first run. Cost: every existing E2E spec would hit a setup screen and fail
+      until each was rewritten; PLAN §7.7 says the PIN is "enabled in P6", not forced at install.
+    - B2 — opt-in: with no PIN stored the app works unlocked as Admin; setting a PIN activates the
+      lock screen and idle enforcement. Cost: out of the box the lock is dormant until configured.
+    - **Lean: B2** — preserves the green suite and makes the feature reachable from Settings.
+  - **C — Session and roles.** C1 — a `Session` (actor id + role) in `sessionStorage`, with
+    `currentSession()` returning Admin when no PIN is configured; services receive the session as
+    their authority object and call `assertPermission`. C2 — a module-level mutable "current role"
+    global. Cost: shared state that leaks between tests and tabs. **Lean: C1** — testable, explicit
+    and matches D-024's explicit-context rule. A service never accepts a raw role or permission
+    string from the caller (SECURITY §4.2); it accepts the authenticated `Session`.
+  - **D — Permission guard placement.** D1 — add an additive `recordPaymentAs(session, db, input)`
+    that checks `payments.write` then delegates to the existing `recordPayment`. Cost: the old
+    function remains callable. D2 — change `recordPayment`'s signature. Cost: HIGH blast radius
+    (5 upstream callers across 2 modules plus 20 test call sites). **Lean: D1** — the UI calls the
+    guarded entry point, the service-level test targets it, and no high-risk signature changes.
+  - **E — Verification.** E1 — unit tests for the permission matrix, PBKDF2 hash/verify, PIN store,
+    idle lock and the Teacher write refusal, plus `auth.spec.ts` driving the real lock/unlock and
+    UI denial through a `/__auth-fixture` test route. E2 — E2E only. Cost: crypto and permission
+    edge cases need fast unit coverage. **Lean: E1.**
+- **Autonomous decision (T-080):** A3, B2, C1, D1, E1 — take all five leans.
+- **Why:** the PIN never touches the database, audit log or backups; the default remains the
+  unlocked single-admin experience so the shipped suite stays green; roles live in a testable
+  session that services trust; and the one guarded write path is additive to a high-blast-radius
+  function. No Locked Decision, schema convention, backup/restore behaviour, test matrix or shared
+  branch changes. Version impact is `minor` (a `feat`).
+- **Impact:** new `src/core/auth/{roles,errors,pin,pin-store,session,authorize,index}.ts` and tests,
+  `src/app/auth/{useAuth,AuthGate,PinSetupScreen,PinLockScreen,SecurityPanel}.tsx`, a `/__auth-fixture`
+  route, an additive guarded payment service function, an en/bn auth namespace, `auth.spec.ts`, and
+  D-060 / PROGRESS / CHANGELOG / session-log updates. No dependency, migration or `main` change.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

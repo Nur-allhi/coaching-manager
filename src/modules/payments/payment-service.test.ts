@@ -2,6 +2,8 @@
 import { describe, expect, it } from 'vitest'
 import { makeAuditContext } from '@/core/audit/write'
 import { VersionConflictError } from '@/core/db/repository'
+import { PermissionDeniedError } from '@/core/auth/errors'
+import type { Session } from '@/core/auth/session'
 import { migrate } from '@/core/db/migrate'
 import { migrations } from '@/core/db/migrations'
 import { createBetterSqliteDb } from '@/core/db/testing/better-sqlite3'
@@ -14,6 +16,7 @@ import {
   duesForStudent,
   editPayment,
   recordPayment,
+  recordPaymentAs,
   voidPayment,
   type PaymentInput,
 } from './payment-service'
@@ -243,5 +246,29 @@ describe('editing and voiding a payment', () => {
       [recorded.id],
     )
     expect(rows[0]?.revision).toBe(0)
+  })
+})
+
+describe('service-side permission guard (T-080)', () => {
+  function sessionFor(role: 'admin' | 'teacher'): Session {
+    return { actorId: role, role, authenticatedAt: 0 }
+  }
+
+  it('refuses a teacher payment write before any row is inserted', async () => {
+    const { db, payment, studentId } = await setup()
+    await expect(recordPaymentAs(sessionFor('teacher'), db, payment())).rejects.toBeInstanceOf(
+      PermissionDeniedError,
+    )
+    expect((await duesForStudent(db, studentId)).totalDueMinor).toBe(6000)
+    expect(await db.query('SELECT id FROM payments')).toHaveLength(0)
+  })
+
+  it('lets an admin write and records the session actor in the audit row', async () => {
+    const { db, payment } = await setup()
+    await recordPaymentAs(sessionFor('admin'), db, payment())
+    const rows = await db.query<{ user_id: string | null }>(
+      "SELECT user_id FROM audit_log WHERE entity = 'payments' AND action = 'create'",
+    )
+    expect(rows[0]?.user_id).toBe('admin')
   })
 })
