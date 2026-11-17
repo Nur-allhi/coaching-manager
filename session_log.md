@@ -24,6 +24,33 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 23:34
+
+### Changes
+
+- PR #48 (T-063 leaderboard) squash-merged into `dev` as commit `293424a`; branch left in place per
+  AUTONOMY.md §3.3.
+- T-070 (dashboard) on branch `feature/dashboard`. Decision D-056 recorded autonomously: payments
+  and student KPIs come from the owning modules' public reads so they match for the same data;
+  cross-module bits use the dashboard's own read-model `queries/` folder (TAD §2 #3).
+- New `src/modules/dashboard/{queries/dashboard,service,types,Screen,dashboard.test}.ts(x)`, dashboard
+  en/bn namespace, `/__dashboard-fixture` route + router registration, `dashboard.spec.ts`.
+- `src/app/__tests__/App.test.tsx` mocks `getDb` and wraps in QueryClientProvider because the default
+  route is now a real data-backed screen; the dashboard keeps its heading in every async state.
+- Verification: 3 dashboard unit tests + 226 unit tests green; `pnpm check` green (274.9 KB);
+  dashboard E2E 6 passed, shell/smoke/i18n/dashboard 48 passed, 0 console errors and 0 horizontal
+  overflow at 375px. Docs: D-056 / PROGRESS / CHANGELOG.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on `routeDefinitions` LOW, dashboard Screen via lazy route)
+- `senior-frontend` (KPI cards, links, banner, async states)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — T-070 implemented, tested and ready to commit and open a PR.
+
 ## Session 2026-11-17 23:15
 
 ### Changes
