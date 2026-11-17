@@ -93,3 +93,34 @@ pnpm install
 pnpm exec playwright install chromium   # for pnpm e2e
 pnpm dev
 ```
+
+## Static hosting
+
+The app is a single-page static site. There is no server, database server or API to deploy:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm check          # typecheck, lint, unit tests, production build, 300 KB bundle budget
+pnpm build          # writes dist/
+```
+
+Upload the contents of `dist/` to any static host. Configure a **SPA fallback** so unknown paths
+(`/students/123`, `/print/receipt/...`) serve `index.html` and let the client router handle them.
+Serve over HTTPS: service workers and OPFS need a secure context (browser-local `localhost` is the
+only exception). Set long cache lifetimes for hashed assets and no-cache for `index.html`,
+`sw.js` and `_headers`.
+
+`public/_headers` carries the security headers for Netlify, Cloudflare Pages and compatible hosts,
+which read that file automatically. On Nginx, Apache or another host, copy the same directives into
+its header configuration. The file documents each header's rationale; in short:
+
+- `Content-Security-Policy` restricts scripts, styles, fonts, images and connections to the app's
+  own origin. `style-src 'unsafe-inline'` is needed because Radix positions overlays with inline
+  style attributes; `worker-src 'self' blob:` is required by the SQLite and service workers.
+- `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
+  `Permissions-Policy` and `Strict-Transport-Security` remove unnecessary exposure.
+
+The version shown in Settings is injected from `package.json` at build time, so the deployed
+stamp always matches the source that was built. Publishing a release, bumping the version or
+tagging a commit is a deliberate human step documented in
+[`docs/VERSIONING.md`](docs/VERSIONING.md) — building and hosting the static files is not a release.

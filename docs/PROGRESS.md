@@ -1800,6 +1800,44 @@ themes, D1 fix the obvious Bangla defects; the human review line is explicitly n
 
 **Next:** T-092, the production build.
 
+### T-092 / P7-3 — Production build — **Done** (pending merge)
+
+**Acceptance:** all four T-092 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                | Result                                                                |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| Version in Settings matches `package.json`     | met — Vite `define` injects the manifest version; E2E asserts the row |
+| Hosting instructions are in `README.md`        | met — new "Static hosting" section                                    |
+| Security headers documented                    | met — `_headers` rationale summarised with host-specific guidance     |
+| A fresh clone builds and passes the full suite | met except the known BUG-012 idle-lock flake — see Results below      |
+
+**What changed**
+
+- `vite.config.ts` injects `__APP_VERSION__` from `package.json`; `SettingsScreen` renders it under
+  Backup & storage with a `data-testid="app-version"` row; en/bn `settings.version` keys.
+- README "Static hosting": build command, SPA fallback, HTTPS/secure context, caching, where
+  `public/_headers` applies and what each directive does, and the release boundary (D-067 D1).
+- D-067, CHANGELOG, session log. No version bump, tag, release, `main` merge or CI change.
+
+**Decisions:** D-067 (A1 build-time version source, B1 README hosting docs, C1 clean-clone check,
+D1 no release actions).
+
+**Results**
+
+| Check        | Result                                                       |
+| ------------ | ------------------------------------------------------------ |
+| `pnpm check` | green; initial JS 281.9 KB of 300 KB                         |
+| version E2E  | 2 passed (Chromium + Firefox), matches `package.json`        |
+| fresh clone  | `pnpm check` green; E2E 234 passed, 2 BUG-012 flake failures |
+
+**Known gaps**
+
+- The clean-clone full suite had two failures in the pre-existing BUG-012 inactivity-lock spec
+  (the failing browser varied on retry); CI's two retries mask it. Every other spec, including the
+  new guide, a11y and full-journey specs, passed.
+- Actual paper/device deployment is not performed here; hosting instructions are for static hosts.
+- Releasing, version bumps and tags remain human-only and were not touched.
+
 ## P7 Release
 
 ### T-090 / P7-1 — End-to-end scenarios — **Done** (pending merge)

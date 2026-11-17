@@ -1644,6 +1644,34 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-067 — T-092 Production build (2026-11-18)
+
+- **Context:** T-092 needs the version shown in Settings to match `package.json`, static hosting
+  instructions in README, documented security headers, and evidence a fresh clone builds and passes
+  the suite. AUTONOMY §3 makes a version bump, tag or release human-only, so this ticket stamps the
+  current version and ships no release.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Version source.** A1 — inject `package.json`'s version at build time with Vite `define`
+    and render it in Settings. Cost: one global declaration. A2 — read `package.json` at runtime.
+    Cost: an extra request or a bundled copy that can drift. **Lean: A1.**
+  - **B — Hosting docs.** B1 — a README section covering `pnpm build`, `dist/`, SPA fallback and the
+    `_headers` file. Cost: prose to maintain. B2 — a separate deployment doc. Cost: another file and
+    a pointer the reader may miss. **Lean: B1.**
+  - **C — Fresh-clone check.** C1 — clone to a temp directory, link the existing pnpm store and run
+    `pnpm check` plus an E2E half. Cost: a few minutes. C2 — reuse the working checkout. Cost: does
+    not prove a clean clone works. **Lean: C1.**
+  - **D — Release boundary.** D1 — no version bump, tag, release or `main` merge; only the stamp and
+    docs. Cost: none. D2 — prepare a release. Cost: §3-blocked overnight. **Lean: D1.**
+- **Autonomous decision (T-092):** A1, B1, C1, D1 — take all four leans.
+- **Why:** the shown version cannot drift from the manifest, hosting requirements live where readers
+  look first, and a clean clone is verified without crossing the release safety line. No Locked
+  Decision, schema convention, backup/restore behaviour or test matrix change. Version impact
+  `minor` is recorded, not applied.
+- **Impact:** `vite.config.ts` define, a `Settings` version row, README hosting/headers section,
+  and D-067 / PROGRESS / CHANGELOG / session-log updates. No dependency, tag, release or `main`.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.
