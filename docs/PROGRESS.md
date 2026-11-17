@@ -719,7 +719,38 @@ human decision (D-036 A2).
 - The first `restore.spec.ts` run failed because `dist` was stale after the harness fix; rebuilding
   and re-running passed. No product defect was logged.
 
-**Next:** T-033, export and import the database file (T-032 is done above).
+### T-033 / P1-4 — Portable database file export/import — **Done** (pending merge)
+
+**Acceptance:** three T-033 lines from `docs/TICKETS.md`.
+
+| Acceptance line                                                                   | Result                                                                     |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| An exported file restores on a clean profile                                      | met — plain round-trip unit + E2E test                                     |
+| An encrypted export restores with the right passphrase and fails with a wrong one | met — AES-GCM codec (6 unit tests) + E2E right/wrong passphrase tests      |
+| Written with showSaveFilePicker where available, download otherwise               | `nativeOrDownloadWriter` implemented; exercised by the product UI in T-035 |
+
+**What changed**
+
+- `src/core/backup/crypto.ts`, `crypto-types.ts` — self-describing AES-GCM container; PBKDF2-SHA-256 600k with random salt/IV; injected WebCrypto.
+- `src/core/backup/file-transfer.ts` — export/import; import reuses the T-032 restore path via a new `importAsSnapshot` helper in `snapshots.ts`.
+- `src/app/dev/FileTransferHarness.tsx` + `/__file-transfer` route, `e2e/specs/file-transfer.spec.ts`.
+- 9 unit tests (crypto + file-transfer), 3 E2E tests; D-038, CHANGELOG, session log.
+
+**Decisions:** D-038 (A1 single container, B1 600k KDF, C1 passphrase as parameter).
+
+**Results**
+
+| Check        | Result                               |
+| ------------ | ------------------------------------ |
+| `pnpm check` | green; bundle under 300 KB           |
+| `pnpm e2e`   | 86 passed (Chromium, Firefox, smoke) |
+
+**Known gaps**
+
+- The picker/download writer is wired but its UI invocation lands in T-035 (backups page).
+- 600k PBKDF2 makes encrypted export/import take a few seconds on a tablet; acceptable for an infrequent, deliberate backup operation.
+
+**Next:** T-034, the undo mechanism and History component.
 
 ## P2 Core records
 

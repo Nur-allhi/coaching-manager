@@ -18,6 +18,9 @@ const CrashProbe = lazy(() => import('./dev/CrashProbe').then((m) => ({ default:
 const SnapshotHarness = lazy(() =>
   import('./dev/SnapshotHarness').then((m) => ({ default: m.SnapshotHarness })),
 )
+const FileTransferHarness = lazy(() =>
+  import('./dev/FileTransferHarness').then((m) => ({ default: m.FileTransferHarness })),
+)
 
 export function routeDefinitions(): RouteObject[] {
   return [
@@ -31,6 +34,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__db-spike', element: createElement(DbSpikeHarness) },
         { path: '/__crash-probe', element: createElement(CrashProbe) },
         { path: '/__snapshots', element: createElement(SnapshotHarness) },
+        { path: '/__file-transfer', element: createElement(FileTransferHarness) },
         { path: '*', element: createElement(NotFound) },
       ],
     },
