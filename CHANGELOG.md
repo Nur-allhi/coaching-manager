@@ -14,6 +14,11 @@ human-readable subset.
 
 ### Added
 
+- CSV and Excel import tools at `/data-tools/import` (T-081, D-061): a downloadable template,
+  editable column mapping, a row-level validation preview and dry run that writes nothing,
+  idempotent students (number or phone + name), and a forced pre-import snapshot before one
+  audited transaction commits the valid rows.
+
 - PIN lock and roles (T-080, D-060): an opt-in admin PIN stored only as a PBKDF2-SHA-256 hash
   (600,000 iterations, per-device salt) in localStorage, an inactivity lock screen (10-minute
   default, configurable in Settings), and the Admin/Accountant/Teacher permission matrix enforced

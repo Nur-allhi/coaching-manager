@@ -12,5 +12,12 @@ export const dataToolsModule: AppModule = {
       titleKey: 'nav.dataTools',
       component: lazy(() => import('./Screen').then((mod) => ({ default: mod.Screen }))),
     },
+    {
+      path: '/data-tools/import',
+      titleKey: 'import.title',
+      component: lazy(() =>
+        import('./ImportScreen').then((mod) => ({ default: mod.ImportScreen })),
+      ),
+    },
   ],
 }
