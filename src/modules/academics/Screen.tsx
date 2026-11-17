@@ -1,5 +1,5 @@
-import { ModulePlaceholder } from '@/app/ModulePlaceholder'
+import { AcademicsScreen } from './AcademicsScreen'
 
 export function Screen() {
-  return <ModulePlaceholder titleKey="nav.academics" />
+  return <AcademicsScreen />
 }

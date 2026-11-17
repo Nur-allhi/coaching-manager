@@ -259,6 +259,61 @@ Format: dated entries, newest last.
 
 ---
 
+## D-042 — T-041 Academics module design (2026-11-17)
+
+- **Context:** T-041 builds the four academics entities (academic years, classes, subjects,
+  batches) with full CRUD, a non-blocking schedule-clash warning and a non-blocking capacity
+  warning. The tables and their relationships already exist from T-013's migrations; the
+  academics `Screen.tsx` is still the T-016 placeholder. The audited repository helpers (T-015),
+  the optimistic mutation hook (T-035) and typed settings service pattern (T-040) are available.
+  No human is present, so REPO_RULES.md §1.1 is followed and the stated lean is taken
+  autonomously under AUTONOMY.md §2.
+- **Options surfaced, with concrete trade-offs and the lean for each:**
+  - **A — Write layer.**
+    - A1 — Use the generic `insert`/`update`/`softDelete`/`repoWithin` helpers with Zod validation
+      at the module service boundary. All four tables carry the five COMMON columns, so the
+      audited write path, optimistic version check and parent/child delete guard are reused with
+      no new core code. Cost: `Row` is loosely typed, so Zod schemas must define the real shapes.
+    - A2 — Hand-written bound SQL per entity, as settings does for its key/value table. Cost:
+      duplicates audit/version/soft-delete logic already owned by core; more LOC and drift risk.
+    - **Lean: A1.**
+  - **B — Schedule-clash warning (same room, overlapping days and time).**
+    - B1 — A service function `findBatchClashes(db, candidate)` returning the names of live
+      batches in the same room, with an overlapping `days_mask` and overlapping time interval;
+      the UI renders a non-blocking warning. Cost: one small query per form preview/save.
+    - B2 — Compute clashes in the screen from an all-batches list. Cost: the rule lives in UI,
+      is not unit-testable in isolation, and would be duplicated on any other batch form.
+    - **Lean: B1.**
+  - **C — Capacity warning (does not block save).**
+    - C1 — A pure `capacityWarning(capacity, enrolledCount)` helper, with occupancy passed in by
+      the caller. Academics never reads another module's table (TAD.md §2), so the screen passes
+      0 until enrollments land in T-043. Cost: unit-testable now, visible in the UI only once a
+      caller supplies real occupancy.
+    - C2 — Count `enrollments` rows from inside academics. Cost: breaks module ownership and
+      must be reworked when T-043 lands.
+    - **Lean: C1.**
+  - **D — Screen shape.**
+    - D1 — One lazy `/academics` screen with four CRUD sections and a live warning preview on the
+      batch form; split into section components to stay under 300 LOC per file. Cost: a larger
+      feature split across several files.
+    - D2 — One route per entity. Cost: conflicts with FRONTEND_SPEC.md §4's single `/academics`
+      route and adds navigation churn.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — A real `academics.spec.ts` driving `/academics` in the browser (T-040 precedent).
+      Cost: more selectors, but it proves the product surface.
+    - E2 — A dev-only harness route. Cost: proves a test surface rather than the product.
+    - **Lean: E1.**
+- **Autonomous decision (T-041):** A1, B1, C1, D1, E1 — take all five leans.
+- **Why:** reuses the one audited write path and optimistic mutation helper the architecture
+  locks, keeps both warnings as testable pure/service logic, and verifies the real screen. No
+  Locked Decision, schema convention, backup behaviour, test matrix or shared branch is touched.
+- **Impact:** new `src/modules/academics/{types,service,repository,service.test,repository.test,
+AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real screen, and
+  `e2e/specs/academics.spec.ts`; i18n keys in en+bn. No new dependency, migration or version bump.
+
+---
+
 ## D-041 — T-040 Settings module design (2026-11-17)
 
 - **Context:** T-040 is the first P2 ticket. The `settings` table (key/value/updated_at) exists
