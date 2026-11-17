@@ -259,6 +259,73 @@ Format: dated entries, newest last.
 
 ---
 
+## D-043 — T-042 Students module design (2026-11-17)
+
+- **Context:** T-042 adds student admission, edit, soft delete/restore, status, photo, FTS5
+  search, filters, a virtualized list and a six-tab profile shell. The `students` table exists
+  from T-013 with indexes on name and phone but no photo column and no FTS table. PLAN.md §6
+  explicitly schedules FTS5 over name, phone, guardian and student number for P2; TAD.md §7 gives
+  the `counters` table to `payments`, so students cannot use it for its own number sequence.
+  No human is present, so REPO_RULES.md §1.1 is followed and the stated lean is taken
+  autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Student-number allocation (`YYYY-0001` by admission year).**
+    - A1 — derive the next suffix from the largest existing `student_no` for that year inside one
+      `db.tx`, with the table's UNIQUE constraint as the final guard. No cross-module read; the
+      `Db` contract guarantees the queue is held for the whole transaction. Cost: relies on the
+      serialized queue rather than a counter row.
+    - A2 — allocate from the shared `counters` table. Cost: reads and writes a table owned by
+      `payments` (TAD.md §7), which the module boundary forbids.
+    - **Lean: A1.**
+  - **B — Search.**
+    - B1 — an FTS5 virtual table plus insert/update/delete triggers in one new append-only
+      migration; `MATCH` with quoted prefix tokens. Cost: FTS5 must exist in the sqlite-wasm
+      build; shadow tables need excluding from the migration schema test.
+    - B2 — `LIKE '%term%'` over the indexed columns. Cost: no tokenised/prefix search, slower at
+      5,000 rows, and does not implement PLAN.md §6's FTS5 instruction.
+    - **Lean: B1.**
+  - **C — Photo.**
+    - C1 — a small optional `BLOB` column added in the same append-only migration; the form
+      resizes and JPEG-compresses the image to a bounded size before storing. Cost: binary input
+      handling in the form.
+    - C2 — store a data URI in a text column. Cost: inflates the database and every backup; no
+      size bound.
+    - **Lean: C1.**
+  - **D — Profile tabs.**
+    - D1 — real Overview and History (the generic T-034 HistoryPanel); Enrollments, Payments,
+      Attendance and Marks remain honest placeholders until their owning modules land. Cost:
+      four tabs are placeholders for now.
+    - D2 — read the other modules' tables from the profile. Cost: breaks TAD.md §2 ownership
+      and must be reworked when those modules arrive.
+    - **Lean: D1.**
+  - **E — List rendering.**
+    - E1 — TanStack Table + TanStack Virtual with a capped, FTS-backed result set. Cost: more UI
+      code, but 5,000 rows stay responsive.
+    - E2 — a plain table of every row. Cost: DOM blowup and a missed performance budget.
+    - **Lean: E1.**
+  - **F — Verification.**
+    - F1 — a real `students.spec.ts` driving admission, search, edit, soft delete and restore.
+      Cost: more selectors; proves the product surface.
+    - F2 — a dev-only harness route. Cost: proves a test surface instead of the product.
+    - **Lean: F1.**
+- **Autonomous decision (T-042):** A1, B1, C1, D1, E1, F1 — take all six leans.
+- **Why:** the number sequence stays inside the owning module, search is the FTS5 the plan asks
+  for, the photo is bounded, the profile respects module ownership, and the list meets the
+  performance budget. The new migration is **append-only** and follows the schema conventions;
+  no Locked Decision, schema convention, backup/restore behaviour, test matrix or shared branch
+  changes. Note: the 5,000-student seed command itself is T-044, so the performance line is
+  verified with a one-off benchmark dataset, not a shipped `pnpm seed` script.
+- **Impact:** new `src/modules/students/*` service/repository/UI files, one append-only migration
+  registered in `src/core/db/migrations.ts`, a migration-test maintenance update for the new
+  version and FTS shadow tables, `e2e/specs/students.spec.ts`, en/bn keys. No new dependency,
+  version bump or change to `main`.
+- **Follow-on found during implementation:** the trigger bodies required `splitSql` (T-013) to
+  keep semicolons inside `CREATE TRIGGER ... BEGIN/END`. It now tracks only that block, with a
+  regression test; every existing migration (no triggers) splits exactly as before. The new
+  schema version also required updating the hard-coded backup-test schema constants.
+
+---
+
 ## D-042 — T-041 Academics module design (2026-11-17)
 
 - **Context:** T-041 builds the four academics entities (academic years, classes, subjects,

@@ -42,6 +42,44 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-007: Undoing a photo update can write a redaction marker into the BLOB column
+
+- **Status:** open
+- **Severity:** low
+- **Found:** 2026-11-17 (during: code review of T-042)
+- **Location:** `src/core/audit/undo.ts:58-68,89-94`; `src/core/audit/write.ts:38-40`;
+  `src/modules/students/StudentProfile.tsx`
+- **Description:** Audit snapshots now redact `Uint8Array` to `<blob:N bytes>` (so photos do not
+  expand into per-byte JSON). `undoWithin` builds its inverse patch from the stored `before_json`,
+  so undoing a photo-only update would write that literal marker string into the `photo` BLOB.
+  The previous code could not undo photo updates either (binding a per-byte object failed), so
+  this is a pre-existing limitation made safe-but-imprecise, not a new regression.
+- **Root Cause:** the undo path reconstructs values from JSON snapshots that intentionally omit
+  binary content.
+- **Fix Approach:** represent blobs by a typed marker that undo translates back to the stored
+  bytes (or exclude binary-only entries from undo), with a regression test. Needs the human's
+  confirmation under REPO_RULES.md §10 before a fix.
+- **Resolved:** —
+
+## BUG-006: Restoring a pre-T-042 snapshot leaves the new students schema absent
+
+- **Status:** open
+- **Severity:** medium
+- **Found:** 2026-11-17 (during: code review of T-042, triggered by the new FTS5/photo migration)
+- **Location:** `src/core/backup/restore.ts:112` (`importBytes` is not followed by `migrate`),
+  `src/core/backup/file-transfer.ts`
+- **Description:** `restoreFromSnapshot` validates that the snapshot schema is not newer than the
+  app, then imports the bytes without re-running migrations. After restoring a snapshot taken
+  before migration `202611171000` in the same running app, `students_fts` and the `photo` column
+  do not exist, so student FTS search throws "no such table" and photo writes fail. A manual page
+  reload (which runs bootstrap migrations) recovers. PLAN.md §7.3 lists "run migrations if the
+  snapshot is older, reload the app" as part of the restore flow; the implementation omits it.
+- **Root Cause:** the restore path does not re-run pending migrations after `importBytes`.
+- **Fix Approach:** run `migrate({ db, migrations })` after a successful import (and for file
+  import), or reload the app. **Deferred:** this changes backup/restore behaviour in PLAN.md §7.3,
+  which is human-only under AUTONOMY.md §3.1; a human must confirm the approach.
+- **Resolved:** —
+
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
 - **Status:** open

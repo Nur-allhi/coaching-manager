@@ -22,4 +22,20 @@ describe('splitSql', () => {
   it('returns nothing for a file of comments only', () => {
     expect(splitSql('-- nothing here\n-- still nothing')).toEqual([])
   })
+
+  it('keeps a CREATE TRIGGER body with internal semicolons as one statement', () => {
+    const sql =
+      '-- search index\n' +
+      'CREATE TABLE t (id TEXT);\n' +
+      'CREATE TRIGGER t_ai AFTER INSERT ON t BEGIN ' +
+      'INSERT INTO log VALUES (new.id); UPDATE log SET n = 1 WHERE id = new.id; ' +
+      'END;\n' +
+      'SELECT 1;'
+    expect(splitSql(sql)).toEqual([
+      'CREATE TABLE t (id TEXT)',
+      'CREATE TRIGGER t_ai AFTER INSERT ON t BEGIN ' +
+        'INSERT INTO log VALUES (new.id); UPDATE log SET n = 1 WHERE id = new.id; END',
+      'SELECT 1',
+    ])
+  })
 })

@@ -28,7 +28,7 @@ describe('migrate', () => {
     expect(names).toContain('charges')
     expect(names).toContain('attendance_sessions')
     expect(names).toContain('exam_results')
-    expect(await versionOf(db)).toBe('202611160960')
+    expect(await versionOf(db)).toBe('202611171000')
   })
 
   it('brings a v1 database to the identical schema', async () => {
@@ -59,6 +59,13 @@ describe('migrate', () => {
           'attendance_records',
           'exam_results',
           'sqlite_sequence',
+          // The FTS5 virtual table and its shadow tables are not business tables.
+          'students_fts',
+          'students_fts_data',
+          'students_fts_idx',
+          'students_fts_content',
+          'students_fts_docsize',
+          'students_fts_config',
         ].includes(name),
     )
     expect(business.length).toBeGreaterThan(0)
@@ -102,7 +109,7 @@ describe('migrate', () => {
     const failing = [
       ...migrations,
       {
-        version: 202611160970,
+        version: 202611171010,
         module: 'test',
         name: 'bad',
         sql: 'CREATE TABLE half_done (id TEXT); THIS IS NOT SQL;',

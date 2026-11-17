@@ -9,6 +9,19 @@ export function splitSql(sql: string): string[] {
   const statements: string[] = []
   let current = ''
   let quote: "'" | '"' | '`' | null = null
+  // A CREATE TRIGGER body ends each statement with its own `;`. Treat those semicolons as
+  // content until the matching END so the whole trigger reaches the Db as one statement.
+  let triggerDepth = 0
+
+  /** True when `text` ends in a whole keyword (not part of a longer identifier). */
+  const endsWithWord = (text: string, word: string): boolean => {
+    const start = text.length - word.length
+    return (
+      start >= 0 &&
+      text.slice(start).toUpperCase() === word &&
+      (start === 0 || !/[A-Za-z0-9_]/.test(text[start - 1] ?? ''))
+    )
+  }
 
   for (let i = 0; i < sql.length; i += 1) {
     const char = sql[i]
@@ -39,7 +52,7 @@ export function splitSql(sql: string): string[] {
       continue
     }
 
-    if (char === ';') {
+    if (char === ';' && triggerDepth === 0) {
       const statement = current.trim()
       if (statement) statements.push(statement)
       current = ''
@@ -47,6 +60,12 @@ export function splitSql(sql: string): string[] {
     }
 
     current += char
+
+    if (endsWithWord(current, 'BEGIN') && current.toUpperCase().includes('CREATE TRIGGER')) {
+      triggerDepth += 1
+    } else if (endsWithWord(current, 'END') && triggerDepth > 0) {
+      triggerDepth -= 1
+    }
   }
 
   const last = current.trim()

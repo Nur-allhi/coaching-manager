@@ -24,6 +24,37 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 16:12
+
+### Changes
+
+- `src/modules/students/migrations/202611171000_students_search_photo.sql` — append-only FTS5
+  index with sync triggers and a bounded photo BLOB (T-042, D-043).
+- `src/core/db/split-sql.ts` + test — preserve trigger bodies as one statement; the new schema
+  version also required update to the backup/snapshot/migrate test constants.
+- `src/modules/students/{types,repository,service,photo}.ts` — Zod boundaries, audited CRUD and
+  restore, in-transaction per-year number allocation, bounded JPEG photos, FTS5 search.
+- `src/modules/students/{StudentsScreen,AdmissionScreen,StudentProfile,StudentFormFields,Screen}.tsx`
+  — the real lazy student routes: search/filters, virtualized list, admission form and the
+  six-tab profile shell.
+- `e2e/specs/students.spec.ts`, en/bn i18n, `docs/DECISIONS.md` D-043, `docs/PROGRESS.md`,
+  `CHANGELOG.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+- `playwright-mcp` (unavailable; Playwright CLI used instead)
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-17 15:27
 
 ### Changes

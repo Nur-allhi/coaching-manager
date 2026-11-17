@@ -14,7 +14,7 @@ import type { WebCrypto } from './crypto-types'
 import { exportDatabaseFile, importDatabaseFile, type FileWriter } from './file-transfer'
 import type { SnapshotStorage } from './storage'
 
-const APP_SCHEMA = 202611160960
+const APP_SCHEMA = 202611171000
 const BASE = Date.UTC(2026, 0, 2, 3, 4, 5)
 const crypto = webcrypto as unknown as WebCrypto
 
