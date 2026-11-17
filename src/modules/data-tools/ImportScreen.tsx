@@ -130,7 +130,8 @@ export function ImportScreen() {
         </div>
         <Button
           type="button"
-          variant="link"
+          variant="ghost"
+          className="underline underline-offset-4"
           data-testid="import-template"
           onClick={() => downloadCsv(templateCsv(kind), templateFileName(kind))}
         >

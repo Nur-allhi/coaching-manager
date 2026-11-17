@@ -95,6 +95,7 @@ export function AdminReportScreen() {
         <label className="space-y-1 text-sm" htmlFor="admin-scope">
           <span className="block">{t('admin.scope')}</span>
           <select
+            id="admin-scope"
             data-testid="admin-scope"
             className="border-input bg-background rounded border px-2 py-1"
             value={scope.kind}
@@ -114,6 +115,7 @@ export function AdminReportScreen() {
           <label className="space-y-1 text-sm" htmlFor="admin-month">
             <span className="block">{t('admin.month')}</span>
             <input
+              id="admin-month"
               data-testid="admin-month"
               type="month"
               className="border-input bg-background rounded border px-2 py-1"
@@ -125,6 +127,7 @@ export function AdminReportScreen() {
           <label className="space-y-1 text-sm" htmlFor="admin-year">
             <span className="block">{t('admin.year')}</span>
             <select
+              id="admin-year"
               data-testid="admin-year"
               className="border-input bg-background rounded border px-2 py-1"
               value={selectedYear.kind === 'year' ? selectedYear.academicYearId : ''}

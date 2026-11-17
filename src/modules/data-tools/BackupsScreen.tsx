@@ -108,7 +108,7 @@ export function BackupsScreen() {
           <p className="text-sm">{t('backup.staleWarning')}</p>
           <button
             type="button"
-            className="text-muted-foreground shrink-0 text-sm underline"
+            className="shrink-0 text-sm underline"
             onClick={() => setDismissed(true)}
           >
             {t('backup.dismiss')}

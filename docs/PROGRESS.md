@@ -1750,10 +1750,10 @@ themes, D1 fix the obvious Bangla defects; the human review line is explicitly n
 
 **Results**
 
-| Check                                                          | Result                                |
-| -------------------------------------------------------------- | ------------------------------------- |
-| `pnpm check`                                                   | green; initial JS 281.0 KB of 300 KB  |
-| `pnpm exec playwright test e2e/specs/a11y.spec.ts --workers=1` | 9 passed in Chromium and 9 in Firefox |
+| Check                                                          | Result                                  |
+| -------------------------------------------------------------- | --------------------------------------- |
+| `pnpm check`                                                   | green; initial JS 281.0 KB of 300 KB    |
+| `pnpm exec playwright test e2e/specs/a11y.spec.ts --workers=1` | 10 passed in Chromium and 10 in Firefox |
 
 **Known gaps**
 
