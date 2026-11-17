@@ -90,9 +90,10 @@ export function Screen() {
       </div>
 
       <div data-print-hide className="flex flex-wrap items-end gap-3">
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="leaderboard-scope">
           <span className="block">{t('leaderboard.scope')}</span>
           <select
+            id="leaderboard-scope"
             data-testid="leaderboard-scope"
             className="border-input bg-background rounded border px-2 py-1"
             value={scope}
@@ -105,9 +106,10 @@ export function Screen() {
         </label>
 
         {scope === 'exam' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-exam">
             <span className="block">{t('leaderboard.exam')}</span>
             <select
+              id="leaderboard-exam"
               data-testid="leaderboard-exam"
               className="border-input bg-background rounded border px-2 py-1"
               value={selectedExam}
@@ -122,9 +124,10 @@ export function Screen() {
           </label>
         )}
         {scope === 'month' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-month">
             <span className="block">{t('leaderboard.month')}</span>
             <input
+              id="leaderboard-month"
               data-testid="leaderboard-month"
               type="month"
               className="border-input bg-background rounded border px-2 py-1"
@@ -134,9 +137,10 @@ export function Screen() {
           </label>
         )}
         {scope === 'year' && (
-          <label className="space-y-1 text-sm">
+          <label className="space-y-1 text-sm" htmlFor="leaderboard-year">
             <span className="block">{t('leaderboard.year')}</span>
             <select
+              id="leaderboard-year"
               data-testid="leaderboard-year"
               className="border-input bg-background rounded border px-2 py-1"
               value={selectedYear}
@@ -151,9 +155,10 @@ export function Screen() {
           </label>
         )}
 
-        <label className="space-y-1 text-sm">
+        <label className="space-y-1 text-sm" htmlFor="leaderboard-filter">
           <span className="block">{t('leaderboard.filter')}</span>
           <select
+            id="leaderboard-filter"
             data-testid="leaderboard-filter"
             className="border-input bg-background rounded border px-2 py-1"
             value={filterValue}

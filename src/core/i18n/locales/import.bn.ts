@@ -2,7 +2,7 @@
 export const importBn = {
   title: 'ডাটা আমদানি',
   backToBackups: 'ব্যাকআপে ফিরে যান',
-  kind: 'ক আমদানি করবেন',
+  kind: 'কী আমদানি করবেন',
   kinds: {
     students: 'শিক্ষার্থী',
     batches: 'ব্যাচ',
@@ -21,9 +21,9 @@ export const importBn = {
   row: 'সারি',
   errors: 'ত্রুটি',
   required: '{{field}} আবশ্যক',
-  badStudentNo: 'শিক্ষার্থী নম্বর 2026-0001 like হতে হবে',
+  badStudentNo: 'শিক্ষার্থী নম্বর 2026-0001 এর মতো হতে হবে',
   badDate: 'তারিখ YYYY-MM-DD হতে হবে',
-  badStatus: 'অবস্থা active, inactive বা left হতে হবে',
+  badStatus: 'অবস্থা active, dropped বা passed_out হতে হবে',
   badInteger: 'পূর্ণ সংখ্যা হতে হবে',
   badMarks: 'নম্বর শূন্য বা তার বেশি হতে হবে',
   duplicate: 'ডুপ্লিকেট সারি — এই রেকর্ডটি আগে থেকে আছে',

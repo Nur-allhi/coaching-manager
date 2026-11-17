@@ -1722,6 +1722,49 @@ B1 deterministic shared generators, C1 measure-then-fix, D1 a non-zero-exit budg
 
 **Next:** T-084, the accessibility and Bangla review.
 
+### T-084 / P6-5 — Accessibility and Bangla review — **Done** (pending merge)
+
+**Acceptance:** four of the five T-084 lines met; the human Bangla review is outstanding.
+
+| Acceptance line                                   | Result                                                                             |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Every screen passes the keyboard-only walkthrough | met — six Tab steps per screen assert DOM-order focus and a visible ring           |
+| Every input has a bound label                     | met — implicit wrappers converted to `htmlFor`/`id`; import group labelled         |
+| Contrast meets AA in both themes                  | met — computed WCAG ratio ≥ 4.5 over text/button/label/table pairs, light and dark |
+| No horizontal scroll at 360px                     | met — all eight main screens assert `scrollWidth - innerWidth === 0`               |
+| A human has reviewed the Bangla strings           | **not met** — an autonomous run cannot supply a human review; left for the human   |
+
+**What changed**
+
+- Bound 12 implicit `<label>` wrappers with `htmlFor`/`id` in reports, admin report and leaderboard;
+  labelled the import-kind button group and the profile photo input (D-064 A1).
+- `e2e/specs/a11y.spec.ts` — tab-order + focus-ring, label-association, computed-contrast in both
+  themes and a 360px overflow walk over the eight main screens (D-064 B1/C1). Colours are resolved
+  through a canvas so Tailwind v4 `oklch()` tokens are measured correctly.
+- BUG-013 fixed: import status vocabulary matches `students` (`active|dropped|passed_out`) and the
+  leaked English tokens in the Bangla import strings are corrected (D-064 D1).
+- D-064, CHANGELOG, BUGS, session log.
+
+**Decisions:** D-064 (A1 codemod labels, B1 dependency-free a11y spec, C1 computed contrast in both
+themes, D1 fix the obvious Bangla defects; the human review line is explicitly not claimed).
+
+**Results**
+
+| Check                                                          | Result                                  |
+| -------------------------------------------------------------- | --------------------------------------- |
+| `pnpm check`                                                   | green; initial JS 281.0 KB of 300 KB    |
+| `pnpm exec playwright test e2e/specs/a11y.spec.ts --workers=1` | 10 passed in Chromium and 10 in Firefox |
+
+**Known gaps**
+
+- The human Bangla review cannot be performed in an autonomous run; it is the one acceptance line
+  left open and needs the human before T-084 can be called fully complete.
+- The Agentation dev toolbar remains the documented dev-only element without a focus indicator;
+  the a11y spec runs against the production preview, where it is absent.
+- A full manual screen-reader pass is still a human step per E2E_TESTING.md §4.
+
+**Next:** T-090, the end-to-end scenarios.
+
 ## P7 Release
 
 ### T-090 / P7-1 — End-to-end scenarios — **Done** (pending merge)

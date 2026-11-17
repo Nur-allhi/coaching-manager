@@ -170,9 +170,13 @@ export function StudentProfile() {
               <option value="dropped">{t('students.dropped')}</option>
               <option value="passed_out">{t('students.passedOut')}</option>
             </select>
-            <label className="border-input inline-flex h-9 items-center rounded-md border px-3 text-sm">
+            <label
+              htmlFor="profile-photo"
+              className="border-input inline-flex h-9 items-center rounded-md border px-3 text-sm"
+            >
               {t('students.photo')}
               <input
+                id="profile-photo"
                 type="file"
                 accept="image/*"
                 data-testid="profile-photo"

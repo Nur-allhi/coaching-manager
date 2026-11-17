@@ -1581,6 +1581,39 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-064 — T-084 Accessibility and Bangla review (2026-11-18)
+
+- **Context:** T-084 requires a keyboard-only walkthrough, bound labels, AA contrast in both themes,
+  no horizontal scroll at 360px, and a human review of the Bangla strings, plus `a11y.spec.ts`.
+  Most product forms already use `<Label htmlFor>`; a cluster of report/leaderboard screens use
+  implicit `<label><span>…</span><control/></label>` wrappers. There is no axe dependency and no
+  dark-mode toggle in v1. No human is present, so REPO_RULES §1.1 is followed and the leans taken.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Label binding.** A1 — a one-off codemod adds `htmlFor`/`id` to the implicit wrappers,
+    then a spec asserts every visible control has an associated label. Cost: a mechanical diff over
+    three screens. A2 — hand-edit each control. Cost: slow and easy to miss one. **Lean: A1.**
+  - **B — Verification.** B1 — `e2e/specs/a11y.spec.ts` checks tab order, the visible focus ring,
+    label association and 360px overflow using the shipped CSS. Cost: no new dependency. B2 — add
+    `@axe-core/playwright`. Cost: E2E_TESTING.md §9 makes that a human-confirmed dependency.
+    **Lean: B1.**
+  - **C — Contrast.** C1 — compute WCAG ratios in-page from computed styles for representative
+    text/background pairs, toggling `.dark` for the second theme. Cost: a small test helper. C2 —
+    visual inspection only. Cost: no reproducible evidence. **Lean: C1.**
+  - **D — Bangla.** D1 — fix the two leaked English tokens and the wrong status vocabulary from
+    BUG-013 here, and record that the **human** review line remains outstanding. Cost: a bug is
+    closed while the human line stays open. D2 — defer all Bangla work. Cost: known bad strings
+    ship. **Lean: D1.**
+- **Autonomous decision (T-084):** A1, B1, C1, D1 — take all four leans.
+- **Why:** the checks are reproducible and dependency-free, and the obvious string defects are
+  fixed. The "a human has reviewed the Bangla strings" line cannot be satisfied by an autonomous
+  run; it is recorded as an open requirement, not claimed as met. No Locked Decision, schema
+  convention, backup/restore behaviour, test matrix or shared branch change. Version impact `patch`.
+- **Impact:** label attributes on three screens, the new `a11y.spec.ts`, a 360px viewport case,
+  the BUG-013 string/vocabulary fix, and D-064 / PROGRESS / CHANGELOG / session-log updates. No
+  new dependency or migration.
+
+---
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

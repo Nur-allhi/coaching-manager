@@ -106,8 +106,15 @@ export function ImportScreen() {
       </div>
 
       <section className="space-y-2">
-        <Label>{t('import.kind')}</Label>
-        <div className="flex flex-wrap gap-2" data-testid="import-kinds">
+        <Label id="import-kind-label" className="block">
+          {t('import.kind')}
+        </Label>
+        <div
+          role="group"
+          aria-labelledby="import-kind-label"
+          className="flex flex-wrap gap-2"
+          data-testid="import-kinds"
+        >
           {IMPORT_KINDS.map((option) => (
             <Button
               key={option}
@@ -123,7 +130,8 @@ export function ImportScreen() {
         </div>
         <Button
           type="button"
-          variant="link"
+          variant="ghost"
+          className="underline underline-offset-4"
           data-testid="import-template"
           onClick={() => downloadCsv(templateCsv(kind), templateFileName(kind))}
         >
