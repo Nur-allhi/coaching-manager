@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Fixed
 
+- The app now loads offline after one visit: the SQLite WASM binary is precached by the service worker (BUG-004), and the Settings persistence-status element has its test id again (BUG-005).
 - Audit snapshots now store a compact `<blob:N bytes>` marker instead of per-byte JSON for binary columns, so a bounded photo cannot bloat the audit log (T-042).
 - The migration SQL splitter now keeps `CREATE TRIGGER ... BEGIN/END` bodies as one statement, so FTS5 sync triggers apply correctly (T-042).
 - The dev snapshot harness no longer overflows horizontally at 375px; the sidecar JSON now wraps (BUG-003).
