@@ -119,6 +119,16 @@ describe('attendance service', () => {
     expect(cells[0]?.studentName).toBe('Rahim')
   })
 
+  it('writes exactly one create audit row when a session opens (BUG-010)', async () => {
+    const db = await seeded()
+    const sessionId = await ensureSession(db, 'b-1', '2026-02-01')
+    const rows = await db.query<{ n: number }>(
+      "SELECT COUNT(*) AS n FROM audit_log WHERE entity = 'attendance_sessions' AND entity_id = ? AND action = 'create'",
+      [sessionId],
+    )
+    expect(Number(rows[0]?.n)).toBe(1)
+  })
+
   it('writes an audit row for a status change', async () => {
     const db = await seeded()
     const { sessionId } = await openAndMarkAllPresent(db, 'b-1', '2026-02-01')

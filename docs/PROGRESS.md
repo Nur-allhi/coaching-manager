@@ -1278,7 +1278,7 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
 - `src/modules/exams/Screen.tsx` (create form + exam list) and `MarksGrid.tsx` (roving-tabindex ARIA grid, number input per cell, absent toggle, no-op write guard); `/exams/:id` route registered.
 - Academics `listSubjects` public read export (TAD §2).
 - `/__marks-fixture` test route, `e2e/specs/marks.spec.ts` (3 tests), 6 service unit tests, en/bn exams i18n namespaces.
-- D-052, BUG-010 (duplicate attendance audit rows, logged not fixed), PROGRESS/CHANGELOG/session log.
+- D-052, PROGRESS/CHANGELOG/session log. BUG-010 (duplicate attendance audit rows) was found in review, logged, and fixed on a separate follow-up branch with a regression test.
 
 **Decisions:** D-052 (A1 service guard, B1 present-only average, C1 roving grid, D1 fixture E2E, E1 grades deferred).
 
