@@ -24,6 +24,34 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 22:55
+
+### Changes
+
+- PR #46 (BUG-011 missing-exam fix) squash-merged into `dev` as commit `01cb059` after both CI jobs
+  went green; branch left in place per AUTONOMY.md §3.3 (branch deletion is human-only overnight).
+- T-062 (grades and GPA) on branch `feature/grades-gpa`. Decision D-054 recorded autonomously: the
+  grade/points display is in scope per PLAN §8 / FRONTEND_SPEC §5.6 despite the ticket's "E2E: n/a"
+  line; no new E2E spec, the existing `marks.spec.ts` was extended.
+- New `src/modules/exams/grades.ts` — pure `gradeFor` (inclusive TAD §5.7 bands) and `gpaFor` (mean
+  grade points, ungraded excluded). `MarksGrid.tsx` reads the live Settings scale through the public
+  `getSetting` and shows grade letter + points beside each student plus a batch GPA, all updating
+  with the optimistic marks. Additive `GradingScale`/`Grade` type re-export from settings, en/bn keys.
+- Verification: 5 new grade unit tests (incl. a persisted-scale edit changing 80 from A+ to A);
+  `pnpm check` green (273.4 KB); `marks.spec.ts` 10 passed in Chromium + Firefox with 0 horizontal
+  overflow at 375px. GitNexus impact: `getSetting` LOW (read-only), MarksGrid via lazy route
+  (text-confirmed). Docs: PROGRESS/CHANGELOG/D-054.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact + detect-changes)
+- `senior-backend` / `senior-frontend` (grade logic + grid columns)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — T-062 implemented, tested and ready to commit and open a PR.
+
 ## Session 2026-11-17 22:45
 
 ### Changes

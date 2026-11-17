@@ -1087,6 +1087,60 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-054 — T-062 grades and GPA (2026-11-17)
+
+- **Context:** T-062 implements grades and GPA from the settings scale. Acceptance: 80 is A+, 79 is
+  A, below 33 is F worth 0, and changing the scale in Settings changes the grade. PLAN §8/P4-3 and
+  FRONTEND_SPEC §5.6 require grade and GPA to be shown beside each student in the marks grid, and
+  T-061's known gap assigned those columns to T-062 — yet T-062's own line reads "E2E: n/a — no
+  UI/user-visible behaviour". TICKETS.md says the plan wins when the two disagree about **what** to
+  build. No human is present, so REPO_RULES §1.1 is followed in full and the leans are taken
+  autonomously under AUTONOMY.md §2.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Scope of the display.**
+    - A1 — pure/service logic only, no UI. Cost: FRONTEND_SPEC §5.6 and the T-061 known gap stay
+      unmet, so the feature is unreachable to the admin.
+    - A2 — pure grade/GPA logic plus grade and points columns beside each student in the marks grid.
+      Cost: adds UI to a ticket scoped `senior-backend` and contradicts the "E2E: n/a" rationale.
+    - **Lean: A2** — PLAN §8 and FRONTEND_SPEC §5.6 own "what to build" and both require the display;
+      TICKETS.md makes the plan win on scope. "E2E: n/a" is honoured by extending the existing
+      `marks.spec.ts` rather than creating a new spec.
+  - **B — Band matching.**
+    - B1 — inclusive `min <= score <= max`: 80 → A+ (80–100), 79 → A (70–79), <33 → F (0–32).
+      Cost: a human-edited scale with gaps yields no grade for uncovered scores.
+    - B2 — snap to the nearest band. Cost: silently misgrades when bounds are edited.
+    - **Lean: B1** — exact band semantics, no gap in the documented default.
+  - **C — "GPA" in a single-exam grid.**
+    - C1 — show the grade letter and the band's grade points (0–5) for that exam, and expose a pure
+      `gpaFor(scores, scale)` for cumulative means (reusable by T-063's leaderboard). Cost: two
+      small pure functions.
+    - C2 — compute a cumulative per-student GPA across all exams inside the grid. Cost: cross-exam
+      aggregation in a single-exam screen with more queries, not required by the acceptance lines.
+    - **Lean: C1.**
+  - **D — Where the scale is read.**
+    - D1 — a `useQuery` on `getSetting(db, 'gradingScale')` in the grid and pure `gradeFor` per cell
+      from the current (optimistic) marks, so the letter/points update live and reflect any Settings
+      edit. Cost: one small query; the component calls the pure helper.
+    - D2 — a service returning a precomputed grade map refetched only after each save. Cost: grades
+      lag in-progress edits and duplicate the grid's optimistic model.
+    - **Lean: D1.**
+  - **E — Verification.**
+    - E1 — pure unit tests for all three acceptance lines plus a test that a scale persisted through
+      `setSetting` and read through `getSetting` changes the grade; extend the existing
+      `marks.spec.ts` with grade/points cell assertions. Cost: a small scale change in a unit test.
+    - E2 — unit tests only. Cost: would not prove the columns render in the real grid.
+    - **Lean: E1.**
+- **Autonomous decision (T-062):** A2, B1, C1, D1, E1 — take all five leans.
+- **Why:** grade conversion stays a pure, testable function of the score and the live Settings
+  scale; the default band boundaries in TAD §5.7 are unchanged; the grid shows the admin the grade
+  and points beside each student as the plan and frontend spec require. No Locked Decision, schema
+  convention, backup/restore behaviour, test matrix or shared branch change. Version impact is
+  `minor` (a `feat`).
+- **Impact:** new `src/modules/exams/{grades,grades.test}.ts`, grade/points columns + a settings
+  query in `MarksGrid.tsx`, a `GradingScale` type re-export from the settings public index, en/bn
+  `exams.grade`/`exams.points` keys, extended `marks.spec.ts`, and D-054 / PROGRESS / CHANGELOG /
+  session-log updates. No new dependency or migration.
+
 ## D-053 — BUG-011 missing-exam detail handling (2026-11-17)
 
 - **Context:** `/exams/:id` for a missing/soft-deleted exam makes `getExam` resolve to `undefined`;
