@@ -5,9 +5,21 @@ import { migrate } from '@/core/db/migrate'
 import { migrations } from '@/core/db/migrations'
 import { insert } from '@/core/db/repository'
 import { createBetterSqliteDb } from '@/core/db/testing/better-sqlite3'
+import { formatMinor } from '@/core/money/money'
 import { keyedRows, reportCsv } from './export'
+import {
+  admissionsRows,
+  attendanceRows,
+  duesRows,
+  paymentsRegisterRows,
+  receiptsRows,
+  resultSheetRows,
+} from './queries/catalogue'
 import { studentListRows } from './queries/students'
+import { getReport } from './registry'
 import type { ReportColumn, ReportFilter } from './types'
+import { listRecordedPayments, duesReport, receiptsForExport } from '@/modules/payments'
+import { listStudents } from '@/modules/students'
 
 const columns: ReportColumn[] = [
   { key: 'studentNo', labelKey: 'reports.studentNo' },
@@ -114,5 +126,166 @@ describe('student list report', () => {
 
     const byClass = await studentListRows(db, { ...all, classId: 'c-1' })
     expect(byClass.map((row) => row.studentName)).toEqual(['Rahim', 'Asha'])
+  })
+})
+
+describe('report catalogue (T-072)', () => {
+  const base = { created_at: 1, updated_at: 1, deleted_at: null, version: 1 }
+
+  async function seeded() {
+    const db = createBetterSqliteDb()
+    await migrate({ db, migrations })
+    const c = makeAuditContext('catalogue-test')
+    await insert(db, c, 'academic_years', {
+      ...base,
+      id: 'ay-1',
+      name: '2026',
+      starts_on: '2026-01-01',
+      ends_on: '2026-12-31',
+      is_current: 1,
+    })
+    await insert(db, c, 'classes', { ...base, id: 'c-1', name: 'Class 10', sort_order: 1 })
+    await insert(db, c, 'batches', {
+      ...base,
+      id: 'b-1',
+      academic_year_id: 'ay-1',
+      class_id: 'c-1',
+      name: 'Morning',
+      days_mask: 62,
+      start_time: '09:00',
+      end_time: '10:00',
+      capacity: 30,
+      monthly_fee_minor: 100000,
+      status: 'active',
+    })
+    for (const [id, name] of [
+      ['s-1', 'Rahim'],
+      ['s-2', 'Karim'],
+    ] as const) {
+      await insert(db, c, 'students', {
+        ...base,
+        id,
+        student_no: `2026-${id}`,
+        full_name: name,
+        admitted_on: '2026-03-01',
+      })
+      await insert(db, c, 'enrollments', {
+        ...base,
+        id: `e-${id}`,
+        student_id: id,
+        batch_id: 'b-1',
+        enrolled_on: '2026-01-01',
+        monthly_fee_minor: 100000,
+        discount_kind: 'none',
+        discount_value: 0,
+      })
+      await insert(db, c, 'charges', {
+        ...base,
+        id: `ch-${id}`,
+        enrollment_id: `e-${id}`,
+        student_id: id,
+        month: null,
+        kind: 'admission',
+        amount_minor: 100000,
+        discount_minor: 0,
+      })
+    }
+    await insert(db, c, 'payments', {
+      ...base,
+      id: 'p-1',
+      receipt_no: 'R-2026-000001',
+      student_id: 's-1',
+      paid_on: '2026-03-02',
+      amount_minor: 40000,
+      status: 'valid',
+      revision: 0,
+    })
+    await db.run(
+      'INSERT INTO payment_allocations (payment_id, charge_id, amount_minor) VALUES (?, ?, ?)',
+      ['p-1', 'ch-s-1', 40000],
+    )
+    await insert(db, c, 'attendance_sessions', {
+      ...base,
+      id: 'as-1',
+      batch_id: 'b-1',
+      held_on: '2026-03-02',
+    })
+    for (const [student, status] of [
+      ['s-1', 'present'],
+      ['s-2', 'absent'],
+    ] as const) {
+      await db.run(
+        'INSERT INTO attendance_records (session_id, student_id, status) VALUES (?, ?, ?)',
+        ['as-1', student, status],
+      )
+    }
+    await insert(db, c, 'exams', {
+      ...base,
+      id: 'x-1',
+      batch_id: 'b-1',
+      subject_id: null,
+      name: 'Test',
+      held_on: '2026-03-03',
+      full_marks: 100,
+      pass_marks: 33,
+    })
+    for (const [student, marks] of [
+      ['s-1', 90],
+      ['s-2', 70],
+    ] as const) {
+      await db.run(
+        'INSERT INTO exam_results (exam_id, student_id, marks, absent, updated_at) VALUES (?, ?, ?, 0, 1)',
+        ['x-1', student, marks],
+      )
+    }
+    return db
+  }
+
+  it('registers every catalogue report except the admin report (T-073)', () => {
+    expect(getReport('students')).toBeDefined()
+    expect(getReport('admissions')).toBeDefined()
+    expect(getReport('payments')).toBeDefined()
+    expect(getReport('dues')).toBeDefined()
+    expect(getReport('receipts')).toBeDefined()
+    expect(getReport('attendance')).toBeDefined()
+    expect(getReport('results')).toBeDefined()
+    expect(getReport('admin')).toBeUndefined()
+  })
+
+  it('matches the payments module for collections, dues and receipts', async () => {
+    const db = await seeded()
+    const payments = await paymentsRegisterRows(db, all)
+    const valid = (await listRecordedPayments(db)).filter((row) => row.status === 'valid')
+    expect(getReport('payments')?.total?.(payments)).toBe('400')
+    expect(payments).toHaveLength(valid.length)
+
+    const dues = await duesRows(db, all)
+    const moduleDues = await duesReport(db)
+    expect(getReport('dues')?.total?.(dues)).toBe(
+      formatMinor(moduleDues.reduce((sum, row) => sum + row.dueMinor, 0)),
+    )
+
+    const receipts = await receiptsRows(db, all)
+    expect(receipts).toHaveLength((await receiptsForExport(db)).length)
+  })
+
+  it('matches admissions to the students module and shapes attendance/results', async () => {
+    const db = await seeded()
+    const admissions = await admissionsRows(db, all)
+    expect(admissions).toHaveLength((await listStudents(db)).length)
+
+    const attendance = await attendanceRows(db, all)
+    expect(attendance.map((row) => row.rate)).toEqual([100, 0])
+
+    const results = await resultSheetRows(db, all)
+    expect(results.map((row) => row.marks)).toEqual([70, 90])
+    expect(getReport('results')?.total?.(results)).toBe('80')
+  })
+
+  it('filters catalogue reports by batch and class', async () => {
+    const db = await seeded()
+    expect(await admissionsRows(db, { ...all, batchId: 'b-1' })).toHaveLength(2)
+    expect(await paymentsRegisterRows(db, { ...all, classId: 'c-1' })).toHaveLength(1)
+    expect(await attendanceRows(db, { ...all, batchId: '' })).toHaveLength(2)
   })
 })

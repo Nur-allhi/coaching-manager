@@ -60,3 +60,27 @@ test('the Excel export downloads a workbook with no console errors or phone over
   ).toBeLessThanOrEqual(0)
   expect(errors).toEqual([])
 })
+
+test('every catalogue report is selectable and its total matches the module sums', async ({
+  page,
+}) => {
+  await page.getByTestId('report-select').selectOption('admissions')
+  await expect(page.getByTestId('report-row')).toHaveCount(3)
+  await expect(page.getByTestId('report-total')).toHaveText('3')
+
+  await page.getByTestId('report-select').selectOption('payments')
+  await expect(page.getByTestId('report-row')).toHaveCount(1)
+  await expect(page.getByTestId('report-total')).toHaveText('400')
+
+  await page.getByTestId('report-select').selectOption('dues')
+  await expect(page.getByTestId('report-row')).toHaveCount(4)
+  await expect(page.getByTestId('report-total')).toHaveText('3,600')
+
+  await page.getByTestId('report-select').selectOption('attendance')
+  await expect(page.getByTestId('report-row')).toHaveCount(3)
+  await expect(page.getByTestId('report-total')).toHaveText('66.7%')
+
+  await page.getByTestId('report-select').selectOption('results')
+  await expect(page.getByTestId('report-row')).toHaveCount(2)
+  await expect(page.getByTestId('report-total')).toHaveText('85')
+})
