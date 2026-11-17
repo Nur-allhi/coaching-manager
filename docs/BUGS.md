@@ -214,6 +214,32 @@ _None._
   Confirmed by the human.
 - **Resolved:** 2026-11-17 — fix branch `fix/duplicate-session-audit`
 
+## BUG-011: Opening /exams/:id for a missing exam logs "Query data cannot be undefined"
+
+- **Status:** fixed
+- **Severity:** low
+- **Found:** 2026-11-17 (during: autonomous run — known issue handed over before T-062)
+- **Location:** `src/modules/exams/MarksGrid.tsx` (the `exam` `useQuery` queryFn);
+  `src/modules/exams/service.ts` (`getExam`); `src/modules/exams/repository.ts` (`getExam`)
+- **Description:** Navigating to `/exams/:id` for an id that does not exist (stale bookmark, or an
+  exam soft-deleted after the link was saved) makes `getExam` resolve to `undefined`. TanStack
+  Query v5.107.1 treats `undefined` as an invalid success value: it logs
+  `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function...`
+  to `console.error`, then throws. Expected: a missing exam is an honest "not found" state with a
+  retry action (REPO_RULES §7.6 #18 four async states), and the query function never resolves to
+  `undefined`. The grid currently renders no error state, so the user sees a blank grid plus a
+  console error. Normal (existing-exam) routes are unaffected; no data is at risk.
+- **Root Cause:** the `exam` query function returns the raw `getExam` result, whose type is
+  `Promise<ExamRow | undefined>`; a `SELECT` with no row yields `rows[0] === undefined`.
+- **Fix Approach:** an additive `loadExam` loader in the exams service converts the missing row
+  into a typed `ExamNotFoundError`; `MarksGrid` uses it as its query function (`retry: false`,
+  unexpected errors thrown to the boundary) and renders loading / not-found + retry states from
+  new en/bn `exams.notFound` / `exams.retry` keys. Decided autonomously in D-053. Regression
+  coverage: a component test that fails before the fix (no alert + the console error) and passes
+  after, a service unit test for the typed error, and an `marks.spec.ts` browser assertion of the
+  not-found state with zero undefined-data console errors.
+- **Resolved:** 2026-11-17 — fix branch `fix/missing-exam-not-found`
+
 ## Won't fix
 
 _None._

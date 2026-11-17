@@ -1296,6 +1296,20 @@ filters + virtual rows, C1 owning module's tab component, D1 one totals rule, E1
 
 **Next:** T-062, grades and GPA from the settings scale.
 
+### BUG-011 — Missing-exam detail state — **Done** (fix branch `fix/missing-exam-not-found`)
+
+Handed over at the start of this autonomous run. `/exams/:id` for a missing/soft-deleted exam made
+`getExam` resolve to `undefined`, which TanStack Query logs as "Query data cannot be undefined"
+and rendered a blank grid. Fixed with an additive typed-loader in the exams service
+(`ExamNotFoundError`), honest loading/not-found+retry states in `MarksGrid`, and en/bn
+`exams.notFound`/`exams.retry` keys. Decision D-053 (autonomous), BUG-011 moved to Fixed.
+
+| Check                                                           | Result                                                                                                    |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                                    | green; bundle 273.2 KB of 300 KB                                                                          |
+| regression tests                                                | component test fails before / passes after the fix; service unit test green                               |
+| `pnpm exec playwright test e2e/specs/marks.spec.ts --workers=1` | 8 passed (Chromium + Firefox), incl. the new missing-exam not-found case; 0 undefined-data console errors |
+
 ## P4 Academics
 
 _(not started)_

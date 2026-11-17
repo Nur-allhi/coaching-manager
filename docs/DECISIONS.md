@@ -1087,6 +1087,55 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
   e2e tests.
 - **Impact:** `src/app/routes.tsx`, `src/app/ModulePlaceholder.tsx`, one lazy screen per module.
 
+## D-053 — BUG-011 missing-exam detail handling (2026-11-17)
+
+- **Context:** `/exams/:id` for a missing/soft-deleted exam makes `getExam` resolve to `undefined`;
+  TanStack Query logs "Query data cannot be undefined" and the marks grid has no honest not-found
+  state (BUG-011). The bug was logged first. No human is present, so REPO_RULES.md §1.1 is followed
+  in full — two viable options per open choice with concrete trade-offs and a stated lean — and the
+  stated lean is then taken autonomously under AUTONOMY.md §2. `StudentProfile` already shows the
+  screen-level `if (!row) throw` pattern; no service-level typed not-found error exists yet.
+- **Options surfaced, with trade-offs and the lean for each:**
+  - **A — Where the "never undefined" rule lives.**
+    - A1 — in `MarksGrid`'s query function only, mirroring `StudentProfile`: `if (!exam) throw`.
+      Cost: the guard sits at the UI boundary and any future `getExam` caller (T-062/T-063) can
+      repeat the same mistake.
+    - A2 — in the exams service: an exported loader calls the low-level `getExam` and throws a typed
+      error when it returns `undefined`; the screen's query function calls the loader; the repository
+      keeps its honest `rows[0]`/`undefined` return. Cost: one small exported function.
+    - **Lean: A2** — the invariant belongs in the owning module and is reusable and unit-testable.
+  - **B — Error type.**
+    - B1 — a module `ExamNotFoundError` (a typed error set, REPO_RULES §7.7 #23), carrying the id.
+      Cost: one small class.
+    - B2 — a bare `new Error('not found')` like `StudentProfile`. Cost: hard-coded English string and
+      nothing to discriminate against.
+    - **Lean: B1.**
+  - **C — Screen behaviour on a missing exam.**
+    - C1 — render pending / not-found / retry states (REPO_RULES §7.6 #18) from new `exams.notFound`
+      and `exams.retry` i18n keys, with `retry: false` on the detail query (a fixed missing id will
+      not appear on retry). All hooks stay above the early returns. Cost: a few lines of JSX.
+    - C2 — redirect to `/exams` with a toast. Cost: hides the error, offers no retry and loses the
+      explicit "not found" clarity.
+    - **Lean: C1.**
+  - **D — Regression test.**
+    - D1 — a component test rendering the real `MarksGrid` at `/exams/missing` with `getDb` mocked,
+      asserting the not-found alert renders and `console.error` was **not** called with the
+      "Query data cannot be undefined" message; plus a service unit test that the loader rejects
+      with `ExamNotFoundError`. Cost: a QueryClientProvider + memory-router test harness.
+    - D2 — service test only. Cost: would not exercise the query-function wiring that caused the
+      console error, so it would not fail on the pre-fix behaviour.
+    - **Lean: D1.**
+- **Autonomous decision (BUG-011):** A2, B1, C1, D1 — take all four leans.
+- **Why:** the invariant is owned and tested at the service boundary, expressed as a typed domain
+  error rather than a bare string, and surfaced in the UI as honest async states; the regression
+  test reproduces the exact pre-fix symptom (console error + missing not-found UI) and fails before
+  the fix. No Locked Decision, schema convention, backup/restore behaviour, test matrix or shared
+  branch changes. Version impact is `patch` (a `fix`).
+- **Impact:** additive `ExamNotFoundError` + loader in `src/modules/exams/service.ts`, the
+  `MarksGrid` query function and async-state rendering, en/bn `exams.notFound`/`exams.retry` keys,
+  a component regression test plus a service unit test, and D-053 / BUGS / PROGRESS / CHANGELOG /
+  session-log updates. No new dependency, migration or schema change.
+
 ## Open decisions carried from PLAN.md section 4
 
 These use the plan's defaults. They become implemented in the phase noted.

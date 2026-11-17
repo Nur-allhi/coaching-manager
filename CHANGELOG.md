@@ -14,6 +14,7 @@ human-readable subset.
 
 ### Fixed
 
+- Opening `/exams/:id` for a missing or deleted exam now shows an honest "Exam not found" state with a retry action instead of a blank grid, and no longer logs TanStack Query's "Query data cannot be undefined" console error (BUG-011, D-053).
 - Opening an attendance session now writes one `create` audit row instead of two — the redundant manual audit was removed, with a regression test (BUG-010).
 - The dues report no longer overflows horizontally at phone and tablet widths; its grid columns shrink to the available width (BUG-009).
 - The app now loads offline after one visit: the SQLite WASM binary is precached by the service worker (BUG-004), and the Settings persistence-status element has its test id again (BUG-005).

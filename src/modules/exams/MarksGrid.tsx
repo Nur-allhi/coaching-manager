@@ -10,7 +10,8 @@ import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getDb } from '@/core/db/client'
 import { useOptimisticMutation } from '@/core/ui/use-optimistic-mutation'
-import { cellsFor, getExam, saveResult, summaryFor } from './service'
+import { Button } from '@/components/ui/button'
+import { cellsFor, ExamNotFoundError, loadExam, saveResult, summaryFor } from './service'
 import type { ExamCell } from './types'
 
 export function MarksGrid() {
@@ -22,7 +23,13 @@ export function MarksGrid() {
   const [saveState, setSaveState] = useState('')
   const rowRefs = useRef<Array<HTMLInputElement | HTMLButtonElement | null>>([])
 
-  const exam = useQuery({ queryKey: ['exams', 'detail', id], queryFn: () => getExam(db, id) })
+  const exam = useQuery({
+    queryKey: ['exams', 'detail', id],
+    queryFn: () => loadExam(db, id),
+    retry: false,
+    // A missing exam is handled below; any other failure reaches the error boundary (§7.7 #25).
+    throwOnError: (error) => !(error instanceof ExamNotFoundError),
+  })
   const batchId = exam.data?.batch_id
   const cells = useQuery({
     queryKey: ['exams', 'cells', id],
@@ -53,6 +60,24 @@ export function MarksGrid() {
           : c,
       ),
   })
+
+  if (exam.isPending) {
+    return (
+      <p role="status" className="p-8 text-sm">
+        {t('common.loading')}
+      </p>
+    )
+  }
+  if (exam.isError || !exam.data) {
+    return (
+      <div role="alert" data-testid="exam-not-found" className="space-y-3 p-8">
+        <p>{t('exams.notFound')}</p>
+        <Button type="button" onClick={() => void exam.refetch()}>
+          {t('exams.retry')}
+        </Button>
+      </div>
+    )
+  }
 
   async function persist(studentId: string, marks: number | null, absent: boolean) {
     setSaveState('saving')

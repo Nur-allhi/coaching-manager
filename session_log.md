@@ -24,6 +24,34 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 22:45
+
+### Changes
+
+- BUG-011 (missing `/exams/:id` logs "Query data cannot be undefined", blank grid) logged FIRST in
+  `docs/BUGS.md` with the next id, before any code was touched. Decision D-053 recorded the fix
+  autonomously under AUTONOMY.md §2 (REPO_RULES §1.1 options + leans taken): typed `ExamNotFoundError` +
+  `loadExam` in `src/modules/exams/service.ts`; `MarksGrid` query function uses it with
+  `retry: false` / `throwOnError` for unexpected errors, and renders loading / not-found + retry
+  states; new en/bn `exams.notFound` and `exams.retry` keys.
+- Regression coverage: `src/modules/exams/MarksGrid.test.tsx` (component test asserts the not-found
+  alert and zero undefined-data console errors — confirmed FAILING on the pre-fix screen, PASSING
+  after), a `loadExam` service unit test, and a `marks.spec.ts` E2E case for the real route.
+- GitNexus index refreshed; impact on `service.ts:getExam` LOW, single caller (the marks-grid route).
+- Docs: BUGS.md BUG-011 moved to Fixed, CHANGELOG Fixed entry, PROGRESS entry, D-053; housekeeping
+  for the fix branch.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact + index refresh)
+- `code-reviewer` / `bug-tracker` / `session-logger` protocols (REPO_RULES §10, §5)
+- autonomous decision protocol (REPO_RULES §1.1, AUTONOMY.md §2)
+
+### Status
+
+in-progress — BUG-011 fix implemented, tested (`pnpm check` green, marks E2E 8/8) and ready to commit
+and open a PR; T-062 not started yet.
+
 ## Session 2026-11-17 22:00
 
 ### Changes

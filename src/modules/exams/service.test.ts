@@ -9,7 +9,9 @@ import * as repo from './repository'
 import {
   cellsFor,
   createExam,
+  ExamNotFoundError,
   ExamsValidationError,
+  loadExam,
   saveResult,
   summaryFor,
   validateExam,
@@ -163,5 +165,14 @@ describe('exams service', () => {
     expect(validateExam({ ...input, fullMarks: 0 })).toBe('fullMarks')
     expect(validateExam({ ...input, passMarks: 120 })).toBe('passMarks')
     expect(validateExam({ ...input, name: '   ' })).toBe('name')
+  })
+
+  // BUG-011: getExam returns undefined for a missing row; the detail loader must convert that to
+  // a typed error so TanStack Query never receives undefined as a success value.
+  it('loads an existing exam but throws a typed error for a missing one', async () => {
+    const db = await seeded()
+    const id = await createExam(db, input)
+    expect((await loadExam(db, id)).name).toBe('Midterm')
+    await expect(loadExam(db, 'does-not-exist')).rejects.toBeInstanceOf(ExamNotFoundError)
   })
 })

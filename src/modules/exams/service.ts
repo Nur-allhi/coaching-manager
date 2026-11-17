@@ -13,6 +13,14 @@ import type { ExamCell, ExamRow, ExamSummary } from './types'
 
 export class ExamsValidationError extends Error {}
 
+/** A detail route points at an exam that does not exist (BUG-011). */
+export class ExamNotFoundError extends Error {
+  constructor(examId: string) {
+    super(`Exam not found: ${examId}`)
+    this.name = 'ExamNotFoundError'
+  }
+}
+
 export interface CreateExamInput {
   batchId: string
   subjectId: string | null
@@ -81,6 +89,17 @@ export async function examOptions(
 
 export function getExam(db: Db, id: string): Promise<ExamRow | undefined> {
   return repo.getExam(db, id)
+}
+
+/**
+ * Detail query function: TanStack Query treats an `undefined` success value as an error and logs
+ * "Query data cannot be undefined", so a missing exam must surface as a typed error the screen
+ * can map to a not-found state (BUG-011).
+ */
+export async function loadExam(db: Db, id: string): Promise<ExamRow> {
+  const exam = await getExam(db, id)
+  if (!exam) throw new ExamNotFoundError(id)
+  return exam
 }
 
 async function rosterFor(db: Db, batchId: string): Promise<string[]> {

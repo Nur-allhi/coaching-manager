@@ -65,3 +65,18 @@ test('marks and absence persist across a reload', async ({ page }) => {
   await expect(page.getByTestId('absent-cell')).toHaveCount(1)
   await expect(page.getByTestId('marks-input')).toHaveCount(2)
 })
+
+// BUG-011: a stale/deleted exam id used to feed undefined into TanStack Query and render a blank
+// grid. It must now show an honest not-found state and log no undefined-data error.
+test('a missing exam shows a not-found state instead of a blank grid', async ({ page }) => {
+  const consoleErrors: string[] = []
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text())
+  })
+  await page.goto('/exams/does-not-exist')
+  await expect(page.getByTestId('exam-not-found')).toContainText('Exam not found')
+  await expect(page.getByRole('grid')).toHaveCount(0)
+  expect(consoleErrors.filter((line) => line.includes('Query data cannot be undefined'))).toEqual(
+    [],
+  )
+})
