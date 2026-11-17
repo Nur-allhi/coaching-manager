@@ -24,6 +24,7 @@ human-readable subset.
 
 ### Added
 
+- A reports framework at `/reports`: a filter bar, a preview and CSV/Excel exports driven by the exact same filtered rows (CSV carries a UTF-8 BOM for Bangla in Excel), plus an A4 print view, with the student list as the first report (T-071, D-057).
 - A dashboard at `/`: KPI cards for collected fees, outstanding dues, admissions, active students, today's batches and low attendance (each linking to the filtered list behind it), recent toppers and a stale-backup warning (T-070, D-056).
 - A leaderboard at `/leaderboard`: competition ranks (ties share a rank and the next rank skips), per-exam / per-month / per-academic-year scopes, batch and class filters, absent counted as zero but excluded from averages, and an A4 print view (T-063, D-055).
 - Grades and GPA in the marks grid: each student's grade letter and grade points come from the live Settings grading scale, a batch GPA summarises the entered marks, and both update as marks change (T-062, D-054).

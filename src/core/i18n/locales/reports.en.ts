@@ -1,0 +1,23 @@
+/** English reports namespace (T-071). */
+export const reportsEn = {
+  title: 'Reports',
+  studentList: 'Student list',
+  from: 'From',
+  to: 'To',
+  batch: 'Batch',
+  class: 'Class',
+  allBatches: 'All batches',
+  allClasses: 'All classes',
+  preview: 'Preview',
+  exportCsv: 'Export CSV',
+  exportExcel: 'Export Excel',
+  print: 'Print',
+  studentNo: 'Student no',
+  studentName: 'Student',
+  admittedOn: 'Admitted',
+  batchName: 'Batch',
+  rows: 'Rows',
+  empty: 'No rows match these filters.',
+  loading: 'Loading…',
+  error: 'The report could not be loaded. Try again.',
+}
