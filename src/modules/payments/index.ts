@@ -5,6 +5,7 @@ import type { AppModule } from '@/app/module-contract'
 /** Public surface for payment recording, editing, voiding and dues (TAD.md §2). */
 export {
   recordPayment,
+  recordPaymentAs,
   editPayment,
   voidPayment,
   duesForStudent,

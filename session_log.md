@@ -24,6 +24,35 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-18 02:10
+
+### Changes
+
+- T-080 (PIN lock and roles) on branch `feature/pin-and-roles`. Decision D-060 recorded
+  autonomously: PIN hash in localStorage (not the DB), opt-in lock, sessionStorage session that
+  services trust, and an additive guarded payment write.
+- `src/core/auth/*` — roles/permissions, typed errors, PBKDF2 hash/verify, PIN store, idle session
+  and `assertPermission`; unit tests for the matrix, crypto, PIN store, idle lock and Teacher refusal.
+- `src/app/auth/*` — lock gate, PIN lock screen, Settings security panel and the auth hook.
+- `src/modules/payments/*` — `recordPaymentAs` guard, session actor in the audit row, and the real
+  collect screen using the guarded entry point.
+- en/bn auth keys; `e2e/specs/auth.spec.ts` (lock/unlock, UI+service denial, idle lock).
+- `docs/DECISIONS.md` D-060, `docs/PROGRESS.md`, `CHANGELOG.md`.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `code-reviewer`
+- `gitnexus`
+- `playwright-mcp`
+
+### Status
+
+completed
+
+---
+
 ## Session 2026-11-18 00:40
 
 ### Changes

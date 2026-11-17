@@ -6,6 +6,8 @@
  */
 import { z } from 'zod'
 import { makeAuditContext } from '@/core/audit/write'
+import { assertPermission } from '@/core/auth/authorize'
+import type { Session } from '@/core/auth/session'
 import { assertVersion, findById } from '@/core/db/repository'
 import { voidRecord } from '@/core/db/void-restore'
 import type { Db } from '@/core/db/types'
@@ -80,13 +82,17 @@ async function allocateToOpenCharges(
 }
 
 /** Allocate a payment across the student's open charges, oldest first, inside one transaction. */
-export async function recordPayment(db: Db, input: PaymentInput): Promise<RecordedPayment> {
+export async function recordPayment(
+  db: Db,
+  input: PaymentInput,
+  actorId: string | null = null,
+): Promise<RecordedPayment> {
   const parsed = paymentSchema.safeParse(input)
   if (!parsed.success) throw new PaymentValidationError('payments.invalidPayment')
   const value = parsed.data
 
   return db.tx(async (t) => {
-    const ctx = makeAuditContext()
+    const ctx = makeAuditContext(actorId)
     const receiptNo = await repo.nextReceiptNumber(t, value.paidOn.slice(0, 4))
     const id = await repo.insertPayment(t, ctx, {
       studentId: value.studentId,
@@ -105,6 +111,20 @@ export async function recordPayment(db: Db, input: PaymentInput): Promise<Record
       advanceMinor: remaining,
     }
   })
+}
+
+/**
+ * Guarded entry point used by the UI (T-080): a role without `payments.write` is refused here,
+ * so hiding the button is not the only control (SECURITY §4). The raw `recordPayment` stays for
+ * internal service/test callers; the actor id from the session reaches the audit row.
+ */
+export async function recordPaymentAs(
+  session: Session | null,
+  db: Db,
+  input: PaymentInput,
+): Promise<RecordedPayment> {
+  assertPermission(session, 'payments.write')
+  return recordPayment(db, input, session?.actorId ?? null)
 }
 
 const editSchema = paymentSchema.omit({ studentId: true })

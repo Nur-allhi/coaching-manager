@@ -13,6 +13,7 @@ import { lastFileExport } from '@/core/backup/health'
 import { listSnapshots } from '@/core/backup/snapshots'
 import { opfsStorage } from '@/core/backup/storage'
 import { useOptimisticMutation } from '@/core/ui/use-optimistic-mutation'
+import { SecurityPanel } from '@/app/auth/SecurityPanel'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -242,6 +243,8 @@ export function SettingsScreen() {
           ))}
         </div>
       </section>
+
+      <SecurityPanel />
 
       <section className="space-y-2">
         <h2 className="text-lg font-medium">{t('settings.backupStatus')}</h2>

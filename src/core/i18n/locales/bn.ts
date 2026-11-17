@@ -10,6 +10,7 @@ import { leaderboardBn } from './leaderboard.bn'
 import { dashboardBn } from './dashboard.bn'
 import { reportsBn } from './reports.bn'
 import { adminBn } from './admin.bn'
+import { authBn } from './auth.bn'
 
 export const bn: { translation: Translation } = {
   translation: {
@@ -130,6 +131,7 @@ export const bn: { translation: Translation } = {
     dashboard: dashboardBn,
     reports: reportsBn,
     admin: adminBn,
+    auth: authBn,
     students: {
       admit: 'নতুন ভর্তি',
       cancel: 'বাতিল',

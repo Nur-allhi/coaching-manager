@@ -9,13 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { listStudents } from '@/modules/students'
+import { useAuth } from '@/app/auth/useAuth'
+import { hasPermission } from '@/core/auth'
 import { getDb } from '@/core/db/client'
 import { formatMinor, parseToMinor } from '@/core/money/money'
 import { today } from '@/core/dates/dates'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { duesForStudent, recordPayment, type PaymentInput } from './payment-service'
+import { duesForStudent, recordPaymentAs, type PaymentInput } from './payment-service'
 import { RecentPayments } from './RecentPayments'
 import { receiptsForExport } from './receipt'
 import { exportReceiptsExcel } from './receipt-export'
@@ -31,6 +33,8 @@ const formSchema = z.object({
 
 export function PaymentsScreen() {
   const { t } = useTranslation()
+  const { session } = useAuth()
+  const canWrite = hasPermission(session?.role ?? 'teacher', 'payments.write')
   const db = getDb()
   const qc = useQueryClient()
   const [receipt, setReceipt] = useState('')
@@ -54,7 +58,10 @@ export function PaymentsScreen() {
     setError('')
     setReceipt('')
     try {
-      const result = await recordPayment(db, { ...values, amountMinor: parseToMinor(amountText) })
+      const result = await recordPaymentAs(session, db, {
+        ...values,
+        amountMinor: parseToMinor(amountText),
+      })
       setReceipt(result.receiptNo)
       setAmountText('')
       form.setValue('amountMinor', 0)
@@ -185,7 +192,16 @@ export function PaymentsScreen() {
         <p data-testid="payment-error" role="alert" className="text-destructive text-sm">
           {error}
         </p>
-        <Button type="submit" data-testid="payment-save">
+        {!canWrite && (
+          <p
+            data-testid="payment-no-permission"
+            role="alert"
+            className="text-muted-foreground text-sm"
+          >
+            {t('auth.noPermission')}
+          </p>
+        )}
+        <Button type="submit" data-testid="payment-save" disabled={!canWrite}>
           {t('payments.take')}
         </Button>
       </form>

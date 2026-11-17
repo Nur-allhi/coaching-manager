@@ -12,6 +12,14 @@ human-readable subset.
 
 ## [Unreleased]
 
+### Added
+
+- PIN lock and roles (T-080, D-060): an opt-in admin PIN stored only as a PBKDF2-SHA-256 hash
+  (600,000 iterations, per-device salt) in localStorage, an inactivity lock screen (10-minute
+  default, configurable in Settings), and the Admin/Accountant/Teacher permission matrix enforced
+  in services — a Teacher's payment write is refused, and a permission hidden in the UI is also
+  refused by the service.
+
 ### Fixed
 
 - Opening `/exams/:id` for a missing or deleted exam now shows an honest "Exam not found" state with a retry action instead of a blank grid, and no longer logs TanStack Query's "Query data cannot be undefined" console error (BUG-011, D-053).
