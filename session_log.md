@@ -24,6 +24,30 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-17 19:17
+
+### Changes
+
+- `src/modules/payments/payment-service.ts` — `editPayment` re-runs allocation in one transaction, keeps the receipt number and bumps `revision`; `voidPayment` wraps core `voidRecord`; the allocation loop was extracted once and reused (T-052, D-048).
+- `src/modules/payments/payments-repository.ts` — additive `deleteAllocations` (audited) and `updatePayment` via `repoWithin`; no change to the HIGH-risk `insertAllocation`/`openCharges` signatures.
+- `src/modules/payments/RecentPayments.tsx` — real recent-payments list with Edit/Void, REVISED/VOID i18n markers and a receipt preview showing the revision count.
+- `PaymentsScreen.tsx` renders the new section and invalidates the recorded-payments query after a collect; en/bn keys added.
+- 7 new unit tests and 2 new `payments.spec.ts` E2E tests; D-048, PROGRESS and CHANGELOG updated.
+- Worked in an isolated worktree (`ccm-wt-t052`) because the main checkout was shared with a busy interactive session; the main checkout was restored clean.
+
+### Skill(s) / Tool(s) Used
+
+- `senior-backend`
+- `senior-frontend`
+- `gitnexus`
+- `code-reviewer`
+- `security-auditor`
+- `playwright-mcp`
+
+### Status
+
+- completed
+
 ## Session 2026-11-17 18:02
 
 ### Changes

@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { listStudents } from '@/modules/students'
 import { getDb } from '@/core/db/client'
@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { duesForStudent, recordPayment, type PaymentInput } from './payment-service'
+import { RecentPayments } from './RecentPayments'
 
 const PAYMENT_METHODS = ['cash', 'bank', 'mobile'] as const
 const formSchema = z.object({
@@ -29,6 +30,7 @@ const formSchema = z.object({
 export function PaymentsScreen() {
   const { t } = useTranslation()
   const db = getDb()
+  const qc = useQueryClient()
   const [receipt, setReceipt] = useState('')
   const [error, setError] = useState('')
   const [amountText, setAmountText] = useState('')
@@ -53,7 +55,10 @@ export function PaymentsScreen() {
       setReceipt(result.receiptNo)
       setAmountText('')
       form.setValue('amountMinor', 0)
-      await dues.refetch()
+      await Promise.all([
+        dues.refetch(),
+        qc.invalidateQueries({ queryKey: ['payments', 'recorded'] }),
+      ])
     } catch {
       setError(t('payments.saveFailed'))
     }
@@ -158,6 +163,8 @@ export function PaymentsScreen() {
           {t('payments.take')}
         </Button>
       </form>
+
+      <RecentPayments />
     </div>
   )
 }
