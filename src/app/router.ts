@@ -33,6 +33,9 @@ const AttendanceFixture = lazy(() =>
 const MarksFixture = lazy(() =>
   import('./dev/MarksFixture').then((m) => ({ default: m.MarksFixture })),
 )
+const DemoDataFixture = lazy(() =>
+  import('./dev/DemoDataFixture').then((m) => ({ default: m.DemoDataFixture })),
+)
 const LeaderboardFixture = lazy(() =>
   import('./dev/LeaderboardFixture').then((m) => ({ default: m.LeaderboardFixture })),
 )
@@ -73,6 +76,7 @@ export function routeDefinitions(): RouteObject[] {
         { path: '/__dues-fixture', element: createElement(DuesFixture) },
         { path: '/__attendance-fixture', element: createElement(AttendanceFixture) },
         { path: '/__marks-fixture', element: createElement(MarksFixture) },
+        { path: '/__demo-fixture', element: createElement(DemoDataFixture) },
         { path: '/__leaderboard-fixture', element: createElement(LeaderboardFixture) },
         { path: '/__dashboard-fixture', element: createElement(DashboardFixture) },
         { path: '*', element: createElement(NotFound) },
