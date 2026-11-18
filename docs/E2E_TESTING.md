@@ -125,7 +125,7 @@ The MCP and the specs cover the UI. The rules below cover everything underneath 
 4. Every repository has three template tests: a stale `expectedVersion` aborts, a soft-deleted
    row is hidden, and every write produces an audit row with the correct before and after.
 5. Every migration has a test that upgrades a fixture database from each earlier version.
-6. Money tests use paisa integers, never `"1000"` strings, so a rounding bug cannot hide
+6. Money tests use whole-taka integers, never `"1000"` strings, so a rounding bug cannot hide
    behind a convenient value.
 7. A test names the behaviour, not the function: `keeps the receipt number when the amount is
 edited`, not `calls updatePayment`.

@@ -12,6 +12,9 @@ const version = JSON.parse(readFileSync(new URL('./package.json', import.meta.ur
 
 export default defineConfig({
   define: { __APP_VERSION__: JSON.stringify(version) },
+  // Dev-only: allow reaching the dev server from other devices on the LAN/tailnet.
+  // OPFS requires a secure context, so use the Tailscale HTTPS URL on remote devices.
+  server: { allowedHosts: ['.ts.net', '192.168.0.169'] },
   plugins: [
     react(),
     tailwindcss(),

@@ -36,7 +36,7 @@ async function seeded() {
     start_time: '09:00',
     end_time: '10:00',
     capacity: 30,
-    monthly_fee_minor: 100000,
+    monthly_fee_minor: 1000,
     status: 'active',
   })
   for (const [id, name, admittedOn] of [
@@ -57,7 +57,7 @@ async function seeded() {
       student_id: id,
       batch_id: 'b-1',
       enrolled_on: admittedOn,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       discount_kind: 'none',
       discount_value: 0,
       status: id === 's-3' ? 'closed' : 'active',
@@ -71,7 +71,7 @@ async function seeded() {
         student_id: id,
         month: null,
         kind: 'admission',
-        amount_minor: 100000,
+        amount_minor: 1000,
         discount_minor: 0,
       })
     }
@@ -82,7 +82,7 @@ async function seeded() {
     receipt_no: 'R-2026-000001',
     student_id: 's-1',
     paid_on: '2026-03-02',
-    amount_minor: 40000,
+    amount_minor: 400,
     status: 'valid',
     revision: 0,
   })
@@ -92,7 +92,7 @@ async function seeded() {
     receipt_no: 'R-2026-000002',
     student_id: 's-2',
     paid_on: '2026-03-02',
-    amount_minor: 50000,
+    amount_minor: 500,
     status: 'void',
     revision: 0,
   })
@@ -150,20 +150,20 @@ describe('admin report', () => {
       students.filter((student) => String(student.admitted_on).startsWith('2026-03')).length,
     )
     expect(report.dropouts).toBe(1)
-    expect(report.collectedMinor).toBe(40000)
+    expect(report.collectedMinor).toBe(400)
     expect(report.collectedMinor).toBe(
       payments
         .filter((payment) => payment.status === 'valid')
         .reduce((sum, p) => sum + Number(p.amount_minor), 0),
     )
     expect(report.dueMinor).toBe(due.reduce((sum, row) => sum + row.dueMinor, 0))
-    expect(report.methodSplit).toEqual([{ method: 'cash', amountMinor: 40000 }])
+    expect(report.methodSplit).toEqual([{ method: 'cash', amountMinor: 400 }])
     expect(report.attendanceRate).toBe(50)
     expect(report.topPerformers).toEqual([
       { name: 'Rahim', marks: 90 },
       { name: 'Karim', marks: 80 },
     ])
-    expect(report.netMinor).toBe(40000 - report.dueMinor)
+    expect(report.netMinor).toBe(400 - report.dueMinor)
     expect(report.admissionsByClass).toEqual([{ name: 'Class 10', count: 2 }])
     expect(report.admissionsByBatch).toEqual([{ name: 'Morning', count: 2 }])
   })

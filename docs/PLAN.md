@@ -57,7 +57,7 @@ Browser targets: latest Chrome and Edge are primary (File System Access API for 
 
 Use these defaults unless the human says otherwise. Store them as settings where noted.
 
-- Currency: BDT, stored as integer paisa (`amount_minor`), shown as whole taka unless paisa is non-zero.
+- Currency: BDT, stored as whole taka (`amount_minor`), shown with South Asian digit grouping.
 - Fee model: one-time admission fee plus a monthly fee per enrollment (batch default, overridable per enrollment).
 - Discounts: fixed amount or percent per enrollment, plus optional per-charge discount.
 - Ranking ties: competition ranking (1, 2, 2, 4).
@@ -326,7 +326,7 @@ Each task lists its acceptance check. Do not skip tests.
 
 **P3 Money**
 
-- P3-1 Fee rules and monthly charge generation (idempotent). Acceptance: running twice creates no duplicates; discounts correct to the paisa.
+- P3-1 Fee rules and monthly charge generation (idempotent). Acceptance: running twice creates no duplicates; discounts correct to the nearest taka.
 - P3-2 Record payment with allocation (partial, advance, multi-month) and receipt numbering in a single transaction. Acceptance: property tests show sum of allocations never exceeds payment and receipt numbers are gapless and unique.
 - P3-3 Edit and void payment with re-allocation and revision tracking. Acceptance: edited receipt keeps its number and shows REVISED.
 - P3-4 Dues list, defaulter filters, student payment tab.

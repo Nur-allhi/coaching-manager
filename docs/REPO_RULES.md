@@ -154,9 +154,9 @@ These are checkable. `code-reviewer` fails a change that breaks one.
 
 ### 7.4 Money, dates and ids
 
-9. Money is an integer number of paisa. A float MUST NOT appear in a money column, parameter
+9. Money is a whole number of taka. A float MUST NOT appear in a money column, parameter
    or calculation. See [`SECURITY.md`](SECURITY.md) §5.
-10. Percent discounts round exactly once, at the end, to the nearest paisa.
+10. Percent discounts round exactly once, at the end, to the nearest taka.
 11. Dates are stored `YYYY-MM-DD`, months `YYYY-MM`, timestamps epoch milliseconds UTC, and
     displayed in Asia/Dhaka. Arithmetic uses `date-fns`.
 12. Primary keys are UUIDv7 from one `newId()` helper. Human-facing numbers come from the

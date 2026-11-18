@@ -75,7 +75,7 @@ describe('academics warnings', () => {
       capacity: '',
       monthlyFee: '1250.50',
     } as BatchForm)
-    expect(patch.monthly_fee_minor).toBe(125050)
+    expect(patch.monthly_fee_minor).toBe(1251)
     expect(patch.days_mask).toBe(32)
     expect(patch.room).toBeNull()
     expect(patch.capacity).toBeNull()

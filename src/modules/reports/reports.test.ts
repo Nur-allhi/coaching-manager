@@ -81,7 +81,7 @@ describe('student list report', () => {
         start_time: '09:00',
         end_time: '10:00',
         capacity: 30,
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         status: 'active',
       })
     }
@@ -103,7 +103,7 @@ describe('student list report', () => {
         student_id: id,
         batch_id: batchId,
         enrolled_on: admittedOn,
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         discount_kind: 'none',
         discount_value: 0,
       })
@@ -155,7 +155,7 @@ describe('report catalogue (T-072)', () => {
       start_time: '09:00',
       end_time: '10:00',
       capacity: 30,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     for (const [id, name] of [
@@ -175,7 +175,7 @@ describe('report catalogue (T-072)', () => {
         student_id: id,
         batch_id: 'b-1',
         enrolled_on: '2026-01-01',
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         discount_kind: 'none',
         discount_value: 0,
       })
@@ -186,7 +186,7 @@ describe('report catalogue (T-072)', () => {
         student_id: id,
         month: null,
         kind: 'admission',
-        amount_minor: 100000,
+        amount_minor: 1000,
         discount_minor: 0,
       })
     }
@@ -196,7 +196,7 @@ describe('report catalogue (T-072)', () => {
       receipt_no: 'R-2026-000001',
       student_id: 's-1',
       paid_on: '2026-03-02',
-      amount_minor: 40000,
+      amount_minor: 400,
       status: 'valid',
       revision: 0,
     })

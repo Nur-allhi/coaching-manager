@@ -25,6 +25,7 @@ interface Props {
 
 export function EnrollmentFormFields({ form, students, batches, editing, onCancel }: Props) {
   const { t } = useTranslation()
+  const discountKind = form.watch('discountKind')
   return (
     <>
       <div className="space-y-1">
@@ -62,12 +63,25 @@ export function EnrollmentFormFields({ form, students, batches, editing, onCance
       {TEXT_FIELDS.map(([name, labelKey, mode, testId]) => (
         <div key={name} className="space-y-1">
           <Label htmlFor={testId}>{t(labelKey)}</Label>
-          <Input
-            id={testId}
-            data-testid={testId}
-            {...(mode === 'date' ? { type: 'date' as const } : { inputMode: mode })}
-            {...form.register(name)}
-          />
+          <div className="relative">
+            <Input
+              id={testId}
+              data-testid={testId}
+              className={mode === 'numeric' ? 'pr-16' : undefined}
+              {...(mode === 'date' ? { type: 'date' as const } : { inputMode: mode })}
+              {...form.register(name)}
+            />
+            {mode === 'numeric' && (
+              <span
+                aria-hidden="true"
+                className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs"
+              >
+                {name === 'discountValue' && discountKind === 'percent'
+                  ? t('enrollments.percentUnit')
+                  : t('enrollments.bdt')}
+              </span>
+            )}
+          </div>
         </div>
       ))}
       <div className="space-y-1">

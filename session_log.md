@@ -24,6 +24,40 @@ Format, per [`docs/REPO_RULES.md`](docs/REPO_RULES.md) §5:
 
 ---
 
+## Session 2026-11-18 13:07
+
+### Changes
+
+- BUG-014 (fees shown in paisa instead of taka, found in manual testing) logged FIRST in `docs/BUGS.md`
+  as BUG-013, then renumbered to BUG-014 on an existing-ID collision. Bug protocol followed: logged
+  before any code change, approach surfaced twice via the confirmation UI, and the human explicitly
+  chose the broader whole-taka conversion over a display-only fix (recorded as D-068).
+- `src/core/money/money.ts` — whole-taka convention: `formatMinor` formats the integer directly,
+  `parseToMinor` rounds to the nearest taka.
+- New migration `202611181200_money_whole_taka.sql` converts existing `*_minor` values by `/100`;
+  registered in `src/core/db/migrations.ts`.
+- `BatchSection` no longer divides the fee by 100; the two Enrollments renders now use `formatMinor`.
+- Demo-data and test fixtures converted to taka; money/reports/academics/backup/migrate test
+  expectations and the E2E enrollments spec updated.
+- Governing docs: PLAN §3, TAD §5.3, REPO_RULES §7.4, SECURITY §5, E2E_TESTING §6, TICKETS T-014
+  acceptance, DECISIONS D-068; CHANGELOG, PROGRESS and BUGS updated.
+- Verification: `pnpm check` green (bundle 282.2/300 KB), 257 unit tests and 208 Playwright tests
+  pass in both browsers. Firefox launcher broke mid-run (AddonManager syntax error); reinstalling
+  the Playwright Firefox build fixed it.
+- Earlier in this session: demo-data dev route `/__demo-fixture` added; `vite.config.ts` dev
+  `allowedHosts` edit for tailnet/LAN testing. Both still uncommitted.
+
+### Skill(s) / Tool(s) Used
+
+- `playwright-mcp`
+- `gitnexus` (earlier)
+- bug protocol (`REPO_RULES` §10) and decision/confirmation UI (`REPO_RULES` §1)
+
+### Status
+
+in-progress — changes uncommitted on `dev`; not committed or merged yet. The BUG-014 fix,
+`/__demo-fixture` route and `vite.config.ts` `allowedHosts` edit are all uncommitted.
+
 ## Session 2026-11-18 02:20
 
 ### Changes

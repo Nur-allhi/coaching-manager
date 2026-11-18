@@ -530,7 +530,7 @@ this file wins.
   with fixed and percent discounts, generated idempotently.
 - **Acceptance:**
   - [ ] Running the generator twice creates no duplicates.
-  - [ ] A percent discount is correct to the paisa.
+  - [ ] A percent discount is correct to the nearest taka.
   - [ ] The unique key, not a flag, prevents duplicates.
 - **E2E:** n/a — no UI/user-visible behavior
 - **Version impact:** minor

@@ -49,7 +49,7 @@ function rowToForm(row: Row): BatchForm {
     endTime: String(row.end_time),
     room: row.room === null ? '' : String(row.room),
     capacity: row.capacity === null ? '' : String(row.capacity),
-    monthlyFee: (Number(row.monthly_fee_minor) / 100).toFixed(2),
+    monthlyFee: String(row.monthly_fee_minor),
   }
 }
 

@@ -12,6 +12,7 @@ import { listStudents } from '@/modules/students'
 import { getDb } from '@/core/db/client'
 import { VersionConflictError } from '@/core/db/repository'
 import { today } from '@/core/dates/dates'
+import { formatMinor } from '@/core/money/money'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useOptimisticMutation } from '@/core/ui/use-optimistic-mutation'
@@ -155,7 +156,8 @@ export function EnrollmentsScreen() {
       </form>
 
       <p data-testid="enroll-net" className="text-sm">
-        {t('enrollments.netMonthly')}: {net}
+        {t('enrollments.netMonthly')}: {formatMinor(net)}{' '}
+        <span className="text-muted-foreground text-xs">{t('enrollments.bdt')}</span>
       </p>
       {capacity && (
         <p data-testid="enroll-capacity-warning" role="status" className="text-warning text-sm">
@@ -179,7 +181,13 @@ export function EnrollmentsScreen() {
               <span>
                 {row.student_id} → {row.batch_id} · {t(`enrollments.${row.status}`)} ·{' '}
                 {t('enrollments.netMonthly')}:{' '}
-                {discountedMonthlyFee(row.monthly_fee_minor, row.discount_kind, row.discount_value)}
+                {formatMinor(
+                  discountedMonthlyFee(
+                    row.monthly_fee_minor,
+                    row.discount_kind,
+                    row.discount_value,
+                  ),
+                )}
               </span>
               <span className="flex gap-2">
                 {row.status === 'active' && (

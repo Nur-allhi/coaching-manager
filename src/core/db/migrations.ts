@@ -13,6 +13,7 @@ import attendance from '../../modules/attendance/migrations/202611160950_attenda
 import exams from '../../modules/exams/migrations/202611160960_exams_create_tables.sql?raw'
 import studentSearch from '../../modules/students/migrations/202611171000_students_search_photo.sql?raw'
 import chargeUniqueness from '../../modules/payments/migrations/202611171020_payments_charge_uniqueness.sql?raw'
+import wholeTaka from '../../modules/settings/migrations/202611181200_money_whole_taka.sql?raw'
 
 export const migrations: readonly Migration[] = [
   { version: 202611160900, module: 'settings', name: 'core_meta', sql: coreMeta },
@@ -48,5 +49,11 @@ export const migrations: readonly Migration[] = [
     module: 'payments',
     name: 'charge_uniqueness',
     sql: chargeUniqueness,
+  },
+  {
+    version: 202611181200,
+    module: 'settings',
+    name: 'money_whole_taka',
+    sql: wholeTaka,
   },
 ]
