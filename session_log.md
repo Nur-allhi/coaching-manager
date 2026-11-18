@@ -1486,4 +1486,39 @@ completed
 
 ### Status
 
-- completed — branch `fix/undo-blob-marker`, PR pending; no merge performed
+- completed — branch `fix/undo-blob-marker`, merged into `dev` as #62
+
+## Session 2026-11-18 14:13
+
+### Changes
+
+- `src/core/auth/session.ts` — added `checkIdle()`; the idle interval checks for expiry without
+  refreshing the activity clock, while real pointer/key events still refresh it.
+- `src/core/auth/session.test.ts` — deterministic 660-tick regression that fails before the fix;
+  mocks restored after each test.
+- `docs/BUGS.md`, `CHANGELOG.md`, `docs/PROGRESS.md` — BUG-012 fixed status, changelog entry and
+  verification record.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on noteActivity/startIdleWatcher; detect-changes before commit)
+- `vitest` (regression tests), `playwright` (full E2E suite)
+
+### Status
+
+- completed — branch `fix/idle-lock-e2e`, PR pending; no merge performed
+
+## Session 2026-11-18 14:22
+
+### Changes
+
+- Merged `origin/dev` (the squash of PR #62) into `fix/idle-lock-e2e` with a normal merge commit;
+  resolved housekeeping-doc conflicts keeping both BUG-007 and BUG-012 entries. No fix was reverted.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (detect-changes), `vitest`, `playwright`
+
+### Status
+
+- completed — conflict resolution only; PR #63 remains open for the human to merge

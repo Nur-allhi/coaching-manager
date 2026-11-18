@@ -78,13 +78,21 @@ a resolved-bug history.
 
 ## BUG-012: Inactivity-lock E2E is flaky across browsers
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-18 (during: full-suite e2e verification for T-082)
 - **Location:** `e2e/specs/auth.spec.ts:75-83`, `src/core/auth/session.ts` (`startIdleWatcher`)
 - **Description:** "locks after the inactivity timeout" intermittently reports `getByTestId('lock-title')` not found within 10 s after setting `IDLE_KEY` to `0.02`. In three local runs the failing browser varied (Chromium twice, Firefox once on clean `dev`); the other browser passed. Reproduced on unmodified `dev` in a detached worktree, so it is not a T-082 regression. T-080's CI was green with its two automatic retries.
-- **Root Cause:** unknown — timing/ordering of the idle watcher when the timeout is changed after boot.
-- **Fix Approach:** not applied; needs confirmation.
+- **Root Cause:** the 1 s interval in `startIdleWatcher` called `noteActivity()`, which refreshed
+  `lastActivityAt` on every tick as long as the timeout had not elapsed. With the test's 1.2 s
+  timeout, locking depended on where the ticks landed relative to the last activity; a real
+  10-minute idle session never auto-locked at all.
+- **Fix Approach:** the human chose to fix the watcher. A new `checkIdle()` locks when the timeout
+  has elapsed without touching the activity clock; the interval uses it while real
+  `pointerdown`/`keydown` events still call `noteActivity()` to refresh. A unit regression drives
+  660 one-second ticks with no activity and fails before / passes after. The existing E2E spec is
+  unchanged and now passes reliably in Chromium and Firefox.
+- **Resolved:** 2026-11-18 — branch `fix/idle-lock-e2e` (PR pending)
 
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 

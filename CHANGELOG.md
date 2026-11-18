@@ -48,6 +48,8 @@ human-readable subset.
 - Undoing an update can no longer write a `<blob:N bytes>` redaction marker into a photo BLOB:
   binary-only updates are refused with a clear error, and mixed updates undo their text columns
   without corrupting the photo (BUG-007).
+- The inactivity lock now actually fires after the configured idle time: the periodic watcher no
+  longer refreshes the activity clock, so the lock E2E passes reliably in both browsers (BUG-012).
 - Money is now stored and shown as whole taka, not paisa: fees on Enrollments show `1,500` rather than `150000`, and existing local data converts on next boot (BUG-014, D-068).
 - Imported student statuses now use the same `active|dropped|passed_out` vocabulary as the rest of
   the app, and the Bangla import strings no longer contain leaked English words (BUG-013, D-064).

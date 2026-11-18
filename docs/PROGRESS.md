@@ -1901,7 +1901,7 @@ pass in both browsers. Firefox had to be reinstalled after its launcher broke mi
 **Known gaps:** older backups restore at their original paisa unit until re-migrated; the `Minor`
 type and `*_minor` column names are retained for compatibility and now hold taka.
 
-## BUG-007 — Undo writes a redaction marker into a photo BLOB — **Done** (pending merge)
+## BUG-007 — Undo writes a redaction marker into a photo BLOB — **Done** (merged in #62)
 
 **What changed:** `inversePatch` in `src/core/audit/undo.ts` now skips binary columns redacted as
 `<blob:N bytes>` and refuses with a typed `InvalidAuditEntryError` when no non-binary column
@@ -1917,3 +1917,20 @@ isolation (2 passed on re-run under lower parallelism).
 **Known gaps:** a photo-only update cannot be undone; the History panel surfaces the typed error
 instead of writing a marker. Redaction is unchanged, so the original bytes stay unavailable to
 undo by design.
+
+## BUG-012 — Inactivity-lock E2E flaky across browsers — **Done** (pending merge)
+
+**What changed:** `checkIdle()` in `src/core/auth/session.ts` locks after the configured timeout
+without refreshing `lastActivityAt`. The 1 s interval in `startIdleWatcher` now calls `checkIdle()`,
+while real `pointerdown`/`keydown` events still call `noteActivity()` to refresh the clock. The
+existing `auth.spec.ts` inactivity test is unchanged; no UI or styling was touched.
+
+**Verified:** `pnpm check` green (bundle 282.2/300 KB). `session.test.ts`: 5 passed, including a new
+regression that drives 660 one-second ticks with no activity — it fails before the fix because the
+interval kept refreshing the clock. Full `pnpm e2e`: 237 passed, 1 failed — the known load-related
+`seed.spec.ts` fixture timeout that passes in isolation (2/2 on re-run); both inactivity-lock tests
+now pass in Chromium and Firefox.
+
+**Known gaps:** the `seed.spec.ts` 5 s fixture timeout under fully-parallel load is unrelated to
+this fix and out of scope for these two bug tickets. The idle check still runs once per second, so
+lock can be up to a second late.
