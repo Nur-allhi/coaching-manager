@@ -1900,3 +1900,20 @@ pass in both browsers. Firefox had to be reinstalled after its launcher broke mi
 
 **Known gaps:** older backups restore at their original paisa unit until re-migrated; the `Minor`
 type and `*_minor` column names are retained for compatibility and now hold taka.
+
+## BUG-007 — Undo writes a redaction marker into a photo BLOB — **Done** (pending merge)
+
+**What changed:** `inversePatch` in `src/core/audit/undo.ts` now skips binary columns redacted as
+`<blob:N bytes>` and refuses with a typed `InvalidAuditEntryError` when no non-binary column
+actually changed between the before and after snapshots. A mixed update still undoes its text
+columns and leaves the photo untouched. No UI or styling was touched.
+
+**Verified:** `pnpm check` green (bundle 282.2/300 KB). `undo.test.ts`: 12 passed, including two
+new regression tests that fail before the fix by writing `<blob:4 bytes>` into the photo column.
+Full `pnpm e2e`: 235 passed, 3 failed — two instances of the known BUG-012 inactivity-lock flake
+(fixed separately on `fix/idle-lock-e2e`) and one `seed.spec.ts` fixture timeout that passes in
+isolation (2 passed on re-run under lower parallelism).
+
+**Known gaps:** a photo-only update cannot be undone; the History panel surfaces the typed error
+instead of writing a marker. Redaction is unchanged, so the original bytes stay unavailable to
+undo by design.

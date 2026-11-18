@@ -5,7 +5,7 @@ import { migrations } from '../db/migrations'
 import { createBetterSqliteDb } from '../db/testing/better-sqlite3'
 import type { Db } from '../db/types'
 import { voidRecord } from '../db/void-restore'
-import type { AuditContext } from './write'
+import { writeAudit, type AuditContext } from './write'
 import { AuditNotFoundError, listHistory, undo } from './undo'
 
 let sequence = 0
@@ -60,6 +60,18 @@ async function seededPayment() {
   const { db, ctx } = await seeded()
   await insert(db, context({ now: 2 }), 'payments', PAYMENT)
   return { db, ctx }
+}
+
+/** An audit row whose redaction markers come from real Uint8Arrays, as in the browser. */
+async function photoUpdateAudit(db: Db, before: Row, after: Row): Promise<string> {
+  await writeAudit(db, context({ now: 2 }), {
+    entity: 'students',
+    entityId: 's-1',
+    action: 'update',
+    before,
+    after,
+  })
+  return latestAudit(db, 'update')
 }
 
 async function latestAudit(db: Db, action: string): Promise<string> {
@@ -135,6 +147,60 @@ describe('undo', () => {
       'update',
       'create',
     ])
+  })
+
+  it('refuses to undo a binary-only update instead of binding the redaction marker', async () => {
+    const db = createBetterSqliteDb()
+    await migrate({ db, migrations })
+    const photo = new Uint8Array([0xff, 0xd8, 0xff, 0xd9])
+    const nextPhoto = new Uint8Array([0xff, 0xd8, 0xff, 0xe0])
+    await insert(db, context({ now: 1 }), 'students', { ...STUDENT, photo })
+    await update(db, context({ now: 2 }), 'students', 's-1', { photo: nextPhoto }, 1)
+    const auditId = await photoUpdateAudit(
+      db,
+      { ...STUDENT, photo },
+      { ...STUDENT, updated_at: 2, photo: nextPhoto },
+    )
+
+    await expect(undo(db, context({ now: 99 }), auditId)).rejects.toThrow(/binary/)
+
+    expect(await findById<Row>(db, 'students', 's-1')).toMatchObject({
+      full_name: 'Rahim',
+      version: 2,
+    })
+    const stored = await findById<Row>(db, 'students', 's-1')
+    expect(Array.from(stored?.photo as Uint8Array)).toEqual(Array.from(nextPhoto))
+    expect(await listHistory(db, 'students', 's-1')).toHaveLength(3)
+  })
+
+  it('undoes the text columns of a mixed update without corrupting the redacted photo', async () => {
+    const db = createBetterSqliteDb()
+    await migrate({ db, migrations })
+    const photo = new Uint8Array([0xff, 0xd8, 0xff, 0xd9])
+    const nextPhoto = new Uint8Array([0xff, 0xd8, 0xff, 0xe0])
+    await insert(db, context({ now: 1 }), 'students', { ...STUDENT, photo })
+    await update(
+      db,
+      context({ now: 2 }),
+      'students',
+      's-1',
+      { full_name: 'Karim', photo: nextPhoto },
+      1,
+    )
+    const auditId = await photoUpdateAudit(
+      db,
+      { ...STUDENT, photo },
+      { ...STUDENT, full_name: 'Karim', updated_at: 2, photo: nextPhoto },
+    )
+
+    await undo(db, context({ now: 99 }), auditId)
+
+    expect(await findById<Row>(db, 'students', 's-1')).toMatchObject({
+      full_name: 'Rahim',
+      version: 3,
+    })
+    const stored = await findById<Row>(db, 'students', 's-1')
+    expect(Array.from(stored?.photo as Uint8Array)).toEqual(Array.from(nextPhoto))
   })
 
   it('reverses a create with a soft delete, never a hard delete', async () => {
