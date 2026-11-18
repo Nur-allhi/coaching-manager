@@ -44,7 +44,7 @@ export function LeaderboardFixture() {
       start_time: '09:00',
       end_time: '10:00',
       capacity: 30,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     for (const [id, name, no] of ROSTER) {
@@ -61,7 +61,7 @@ export function LeaderboardFixture() {
         student_id: id,
         batch_id: 'lb-batch',
         enrolled_on: '2026-01-01',
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         discount_kind: 'none',
         discount_value: 0,
       })

@@ -42,7 +42,7 @@ export function DashboardFixture() {
       start_time: '09:00',
       end_time: '10:00',
       capacity: 30,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     const month = today().slice(0, 7)
@@ -60,7 +60,7 @@ export function DashboardFixture() {
         student_id: id,
         batch_id: 'db-batch',
         enrolled_on: '2026-01-01',
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         discount_kind: 'none',
         discount_value: 0,
       })
@@ -71,7 +71,7 @@ export function DashboardFixture() {
         student_id: id,
         month: null,
         kind: 'admission',
-        amount_minor: 100000,
+        amount_minor: 1000,
         discount_minor: 0,
       })
     }
@@ -81,7 +81,7 @@ export function DashboardFixture() {
       receipt_no: 'R-2026-000001',
       student_id: 'db-1',
       paid_on: '2026-03-02',
-      amount_minor: 40000,
+      amount_minor: 400,
       status: 'valid',
       revision: 0,
     })
@@ -91,13 +91,13 @@ export function DashboardFixture() {
       receipt_no: 'R-2026-000002',
       student_id: 'db-2',
       paid_on: '2026-03-02',
-      amount_minor: 50000,
+      amount_minor: 500,
       status: 'void',
       revision: 0,
     })
     await db.run(
       'INSERT INTO payment_allocations (payment_id, charge_id, amount_minor) VALUES (?, ?, ?)',
-      ['db-p-1', 'db-ch-db-1', 40000],
+      ['db-p-1', 'db-ch-db-1', 400],
     )
     await insert(db, c, 'attendance_sessions', {
       ...base,

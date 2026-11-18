@@ -36,7 +36,7 @@ export function DuesFixture() {
       end_time: '10:00',
       room: 'A',
       capacity: 10,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     const batchB = await batches.create(db, ctx, {
@@ -48,7 +48,7 @@ export function DuesFixture() {
       end_time: '12:00',
       room: 'B',
       capacity: 10,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     for (const [index, name, batchId] of [
@@ -67,8 +67,8 @@ export function DuesFixture() {
         batch_id: batchId,
         enrolled_on: '2026-01-01',
         left_on: null,
-        admission_fee_minor: 5000,
-        monthly_fee_minor: 1000,
+        admission_fee_minor: 50,
+        monthly_fee_minor: 10,
         discount_kind: 'none',
         discount_value: 0,
         status: 'active',
@@ -79,7 +79,7 @@ export function DuesFixture() {
           studentId,
           paidOn: '2026-02-10',
           method: 'cash',
-          amountMinor: 6000,
+          amountMinor: 60,
           note: '',
         })
       }

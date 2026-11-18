@@ -23,15 +23,15 @@ async function enroll(page: Page, batch: string, kind = 'none', value = '0') {
 }
 
 test('enrolls a student with a fixed discount and shows the net fee', async ({ page }) => {
-  await enroll(page, 'Batch A', 'fixed', '5000')
+  await enroll(page, 'Batch A', 'fixed', '50')
   await expect(page.getByTestId('enroll-row')).toHaveCount(1)
-  await expect(page.getByTestId('enroll-row')).toContainText('95000')
+  await expect(page.getByTestId('enroll-row')).toContainText('950')
 })
 
 test('enrolls with a percent discount and shows the net fee', async ({ page }) => {
   await enroll(page, 'Batch A', 'percent', '10')
   await expect(page.getByTestId('enroll-row')).toHaveCount(1)
-  await expect(page.getByTestId('enroll-row')).toContainText('90000')
+  await expect(page.getByTestId('enroll-row')).toContainText('900')
 })
 
 test('warns on a full batch but still saves the enrollment', async ({ page }) => {

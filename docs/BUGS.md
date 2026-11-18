@@ -42,6 +42,40 @@ a resolved-bug history.
 
 ## Open
 
+## BUG-015: Enrollment form still says "(paisa)" and money inputs have no unit hint
+
+- **Status:** fixed
+- **Severity:** low
+- **Found:** 2026-11-18 (user feedback on `/enrollments` at 1462×788)
+- **Location:** `src/core/i18n/locales/en.ts:102-103`, `bn.ts:107-108` (labels);
+  `src/modules/enrollments/EnrollmentFormFields.tsx` (numeric inputs)
+- **Description:** after the whole-taka change (D-068), the admission-fee and monthly-fee labels
+  still read "(paisa)" / "(পয়সা)", and the numeric inputs show a bare number with no unit, so it
+  is not obvious the value is money. Expected: labels name taka/BDT and the numeric fields carry a
+  small, non-blocking unit hint next to the number.
+- **Root Cause:** the money-unit conversion updated helpers, fixtures and governing docs but missed
+  these labels and the form fields.
+- **Fix Approach:** labels now say "(BDT)" / "(বিডিটি)"; money inputs carry a small muted unit
+  suffix inside the field ("BDT", or "%" when the discount kind is percent); the live net-fee
+  preview shows the unit too. Used the existing `Input`, `Label` and muted-foreground token, no new
+  dependency. The unit suffix is `aria-hidden` because the label already names the unit for screen
+  readers.
+- **Resolved:** 2026-11-18 — uncommitted follow-up to D-068 on `dev`
+
+## BUG-014: Enrollments screen shows fees in paisa instead of taka
+
+- **Status:** fixed
+- **Severity:** medium
+- **Found:** 2026-11-18 (during: user testing with the demo dataset)
+- **Location:** `src/modules/enrollments/EnrollmentsScreen.tsx:158` (form preview) and `:182` (list row)
+- **Description:** Both places rendered `discountedMonthlyFee(...)` directly, so a 1500-taka
+  monthly fee was shown as `150000`.
+- **Root Cause:** two renders skipped the money formatter, and the app's stored unit was paisa.
+- **Fix Approach:** the human chose the broader fix — redefine all money as whole taka (D-068).
+  Both renders now call `formatMinor`; helpers, migration, fixtures and governing docs were
+  updated to the taka convention. Verified with unit and E2E tests showing formatted taka.
+- **Resolved:** 2026-11-18 — whole-taka conversion on `dev` (no release)
+
 ## BUG-012: Inactivity-lock E2E is flaky across browsers
 
 - **Status:** open

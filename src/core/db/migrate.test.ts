@@ -28,7 +28,34 @@ describe('migrate', () => {
     expect(names).toContain('charges')
     expect(names).toContain('attendance_sessions')
     expect(names).toContain('exam_results')
-    expect(await versionOf(db)).toBe('202611171020')
+    expect(await versionOf(db)).toBe('202611181200')
+  })
+
+  it('converts existing paisa amounts to whole taka', async () => {
+    const db = createBetterSqliteDb()
+    // Upgrade to the version just before the money-unit migration.
+    await migrate({ db, migrations: migrations.slice(0, -1) })
+    await db.run(
+      'INSERT INTO academic_years (id, created_at, updated_at, deleted_at, version, name, starts_on, ends_on, is_current) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      ['ay-1', 1, 1, null, 1, '2026', '2026-01-01', '2026-12-31', 1],
+    )
+    await db.run(
+      'INSERT INTO classes (id, created_at, updated_at, deleted_at, version, name, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      ['c-1', 1, 1, null, 1, 'Class 10', 1],
+    )
+    await db.run(
+      'INSERT INTO batches (id, created_at, updated_at, deleted_at, version, academic_year_id, class_id, name, days_mask, start_time, end_time, monthly_fee_minor, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      ['b-1', 1, 1, null, 1, 'ay-1', 'c-1', 'Morning', 62, '09:00', '10:00', 150000, 'active'],
+    )
+
+    await migrate({ db, migrations })
+
+    const rows = await db.query<{ monthly_fee_minor: number }>(
+      'SELECT monthly_fee_minor FROM batches WHERE id = ?',
+      ['b-1'],
+    )
+    expect(rows[0]?.monthly_fee_minor).toBe(1500)
+    expect(await versionOf(db)).toBe('202611181200')
   })
 
   it('brings a v1 database to the identical schema', async () => {

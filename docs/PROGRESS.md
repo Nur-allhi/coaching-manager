@@ -1884,3 +1884,19 @@ admission on the real screens, C1 break and recover the journey student's data).
 ## P8 Optional extras
 
 _(not started)_
+
+## Money unit change — whole taka (BUG-014 / D-068)
+
+**What changed:** the human chose to redefine money from integer paisa to whole taka after
+seeing a 1500-taka fee displayed as `150000` on Enrollments. `formatMinor` now formats the integer
+directly, `parseToMinor` rounds input to nearest taka, `BatchSection` no longer divides by 100,
+both Enrollments renders use `formatMinor`, and migration `202611181200_money_whole_taka` divides
+existing `*_minor` values by 100 (percent discounts untouched). Demo/test fixtures and the
+governing money rules in PLAN/TAD/REPO_RULES/SECURITY/E2E_TESTING were updated.
+
+**Verified:** `pnpm check` green (bundle 282.2/300 KB); 257 unit tests and 208 Playwright tests
+pass in both browsers. Firefox had to be reinstalled after its launcher broke mid-run
+(infrastructure, not product).
+
+**Known gaps:** older backups restore at their original paisa unit until re-migrated; the `Minor`
+type and `*_minor` column names are retained for compatibility and now hold taka.

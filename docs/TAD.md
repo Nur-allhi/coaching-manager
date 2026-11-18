@@ -97,9 +97,9 @@ Every business table carries the same five columns:
 
 ### 5.3 Rules
 
-1. Money MUST be an integer number of paisa. A float MUST NOT appear in a money column, a
+1. Money MUST be a whole number of taka. A float MUST NOT appear in a money column, a
    money parameter, or a money calculation.
-2. Percent discounts MUST be rounded exactly once, at the end, to the nearest paisa.
+2. Percent discounts MUST be rounded exactly once, at the end, to the nearest taka.
 3. Soft delete only. Every default list query filters `deleted_at IS NULL`.
 4. Every update goes through `repo.update(id, patch, expectedVersion)`. A version mismatch
    MUST abort the write.

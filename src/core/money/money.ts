@@ -1,8 +1,8 @@
 /**
- * Money helpers (PLAN.md §3, ticket T-014).
+ * Money helpers (PLAN.md §3, ticket T-014; unit changed to whole taka on human instruction).
  *
- * Money is an integer number of paisa: 100 paisa = 1 taka. Nothing in this module accepts or
- * returns a fractional amount, and no arithmetic here goes through a float.
+ * Money is an integer number of taka. No arithmetic here goes through a float.
+ * The `Minor` alias and `*_minor` column names are kept for compatibility; they now hold taka.
  *
  * Discount helpers return the **discount**, not the remainder. `netAmount` subtracts it.
  */
@@ -19,7 +19,7 @@ export function sumMinor(values: readonly Minor[]): Minor {
   return total
 }
 
-/** Fixed paisa off an amount, never more than the amount itself. */
+/** Fixed taka off an amount, never more than the amount itself. */
 export function applyFixedDiscount(amount: Minor, discount: Minor): Minor {
   assertMinor(amount)
   assertMinor(discount)
@@ -28,10 +28,10 @@ export function applyFixedDiscount(amount: Minor, discount: Minor): Minor {
 }
 
 /**
- * Percent off an amount, in whole percent, rounded once to the nearest paisa.
+ * Percent off an amount, in whole percent, rounded once to the nearest taka.
  *
- * 15% of 3333 paisa = 499.95 → 500. 7% of 1000 paisa = 70 exactly.
- * Ties round up, so the rule is deterministic: 5% of 10 paisa = 0.5 → 1.
+ * 15% of 3333 taka = 499.95 → 500. 7% of 1000 taka = 70 exactly.
+ * Ties round up, so the rule is deterministic: 5% of 10 taka = 0.5 → 1.
  * The arithmetic stays in integers: `(amount * percent + 50) / 100` floored.
  */
 export function applyPercentDiscount(amount: Minor, percent: number): Minor {
@@ -42,7 +42,7 @@ export function applyPercentDiscount(amount: Minor, percent: number): Minor {
   return Math.min(amount, Math.floor((amount * percent + 50) / 100))
 }
 
-/** The paisa left after a discount of either kind. */
+/** The taka left after a discount of either kind. */
 export function netAmount(
   amount: Minor,
   discountKind: 'none' | 'fixed' | 'percent',
@@ -81,34 +81,28 @@ export interface FormatMinorOptions {
   digits?: 'latin' | 'bengali'
 }
 
-/** Format paisa as taka, dropping the decimal part when it is zero. */
+/** Format whole taka with South Asian digit grouping. */
 export function formatMinor(amount: Minor, options: FormatMinorOptions = {}): string {
   assertMinor(amount)
-  const absolute = Math.abs(amount)
-  const taka = Math.floor(absolute / 100)
-  const paisa = absolute % 100
-  const whole = groupDigits(String(taka))
-  const text = paisa === 0 ? whole : `${whole}.${String(paisa).padStart(2, '0')}`
+  const text = groupDigits(String(Math.abs(amount)))
   const signed = amount < 0 ? `-${text}` : text
   return options.digits === 'bengali' ? toBengali(signed) : signed
 }
 
 /**
- * Parse a taka string into integer paisa: "1,250.50" → 125050.
- * Accepts Bengali digits and thousands separators, and refuses more than two decimals.
+ * Parse a taka string into whole taka: "1,250" → 1250. Decimals round to the nearest taka.
+ * Accepts Bengali digits, thousands separators and the taka sign.
  */
 export function parseToMinor(input: string): Minor {
   const cleaned = toLatin(input)
     .replace(/[\s,৳]/g, '')
     .trim()
-  if (!/^-?\d+(\.\d{1,2})?$/.test(cleaned)) throw new Error('invalid money amount')
-  const negative = cleaned.startsWith('-')
-  const [whole, fraction = ''] = cleaned.replace('-', '').split('.')
-  const taka = Number(whole)
-  if (!Number.isSafeInteger(taka)) throw new Error('amount is too large')
-  const total = taka * 100 + Number(fraction.padEnd(2, '0'))
-  assertMinor(total)
-  return negative ? -total : total
+  if (!/^-?\d+(\.\d+)?$/.test(cleaned)) throw new Error('invalid money amount')
+  const value = Number(cleaned)
+  if (!Number.isFinite(value)) throw new Error('invalid money amount')
+  const rounded = Math.round(value)
+  assertMinor(rounded)
+  return rounded
 }
 
 function toLatin(text: string): string {
@@ -116,5 +110,5 @@ function toLatin(text: string): string {
 }
 
 export function assertMinor(value: number): void {
-  if (!Number.isSafeInteger(value)) throw new Error('money must be an integer number of paisa')
+  if (!Number.isSafeInteger(value)) throw new Error('money must be an integer number of taka')
 }

@@ -84,7 +84,7 @@ Rules:
 
 These protect the data itself. They are the highest-value rules in this document.
 
-1. **Money is never a float.** Amounts are integer paisa in `*_minor` columns. A float MUST
+1. **Money is never a float.** Amounts are whole taka in `*_minor` columns. A float MUST
    NOT appear in a money column, a money parameter, or a money calculation. Reason: 0.1 + 0.2
    is not 0.3, and a fee ledger that drifts is a fee ledger that cannot be trusted.
 2. **No hard deletes.** Records are soft-deleted with `deleted_at`; every default list query

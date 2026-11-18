@@ -37,7 +37,7 @@ export function EnrollmentFixture() {
         end_time: '10:00',
         room: name,
         capacity,
-        monthly_fee_minor: 100000,
+        monthly_fee_minor: 1000,
         status: 'active',
       })
     }

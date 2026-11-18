@@ -1644,6 +1644,23 @@ AcademicsScreen,*Section}.ts(x)`, the placeholder `Screen.tsx` becomes the real 
 
 ---
 
+## D-068 — Money stored as whole taka (2026-11-18)
+
+- **Context:** User testing with the demo dataset found the Enrollments screen printing `150000`
+  for a 1500-taka fee. The display bug (BUG-014) was isolated to two renders, but the human twice
+  chose the broader outcome: define money as whole taka everywhere, not paisa.
+- **Decision (human, confirmed twice after the consequences were stated):** change the locked money
+  convention in PLAN §3, TAD §5.3, REPO_RULES §7.4, SECURITY §5 and E2E_TESTING §6 from integer
+  paisa to whole taka. `formatMinor` now formats the integer directly, `parseToMinor` rounds input
+  to the nearest taka, `BatchSection` no longer divides by 100, and a migration divides all existing
+  `*_minor` values by 100 (percent discounts unchanged). Demo/test fixtures were converted.
+- **Why:** the user wants fees read as taka throughout; the two-render patch alone would have left
+  the stored unit inconsistent with what they asked for.
+- **Impact:** changing a Locked Decision — schema convention and upgrade path. Existing local data
+  is converted on next boot; older backups restore at their old unit until re-migrated. The `Minor`
+  type and `*_minor` column names are retained for compatibility but now hold taka.
+- **Verified:** 257 unit tests and 208 Playwright tests pass; `pnpm check` green.
+
 ## D-067 — T-092 Production build (2026-11-18)
 
 - **Context:** T-092 needs the version shown in Settings to match `package.json`, static hosting

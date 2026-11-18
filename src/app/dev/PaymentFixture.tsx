@@ -44,7 +44,7 @@ export function PaymentFixture() {
       end_time: '10:00',
       room: 'A',
       capacity: 10,
-      monthly_fee_minor: 100000,
+      monthly_fee_minor: 1000,
       status: 'active',
     })
     const studentId = await createStudent(db, ctx, {
@@ -58,8 +58,8 @@ export function PaymentFixture() {
       batch_id: batchId,
       enrolled_on: '2026-01-01',
       left_on: null,
-      admission_fee_minor: 5000,
-      monthly_fee_minor: 1000,
+      admission_fee_minor: 50,
+      monthly_fee_minor: 10,
       discount_kind: 'none',
       discount_value: 0,
       status: 'active',
