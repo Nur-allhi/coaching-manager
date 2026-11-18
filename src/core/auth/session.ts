@@ -129,19 +129,26 @@ export function setIdleMinutes(minutes: number, store: Storage = localStorage): 
   emit()
 }
 
-/** Refresh the idle clock, or lock when the configured timeout has elapsed. */
-export function noteActivity(
+/** Lock when the configured timeout has elapsed, without touching the activity clock. */
+export function checkIdle(
   sessionStore: Storage = webStorage(),
   pinStore: Storage = localStorage,
   now: () => number = Date.now,
 ): void {
   const stored = read(sessionStore)
   if (!stored || !hasPin(pinStore)) return
-  const idleMs = getIdleMinutes() * 60_000
-  if (now() - stored.lastActivityAt >= idleMs) {
-    lock(sessionStore)
-    return
-  }
+  if (now() - stored.lastActivityAt >= getIdleMinutes() * 60_000) lock(sessionStore)
+}
+
+/** Refresh the idle clock after real activity, or lock when the timeout has elapsed. */
+export function noteActivity(
+  sessionStore: Storage = webStorage(),
+  pinStore: Storage = localStorage,
+  now: () => number = Date.now,
+): void {
+  checkIdle(sessionStore, pinStore, now)
+  const stored = read(sessionStore)
+  if (!stored || !hasPin(pinStore)) return
   sessionStore.setItem(SESSION_KEY, JSON.stringify({ ...stored, lastActivityAt: now() }))
 }
 
@@ -173,5 +180,5 @@ export function startIdleWatcher(): void {
   for (const event of ['pointerdown', 'keydown'] as const) {
     document.addEventListener(event, () => noteActivity(), { passive: true })
   }
-  window.setInterval(() => noteActivity(), 1000)
+  window.setInterval(() => checkIdle(), 1000)
 }

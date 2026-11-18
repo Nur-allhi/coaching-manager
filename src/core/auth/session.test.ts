@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   currentSession,
   DEFAULT_IDLE_MINUTES,
@@ -9,6 +9,7 @@ import {
   noteActivity,
   setIdleMinutes,
   setSession,
+  startIdleWatcher,
   unlock,
 } from './session'
 import { clearPin, setPin } from './pin-store'
@@ -20,6 +21,11 @@ beforeEach(() => {
   clearPin(pinStore)
   sessionStore.clear()
   pinStore.removeItem('coaching-manager:idle-minutes')
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
 })
 
 describe('session and inactivity lock (T-080)', () => {
@@ -65,5 +71,29 @@ describe('session and inactivity lock (T-080)', () => {
     await setPin('123456', pinStore)
     setSession('teacher', sessionStore, () => 500)
     expect(currentSession(sessionStore, pinStore)?.role).toBe('teacher')
+  })
+
+  it('locks on idle ticks without refreshing the activity clock', async () => {
+    await setPin('123456', pinStore)
+    setIdleMinutes(10, pinStore)
+    let now = 1_000_000
+    vi.spyOn(Date, 'now').mockImplementation(() => now)
+    await unlock('123456', sessionStore, pinStore)
+
+    vi.spyOn(document, 'addEventListener').mockImplementation(() => {})
+    let tick: (() => void) | undefined
+    vi.stubGlobal('setInterval', (fn: () => void) => {
+      tick = fn
+      return 0
+    })
+    startIdleWatcher()
+    if (!tick) throw new Error('idle watcher installed no interval')
+
+    // Eleven minutes of one-second ticks with no pointer or key activity.
+    for (let minute = 0; minute < 11 * 60; minute += 1) {
+      now += 1000
+      tick()
+    }
+    expect(isLocked(sessionStore, pinStore)).toBe(true)
   })
 })

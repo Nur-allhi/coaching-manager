@@ -78,13 +78,21 @@ a resolved-bug history.
 
 ## BUG-012: Inactivity-lock E2E is flaky across browsers
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-18 (during: full-suite e2e verification for T-082)
 - **Location:** `e2e/specs/auth.spec.ts:75-83`, `src/core/auth/session.ts` (`startIdleWatcher`)
 - **Description:** "locks after the inactivity timeout" intermittently reports `getByTestId('lock-title')` not found within 10 s after setting `IDLE_KEY` to `0.02`. In three local runs the failing browser varied (Chromium twice, Firefox once on clean `dev`); the other browser passed. Reproduced on unmodified `dev` in a detached worktree, so it is not a T-082 regression. T-080's CI was green with its two automatic retries.
-- **Root Cause:** unknown — timing/ordering of the idle watcher when the timeout is changed after boot.
-- **Fix Approach:** not applied; needs confirmation.
+- **Root Cause:** the 1 s interval in `startIdleWatcher` called `noteActivity()`, which refreshed
+  `lastActivityAt` on every tick as long as the timeout had not elapsed. With the test's 1.2 s
+  timeout, locking depended on where the ticks landed relative to the last activity; a real
+  10-minute idle session never auto-locked at all.
+- **Fix Approach:** the human chose to fix the watcher. A new `checkIdle()` locks when the timeout
+  has elapsed without touching the activity clock; the interval uses it while real
+  `pointerdown`/`keydown` events still call `noteActivity()` to refresh. A unit regression drives
+  660 one-second ticks with no activity and fails before / passes after. The existing E2E spec is
+  unchanged and now passes reliably in Chromium and Firefox.
+- **Resolved:** 2026-11-18 — branch `fix/idle-lock-e2e` (PR pending)
 
 ## BUG-004: The app cannot load offline — SQLite WASM is not precached
 
@@ -129,7 +137,7 @@ a resolved-bug history.
 
 ## BUG-007: Undoing a photo update can write a redaction marker into the BLOB column
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-17 (during: code review of T-042)
 - **Location:** `src/core/audit/undo.ts:58-68,89-94`; `src/core/audit/write.ts:38-40`;
@@ -141,10 +149,12 @@ a resolved-bug history.
   this is a pre-existing limitation made safe-but-imprecise, not a new regression.
 - **Root Cause:** the undo path reconstructs values from JSON snapshots that intentionally omit
   binary content.
-- **Fix Approach:** represent blobs by a typed marker that undo translates back to the stored
-  bytes (or exclude binary-only entries from undo), with a regression test. Needs the human's
-  confirmation under REPO_RULES.md §10 before a fix.
-- **Resolved:** —
+- **Fix Approach:** the human chose to reject binary-only undo. `inversePatch` now skips
+  redacted binary columns, and refuses the undo with a typed `InvalidAuditEntryError` when no
+  non-binary column actually changed between the before and after snapshots. A mixed update
+  still undoes its text columns and leaves the photo untouched, so no marker can reach a BLOB.
+  Two regression tests in `undo.test.ts` fail before and pass after the change.
+- **Resolved:** 2026-11-18 — branch `fix/undo-blob-marker` (PR pending)
 
 ## BUG-008: Dev/test harness routes are reachable in production builds
 
