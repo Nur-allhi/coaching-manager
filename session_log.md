@@ -1467,3 +1467,23 @@ completed
 ### Status
 
 - completed
+
+## Session 2026-11-18 14:03
+
+### Changes
+
+- `src/core/audit/undo.ts` — `inversePatch` skips redacted binary columns; binary-only updates are
+  refused with a typed `InvalidAuditEntryError`; mixed updates keep their text-only inverse patch.
+- `src/core/audit/undo.test.ts` — two regression tests (binary-only refusal, mixed update without
+  BLOB corruption) that fail before the fix and pass after.
+- `docs/BUGS.md`, `CHANGELOG.md`, `docs/PROGRESS.md` — BUG-007 fixed status, changelog entry and
+  verification record.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on inversePatch/undoWithin; detect-changes before commit)
+- `vitest` (regression tests), `playwright` (full E2E suite)
+
+### Status
+
+- completed — branch `fix/undo-blob-marker`, PR pending; no merge performed
