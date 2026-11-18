@@ -1934,3 +1934,26 @@ now pass in Chromium and Firefox.
 **Known gaps:** the `seed.spec.ts` 5 s fixture timeout under fully-parallel load is unrelated to
 this fix and out of scope for these two bug tickets. The idle check still runs once per second, so
 lock can be up to a second late.
+
+## DESIGN-REVAMP — OpenDesign visual system — **In progress** (PR pending)
+
+**What changed:** translated the approved 21-artifact OpenDesign bundle into CSS tokens in
+`src/index.css` only — page `#F4EFE4`/`#121212`, white/`#1E1E1E` surfaces, 0px radius, no
+shadows or gradients, `blur(8px)` restricted to sidebar and cards, solid high-contrast tables.
+Mounted the already-installed `next-themes` provider and persisted a `theme` setting
+(`light | dark | system`, default `system`) in the existing key/value settings table — no
+migration or schema change. Added a labelled three-way theme control to Settings (en + bn).
+Print CSS files were not touched; a global `@media print` rule removes glass.
+
+**Scope kept:** all behaviour, routes, i18n keys (except the new theme labels), data-testid hooks,
+money logic and access rules are unchanged. No per-component rewrites.
+
+**Verified:** `pnpm check` green (261 unit tests, bundle 283.6/300 KB). Full `pnpm e2e` in two
+halves with `--workers=1`: 117 + 121 = 238 passed, 0 failed across Chromium, Firefox and smoke.
+`check_ui.mjs` at 375px and 1280px: no horizontal overflow, no console errors, no focus stop
+without a visible indicator. Before/after screenshots in `docs/design-review/`.
+
+**Known deviations:** Archivo was not installed (no new dependency without approval), so the
+self-hosted Noto Sans Variable stack is kept. `--primary` is #C62828 rather than #E53935 to
+meet AA contrast for white button text. Two artifacts contain small box-shadows; omitted per the
+flat/no-shadow rule. The artifacts contain chart colour tokens but no chart, so none was added.

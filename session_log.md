@@ -1522,3 +1522,26 @@ completed
 ### Status
 
 - completed — conflict resolution only; PR #63 remains open for the human to merge
+
+## Session 2026-11-18 16:06
+
+### Changes
+
+- `origin/dev` merged into `feature/glass-theme` with a normal merge commit (BUG-007, BUG-012).
+- `src/index.css` — OpenDesign tokens in one place; flat 0px radius, no shadows/gradients,
+  glass on sidebar/cards only, solid tables, print neutralised.
+- `src/core/theme/theme-context.ts`, `src/core/theme/ThemeProvider.tsx`, `src/main.tsx` —
+  next-themes provider mounted, stored theme applied pre-render.
+- `src/modules/settings/{defaults,repository,SettingsScreen}.tsx` and both locale files —
+  theme setting plus labelled Light/Dark/System control (en + bn).
+- `src/modules/dashboard/Screen.tsx` — KPI cards use the shared glass-card surface.
+- `docs/{DECISIONS,PROGRESS}.md`, `CHANGELOG.md` — D-068/D-069 and housekeeping.
+
+### Skill(s) / Tool(s) Used
+
+- `open-design` (one get_artifact bundle pull), `senior-frontend` (check_ui.mjs screenshots),
+  `vitest`, `playwright`, `gitnexus` (blast-radius checks)
+
+### Status
+
+- completed — `pnpm check` green; full E2E 238 passed in two halves; PR opened into `dev`, not merged.

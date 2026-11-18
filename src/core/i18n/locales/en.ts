@@ -268,6 +268,10 @@ export const en = {
       persistenceEnabled: 'Persistent storage is enabled.',
       persistenceDisabled: 'Persistent storage is not enabled.',
       version: 'Version',
+      theme: 'Theme',
+      themeLight: 'Light',
+      themeDark: 'Dark',
+      themeSystem: 'System',
     },
     i18n: {
       language: 'Language',

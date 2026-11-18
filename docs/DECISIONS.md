@@ -1738,3 +1738,29 @@ These use the plan's defaults. They become implemented in the phase noted.
   backup/restore behaviour, test matrix, secret or shared branch is touched. Version impact: none.
 - **Impact:** additive controls in `src/app/dev/PaymentFixture.tsx`, a new
   `e2e/specs/full-journey.spec.ts`, and PROGRESS / CHANGELOG / session-log lines. No new dependency.
+
+## 2026-11-18 — OpenDesign visual system (design-revamp branch)
+
+### D-068 Bauhaus-flat glass tokens, no new dependency
+
+- **Context:** the approved OpenDesign bundle specifies Archivo for Latin text. Adding a font
+  dependency needs human approval, and the plan forbids remote font requests.
+- **Decision:** keep the existing self-hosted Noto Sans Variable stack for Latin and Noto Sans
+  Bengali for `:lang(bn)`. Translate the bundle's palette into `oklch` tokens in one place,
+  `src/index.css`; `--primary` uses #C62828 rather than #E53935 so white button text meets AA.
+  #E53935 remains available as the single accent through `--accent-mark`. Glass (`blur(8px)`) is
+  limited to the sidebar and cards; tables and forms stay solid, print stays ink-on-white.
+- **Why:** visual parity without a dependency change, no flash of unstyled text, and the existing
+  i18n/font and contrast rules stay intact.
+- **Impact:** token values change across the app; no behaviour, route, money or schema change.
+  The Archivo substitution is reported to the human for approval.
+
+### D-069 Theme preference stored in the existing settings table
+
+- **Decision:** add a Zod-validated `theme` key (`light | dark | system`, default `system`) to the
+  key/value settings repository. Mount the already-installed `next-themes` provider with
+  `attribute="class"`, seed the class before React mounts from the stored value, and let a
+  segmented control in Settings change it. No migration and no schema change.
+- **Why:** the brief asks to persist the choice in Settings and default to system where feasible;
+  the settings table already exists and needs no schema work.
+- **Impact:** one new setting row at most; `defaultTheme: system` keeps existing installs unchanged.
