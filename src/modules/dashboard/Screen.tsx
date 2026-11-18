@@ -22,7 +22,7 @@ function Kpi({
   to: string
 }) {
   return (
-    <Link to={to} data-testid={testId} className="block rounded border p-4 hover:underline">
+    <Link to={to} data-testid={testId} className="glass-card block p-4 hover:underline">
       <p className="text-muted-foreground text-sm">{label}</p>
       <p className="text-xl font-semibold">{value}</p>
     </Link>

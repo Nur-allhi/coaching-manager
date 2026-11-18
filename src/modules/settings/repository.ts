@@ -13,6 +13,7 @@ import {
   type CentreProfile,
   type GradingScale,
   type SettingKey,
+  type ThemePreference,
 } from './defaults'
 
 type ValueOf<K extends SettingKey> = ReturnType<(typeof SETTING_DEFINITIONS)[K]['schema']['parse']>
@@ -60,15 +61,17 @@ export interface AllSettings {
   currency: string
   gradingScale: GradingScale
   receiptFormat: string
+  theme: ThemePreference
 }
 
 /** Read all settings in one call for the Settings screen. */
 export async function getAllSettings(db: Db): Promise<AllSettings> {
-  const [centre, currency, gradingScale, receiptFormat] = await Promise.all([
+  const [centre, currency, gradingScale, receiptFormat, theme] = await Promise.all([
     getSetting(db, 'centre'),
     getSetting(db, 'currency'),
     getSetting(db, 'gradingScale'),
     getSetting(db, 'receiptFormat'),
+    getSetting(db, 'theme'),
   ])
-  return { centre, currency, gradingScale, receiptFormat }
+  return { centre, currency, gradingScale, receiptFormat, theme }
 }

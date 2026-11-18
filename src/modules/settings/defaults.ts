@@ -31,6 +31,10 @@ export const DEFAULT_GRADING_SCALE: GradingScale = [
 
 export const DEFAULT_RECEIPT_FORMAT = 'R-YYYY-000001'
 
+/** Theme preference. 'system' follows the OS and is the default. */
+export const ThemeSchema = z.enum(['light', 'dark', 'system'])
+export type ThemePreference = z.infer<typeof ThemeSchema>
+
 export interface CentreProfile {
   name: string
   logoDataUri: string
@@ -58,6 +62,7 @@ export const SETTING_DEFINITIONS = {
   currency: { schema: z.string().min(1), fallback: 'BDT' },
   gradingScale: { schema: GradingScaleSchema, fallback: DEFAULT_GRADING_SCALE },
   receiptFormat: { schema: z.string().min(1), fallback: DEFAULT_RECEIPT_FORMAT },
+  theme: { schema: ThemeSchema, fallback: 'system' },
 } as const
 
 export type SettingKey = keyof typeof SETTING_DEFINITIONS

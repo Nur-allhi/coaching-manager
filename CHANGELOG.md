@@ -12,7 +12,16 @@ human-readable subset.
 
 ## [Unreleased]
 
+### Changed
+
+- Applied the approved OpenDesign Bauhaus-flat visual system across the app: page, surface,
+  border, radius and chart tokens; restrained glass on the sidebar and cards; solid tables and
+  forms; plain ink-on-white print. No behaviour, route, money or schema change (D-068).
+
 ### Added
+
+- Light / Dark / System theme choice in Settings, persisted in the existing key/value settings
+  table and applied before first paint; defaults to the system preference (D-069).
 
 - Static hosting instructions and security-header documentation in `README.md`, and a Settings
   version stamp injected from `package.json` at build time (T-092, D-067).

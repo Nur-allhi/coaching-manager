@@ -273,6 +273,10 @@ export const bn: { translation: Translation } = {
       persistenceEnabled: 'স্থায়ী সংরক্ষণ সক্রিয় আছে।',
       persistenceDisabled: 'স্থায়ী সংরক্ষণ সক্রিয় নেই।',
       version: 'সংস্করণ',
+      theme: 'থিম',
+      themeLight: 'হালকা',
+      themeDark: 'অন্ধকার',
+      themeSystem: 'সিস্টেম',
     },
     i18n: {
       language: 'ভাষা',

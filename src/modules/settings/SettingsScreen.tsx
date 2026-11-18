@@ -14,6 +14,8 @@ import { listSnapshots } from '@/core/backup/snapshots'
 import { opfsStorage } from '@/core/backup/storage'
 import { useOptimisticMutation } from '@/core/ui/use-optimistic-mutation'
 import { SecurityPanel } from '@/app/auth/SecurityPanel'
+import { useAppTheme } from '@/core/theme/theme-context'
+import type { ThemePreference } from './defaults'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -22,10 +24,17 @@ import type { CentreProfile, GradingScale } from './defaults'
 
 const SETTINGS_KEY = ['settings'] as const
 
+const THEME_LABELS: Record<ThemePreference, string> = {
+  light: 'settings.themeLight',
+  dark: 'settings.themeDark',
+  system: 'settings.themeSystem',
+}
+
 export function SettingsScreen() {
   const { t } = useTranslation()
   const db = getDb()
   const storage = opfsStorage()
+  const { preference: themePreference, setPreference: setThemePreference } = useAppTheme()
 
   const settings = useQuery({ queryKey: SETTINGS_KEY, queryFn: () => getAllSettings(db) })
   const [draft, setDraft] = useState<AllSettings | null>(null)
@@ -239,6 +248,24 @@ export function SettingsScreen() {
               onClick={() => void setLanguage(lang)}
             >
               {lang === 'en' ? t('i18n.english') : t('i18n.bangla')}
+            </Button>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-medium">{t('settings.theme')}</h2>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t('settings.theme')}>
+          {(['light', 'dark', 'system'] as ThemePreference[]).map((value) => (
+            <Button
+              key={value}
+              type="button"
+              variant={themePreference === value ? 'default' : 'outline'}
+              aria-pressed={themePreference === value}
+              data-testid={`theme-${value}`}
+              onClick={() => void setThemePreference(value)}
+            >
+              {t(THEME_LABELS[value])}
             </Button>
           ))}
         </div>

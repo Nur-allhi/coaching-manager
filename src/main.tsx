@@ -6,10 +6,13 @@ import { AuthGate } from '@/app/auth/AuthGate'
 import { LockScreen } from '@/app/LockScreen'
 import { RecoveryScreen } from '@/app/RecoveryScreen'
 import { bootstrapApp } from '@/app/bootstrap'
+import { getDb } from '@/core/db/client'
 import { acquireDbOwnerLock } from '@/app/single-tab'
 import { requestPersistenceOnFirstRun } from '@/app/persistent-storage'
 import { initI18n } from '@/core/i18n'
 import { startIdleWatcher } from '@/core/auth'
+import { applyStoredTheme } from '@/core/theme/theme-context'
+import { AppThemeProvider } from '@/core/theme/ThemeProvider'
 import '@/index.css'
 
 const container = document.getElementById('root')
@@ -28,7 +31,11 @@ const ownsDb = await acquireDbOwnerLock()
 // a table. A failure shows a recovery screen instead of a broken app (PLAN §7.4).
 const boot = ownsDb ? await bootstrapApp() : { ok: true }
 
-if (ownsDb && boot.ok) void requestPersistenceOnFirstRun()
+if (ownsDb && boot.ok) {
+  void requestPersistenceOnFirstRun()
+  // Theme is applied before render so the first paint never flashes the wrong theme.
+  await applyStoredTheme(getDb())
+}
 
 const queryClient = new QueryClient()
 
@@ -40,9 +47,11 @@ createRoot(container).render(
       <RecoveryScreen message={boot.error ?? 'unknown error'} />
     ) : (
       <QueryClientProvider client={queryClient}>
-        <AuthGate>
-          <App />
-        </AuthGate>
+        <AppThemeProvider>
+          <AuthGate>
+            <App />
+          </AuthGate>
+        </AppThemeProvider>
       </QueryClientProvider>
     )}
   </StrictMode>,
