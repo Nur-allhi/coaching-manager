@@ -1467,3 +1467,23 @@ completed
 ### Status
 
 - completed
+
+## Session 2026-11-18 14:13
+
+### Changes
+
+- `src/core/auth/session.ts` — added `checkIdle()`; the idle interval checks for expiry without
+  refreshing the activity clock, while real pointer/key events still refresh it.
+- `src/core/auth/session.test.ts` — deterministic 660-tick regression that fails before the fix;
+  mocks restored after each test.
+- `docs/BUGS.md`, `CHANGELOG.md`, `docs/PROGRESS.md` — BUG-012 fixed status, changelog entry and
+  verification record.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on noteActivity/startIdleWatcher; detect-changes before commit)
+- `vitest` (regression tests), `playwright` (full E2E suite)
+
+### Status
+
+- completed — branch `fix/idle-lock-e2e`, PR pending; no merge performed
