@@ -1,0 +1,131 @@
+/*
+ * Design refinement: rounded surfaces, neutral elevation and one crisp focus ring.
+ * Rules are unlayered so they win over Tailwind's layered utilities without editing
+ * any generated shadcn component. Values are owned by the tokens in index.css.
+ */
+
+/* Cards and KPI tiles. */
+[data-slot='card'],
+.glass-card {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-rest);
+}
+
+a.glass-card:hover,
+[data-slot='card']:has(a):hover {
+  box-shadow: var(--shadow-raised);
+}
+
+/* Modal and sheet shells. */
+[data-slot='dialog-content'],
+[data-slot='alert-dialog-content'],
+[data-slot='sheet-content'] {
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    0 0 0 1px var(--card-border),
+    var(--shadow-raised);
+}
+
+[data-slot='dialog-footer'],
+[data-slot='alert-dialog-footer'] {
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+}
+
+/* The command root carries a generated `rounded-xl!`; only !important matches it. */
+[data-slot='command'] {
+  border-radius: var(--radius-2xl) !important;
+}
+
+/* Surface panels that behave like cards. */
+[data-slot='popover-content'],
+[data-slot='dropdown-menu-content'],
+[data-slot='dropdown-menu-sub-content'],
+[data-slot='select-content'],
+[data-slot='hover-card-content'],
+[data-slot='menubar-content'],
+[data-slot='menubar-sub-content'] {
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 0 0 1px var(--card-border),
+    var(--shadow-raised);
+}
+
+/* Table shells only: cells, rows and grids stay square. */
+[data-slot='table'],
+[data-slot='table-container'],
+.oc-table,
+table {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-rest);
+}
+
+[data-slot='button']:active {
+  box-shadow: var(--shadow-pressed);
+}
+
+/* Exactly one visible ring: full-opacity 2px outline at 2px offset. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Neutralise the generated translucent ring on controls. */
+:is(
+  [data-slot='button'],
+  [data-slot='input'],
+  [data-slot='textarea'],
+  [data-slot='select-trigger'],
+  [data-slot='toggle'],
+  [data-slot='tabs-trigger'],
+  [data-slot='accordion-trigger'],
+  [data-slot='checkbox'],
+  [data-slot='radio-group-item'],
+  [data-slot='switch'],
+  [data-slot='input-group'],
+  [data-slot='item'],
+  [data-slot='field-label'],
+  [data-slot='sidebar-menu-button'],
+  [data-slot='scroll-area-viewport']
+):focus-visible {
+  box-shadow: none;
+}
+
+/* Focused fields: primary border, opaque surface, unchanged width. */
+[data-slot='input']:focus-visible,
+[data-slot='textarea']:focus-visible,
+[data-slot='select-trigger']:focus-visible {
+  border-color: var(--primary);
+  background-color: var(--card);
+}
+
+[data-slot='input-group']:has([data-slot='input-group-control']:focus-visible) {
+  border-color: var(--primary);
+  background-color: var(--card);
+}
+
+/* Floating desktop sidebar: 12px inset, 240px panel, 252px column. */
+[data-slot='sidebar-wrapper'] {
+  --sidebar-width: 15rem !important;
+}
+
+[data-slot='sidebar-gap'] {
+  width: calc(var(--sidebar-width) + 12px) !important;
+}
+
+[data-slot='sidebar'][data-collapsible='offcanvas'] [data-slot='sidebar-gap'] {
+  width: 0 !important;
+}
+
+[data-slot='sidebar-container'][data-side='left'] {
+  top: 12px;
+  bottom: 12px;
+  left: 12px;
+  height: auto;
+  background-color: var(--glass-sidebar);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-rest);
+  overflow: hidden;
+}

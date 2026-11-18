@@ -1957,3 +1957,34 @@ without a visible indicator. Before/after screenshots in `docs/design-review/`.
 self-hosted Noto Sans Variable stack is kept. `--primary` is #C62828 rather than #E53935 to
 meet AA contrast for white button text. Two artifacts contain small box-shadows; omitted per the
 flat/no-shadow rule. The artifacts contain chart colour tokens but no chart, so none was added.
+
+## DESIGN-REFINE — Rounded surfaces, elevation and focus — **Done** (PR pending)
+
+**What changed:** refined the OpenDesign system in `src/index.css` (tokens) and the unlayered
+`src/design-refinement.css` (component overrides), keeping each file under 300 LOC. Pinned the radius scale
+to 4/8/12/16px (small controls / inputs and buttons / cards and panels / dialogs and sheets),
+with an 8px table shell, square cells/grids and a 12px-radius floating desktop sidebar inset
+12px from the viewport edges (240px panel, 252px column). Added three neutral shadow tokens
+rest/raised/pressed with per-theme alpha — no gradients, no accent tint, no component hard-coded
+colour. Unified focus on a single full-opacity 2px `--ring` outline at 2px offset and gave focused
+fields a `--primary` border plus an opaque surface. Kept blur(8px), the red palette, the type
+scale and all row heights. Print now resets radius as well as glass and shadow.
+`docs/FRONTEND_SPEC.md` §2.3 and §3.1 were corrected to match. Added
+`e2e/specs/design-refinement.spec.ts` (8 checks in Chromium and Firefox).
+
+**Verified:** `pnpm check` green (261 unit tests, bundle 283.6/300 KB); 3 pre-existing lint
+warnings in `DuesScreen.tsx`. Full `pnpm e2e`: 241 passed, 1 failed — the known load-related
+`seed.spec.ts` fixture timeout, which passes in isolation. After splitting the stylesheet, the
+design, a11y and smoke specs were re-run: 32 passed in Chromium and Firefox. Playwright evidence:
+1280×800 light, 1280×800 dark, 375×812 light and a focused-input capture, saved in
+`docs/design-review/refined-{light-1280,dark-1280,light-375,focus-1280}.png`; **0 console errors**
+across all four captures. Computed focus styles match the locked spec exactly.
+
+**Known gaps:** no real dialog/sheet exists in the modules yet, so their 16px radius is verified
+at CSS level. The sidebar's floating inset reduces usable shell width by 4px versus the old
+flush 256px panel; `FRONTEND_SPEC.md` §3.1 now states the 252px column. The E2E suite was run on a
+fresh port because port 4173 was occupied by another session's preview server; that server was
+not touched. One Vitest worker SIGSEGV in `client.test.ts` occurred on a single run and passed on
+re-run (261/261). `feat(ui)` implies a minor version impact, but `DESIGN-REFINE` has no `T-` ticket
+in `docs/TICKETS.md` declaring one, so the declared-vs-commit check cannot be performed; the
+earlier `DESIGN-REVAMP` entry has the same gap.

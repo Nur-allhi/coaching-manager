@@ -68,7 +68,7 @@ Rules:
 ### 2.3 Spacing and radius
 
 - Base unit 4px. Table rows are 40px tall on tablet, 44px minimum for a touch target.
-- `--radius: 0.625rem`. Buttons and inputs use `--radius-md`.
+- Radius scale: small controls 4px, inputs and default buttons 8px, cards and surface panels 12px, dialogs and sheets 16px. Table shells use 8px; cells, rows, data grids and print output stay square. The tokens are pinned in `src/index.css`.
 - Page padding: 16px on phone, 24px on tablet and up.
 
 ## 3. Layout
@@ -88,8 +88,8 @@ Rules:
 └──────────┴──────────────────────────────────────────────┘
 ```
 
-- The sidebar is 240px on tablet and wider. Below 768px it collapses into a Sheet, reachable
-  from a menu button in the header.
+- The sidebar is a floating 240px panel with a 12px inset, reserving a 252px column, on tablet
+  and wider. Below 768px it collapses into a Sheet, reachable from a menu button in the header.
 - The header is sticky. The primary action of a screen sits in the header, never at the
   bottom of a scroll.
 - The content area scrolls; the shell does not.

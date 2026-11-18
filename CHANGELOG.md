@@ -14,6 +14,10 @@ human-readable subset.
 
 ### Changed
 
+- Refined the OpenDesign surfaces: rounded corners (4/8/12/16px by component), neutral
+  rest/raised/pressed shadows in both themes, a single crisp focus ring and clearly highlighted
+  focused inputs, and a floating 12px-inset sidebar. Glass, palette, density and print rules
+  were preserved; `FRONTEND_SPEC.md` radius and sidebar values were corrected to match.
 - Applied the approved OpenDesign Bauhaus-flat visual system across the app: page, surface,
   border, radius and chart tokens; restrained glass on the sidebar and cards; solid tables and
   forms; plain ink-on-white print. No behaviour, route, money or schema change (D-068).
