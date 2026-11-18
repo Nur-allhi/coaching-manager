@@ -55,11 +55,29 @@ export function parseSnapshot(value: string | null): Row | undefined {
   return parsed as Row
 }
 
-function inversePatch(before: Row, auditId: string): Row {
+const METADATA_COLUMNS = new Set(['id', 'version', 'created_at', 'updated_at', 'deleted_at'])
+const BLOB_MARKER = /^<blob:\d+ bytes>$/
+
+function inversePatch(before: Row, after: Row | undefined, auditId: string): Row {
   const patch: Row = {}
+  const redacted: string[] = []
   for (const [key, value] of Object.entries(before)) {
-    if (key === 'id' || key === 'version' || key === 'created_at' || key === 'deleted_at') continue
+    if (METADATA_COLUMNS.has(key)) continue
+    // Snapshots redact binary to a marker; binding it would store the text in a BLOB column.
+    if (typeof value === 'string' && BLOB_MARKER.test(value)) {
+      redacted.push(key)
+      continue
+    }
     patch[key] = value
+  }
+  const restoredText = Object.keys(patch).some(
+    (key) => JSON.stringify(patch[key]) !== JSON.stringify(after?.[key]),
+  )
+  if (redacted.length > 0 && !restoredText) {
+    throw new InvalidAuditEntryError(
+      auditId,
+      'binary columns cannot be restored from a redacted snapshot',
+    )
   }
   if (Object.keys(patch).length === 0) {
     throw new InvalidAuditEntryError(auditId, 'no reversible columns in the before snapshot')
@@ -89,7 +107,8 @@ export async function undoWithin(db: Db, ctx: AuditContext, auditId: string): Pr
     case 'update': {
       const before = parseSnapshot(entry.before_json)
       if (!before) throw new InvalidAuditEntryError(auditId, 'update entry has no before snapshot')
-      await repo.update(table, entry.entity_id, inversePatch(before, auditId), version)
+      const after = parseSnapshot(entry.after_json)
+      await repo.update(table, entry.entity_id, inversePatch(before, after, auditId), version)
       return
     }
     case 'delete':

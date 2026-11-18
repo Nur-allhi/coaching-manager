@@ -1468,6 +1468,26 @@ completed
 
 - completed
 
+## Session 2026-11-18 14:03
+
+### Changes
+
+- `src/core/audit/undo.ts` — `inversePatch` skips redacted binary columns; binary-only updates are
+  refused with a typed `InvalidAuditEntryError`; mixed updates keep their text-only inverse patch.
+- `src/core/audit/undo.test.ts` — two regression tests (binary-only refusal, mixed update without
+  BLOB corruption) that fail before the fix and pass after.
+- `docs/BUGS.md`, `CHANGELOG.md`, `docs/PROGRESS.md` — BUG-007 fixed status, changelog entry and
+  verification record.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (impact on inversePatch/undoWithin; detect-changes before commit)
+- `vitest` (regression tests), `playwright` (full E2E suite)
+
+### Status
+
+- completed — branch `fix/undo-blob-marker`, merged into `dev` as #62
+
 ## Session 2026-11-18 14:13
 
 ### Changes
@@ -1487,3 +1507,18 @@ completed
 ### Status
 
 - completed — branch `fix/idle-lock-e2e`, PR pending; no merge performed
+
+## Session 2026-11-18 14:22
+
+### Changes
+
+- Merged `origin/dev` (the squash of PR #62) into `fix/idle-lock-e2e` with a normal merge commit;
+  resolved housekeeping-doc conflicts keeping both BUG-007 and BUG-012 entries. No fix was reverted.
+
+### Skill(s) / Tool(s) Used
+
+- `gitnexus` (detect-changes), `vitest`, `playwright`
+
+### Status
+
+- completed — conflict resolution only; PR #63 remains open for the human to merge

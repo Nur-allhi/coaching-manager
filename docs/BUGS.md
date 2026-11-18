@@ -137,7 +137,7 @@ a resolved-bug history.
 
 ## BUG-007: Undoing a photo update can write a redaction marker into the BLOB column
 
-- **Status:** open
+- **Status:** fixed
 - **Severity:** low
 - **Found:** 2026-11-17 (during: code review of T-042)
 - **Location:** `src/core/audit/undo.ts:58-68,89-94`; `src/core/audit/write.ts:38-40`;
@@ -149,10 +149,12 @@ a resolved-bug history.
   this is a pre-existing limitation made safe-but-imprecise, not a new regression.
 - **Root Cause:** the undo path reconstructs values from JSON snapshots that intentionally omit
   binary content.
-- **Fix Approach:** represent blobs by a typed marker that undo translates back to the stored
-  bytes (or exclude binary-only entries from undo), with a regression test. Needs the human's
-  confirmation under REPO_RULES.md §10 before a fix.
-- **Resolved:** —
+- **Fix Approach:** the human chose to reject binary-only undo. `inversePatch` now skips
+  redacted binary columns, and refuses the undo with a typed `InvalidAuditEntryError` when no
+  non-binary column actually changed between the before and after snapshots. A mixed update
+  still undoes its text columns and leaves the photo untouched, so no marker can reach a BLOB.
+  Two regression tests in `undo.test.ts` fail before and pass after the change.
+- **Resolved:** 2026-11-18 — branch `fix/undo-blob-marker` (PR pending)
 
 ## BUG-008: Dev/test harness routes are reachable in production builds
 
