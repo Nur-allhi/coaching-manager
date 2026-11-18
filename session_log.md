@@ -1545,3 +1545,28 @@ completed
 ### Status
 
 - completed — `pnpm check` green; full E2E 238 passed in two halves; PR opened into `dev`, not merged.
+
+## Session 2026-11-18 17:10
+
+### Changes
+
+- `src/index.css` — pinned 4/8/12/16px radius tokens, neutral per-theme rest/raised/pressed
+  shadow tokens, one 2px `--ring` focus outline, primary-border/opaque-surface input focus,
+  floating 12px-radius sidebar with a 12px inset, and print radius reset.
+- `src/design-refinement.css` — component overrides moved here (unlayered, so they beat Tailwind's
+  layered utilities) after review found `index.css` over the 300-LOC cap. No generated shadcn
+  file was edited.
+- `docs/FRONTEND_SPEC.md` — §2.3 radius scale and §3.1 sidebar geometry corrected.
+- `e2e/specs/design-refinement.spec.ts` — 8 regression checks for radius, focus, elevation and
+  sidebar geometry across Chromium and Firefox.
+- `docs/design-review/refined-*.png` — light/dark desktop, phone and focused-input evidence.
+- `docs/PROGRESS.md`, `CHANGELOG.md` — task outcome recorded.
+
+### Skill(s) / Tool(s) Used
+
+- `playwright` (E2E + screenshots), `vitest`, `gitnexus` (pre-commit detect-changes), `code-reviewer`
+
+### Status
+
+- completed — `pnpm check` green; full E2E 241 passed, 1 known flaky seed timeout (passes alone);
+  PR to `dev` pending, no merge performed.
